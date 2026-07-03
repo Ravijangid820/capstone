@@ -1,0 +1,18 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Project data & model artifacts
+data/
+*.pt
+*.pth
+*.nii.gz
+runs/
+lightning_logs/
