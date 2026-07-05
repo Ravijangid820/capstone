@@ -48,6 +48,7 @@ def parse_args():
     p.add_argument("--prox-mu", type=float, default=0.0)
     p.add_argument("--max-cases", type=int, default=0)
     p.add_argument("--batch-size", type=int, default=8)
+    p.add_argument("--workers", type=int, default=0, help="DataLoader workers per client")
     p.add_argument("--results-dir", default="results")
     p.add_argument("--workspace", default="data/fl_workspace")
     p.add_argument("--gpu", default=None, help="e.g. '0'; omit for CPU")
@@ -79,7 +80,7 @@ def main() -> None:
                 f"--data-root {data_root} --results-dir {results_dir} --method {args.method} "
                 f"{src} --client-index {i} --personalization {args.personalization} "
                 f"--prox-mu {args.prox_mu} --epochs {args.epochs} --max-cases {args.max_cases} "
-                f"--batch-size {args.batch_size} --workers 0{shift_flag}"
+                f"--batch-size {args.batch_size} --workers {args.workers}{shift_flag}"
             ),
         )
         job.to(runner, f"site-{i + 1}")
