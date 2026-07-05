@@ -83,25 +83,41 @@ def main() -> None:
 
     flare.init()
     site = flare.get_site_name()
+    method_dir = os.path.join(args.results_dir, args.method)
+    os.makedirs(method_dir, exist_ok=True)
+    local_state_path = os.path.join(method_dir, f"{site}_local.pt")  # accumulated kept-local params
 
     while flare.is_running():
         input_model = flare.receive()
-        # Assemble this hospital's model: global params, EXCEPT kept-local ones.
+        # Assemble this hospital's model: global shared params, EXCEPT kept-local ones.
         load_global(model, input_model.params, keep_local)
+        # Restore this hospital's ACCUMULATED local (personalized) params from prior
+        # rounds so e.g. FedBN's BatchNorm stats keep specializing across rounds even
+        # if FLARE re-runs this script each round (otherwise they'd reset -> no gain).
+        if keep_local and os.path.exists(local_state_path):
+            prev = torch.load(local_state_path, map_location=device)
+            sd = model.state_dict()
+            for k in keep_local:
+                if k in prev:
+                    sd[k] = prev[k].to(device)
+            model.load_state_dict(sd)
 
-        # Evaluate BEFORE local training: this scores the true federated model on
-        # this hospital (pure global for FedAvg; global-body + local-BN for FedBN),
-        # with no local-adaptation contamination. This is the number we report.
+        # Evaluate BEFORE local training: scores the true federated model on this
+        # hospital (pure global for FedAvg; global-body + local-BN for FedBN), with
+        # no local-adaptation contamination. This is the number we report.
         scores = evaluate(model, val_loader, metric, device)
-        os.makedirs(os.path.join(args.results_dir, args.method), exist_ok=True)
-        torch.save(model.state_dict(),
-                   os.path.join(args.results_dir, args.method, f"{site}.pt"))
+        torch.save(model.state_dict(), os.path.join(method_dir, f"{site}.pt"))
         write_scores(args.results_dir, args.method, site, scores, n_train, n_val)
 
-        # Now train locally to contribute this round's update.
+        # Train locally to contribute this round's update.
         global_ref = dict(input_model.params) if args.prox_mu > 0 else None  # FedProx anchor
         local_train(model, train_loader, args.epochs, args.lr, device,
                     prox_mu=args.prox_mu, global_params=global_ref)
+
+        # Persist accumulated local params for next round.
+        if keep_local:
+            sd = model.state_dict()
+            torch.save({k: sd[k].cpu() for k in keep_local}, local_state_path)
 
         output = flare.FLModel(
             params=model.cpu().state_dict(),
