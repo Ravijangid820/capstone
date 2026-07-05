@@ -26,7 +26,7 @@ from monai.transforms import (
     Resized,
     ToTensord,
 )
-from torch.utils.data import Dataset
+from torch.utils.data import DataLoader, Dataset
 
 from . import MODALITIES
 
@@ -58,24 +58,37 @@ def build_slice_index(
 ) -> list[tuple[str, int]]:
     """Index every axial slice that contains at least `min_tumor_pixels` of tumor.
 
-    Reads only the (small) seg volumes. Result is cached to CSV if given.
+    Reads only the (small) seg volumes. The CSV cache is keyed by case dir and is
+    incremental: only cases missing from the cache are recomputed, so growing the
+    case set (5 -> 100 -> 1251) never rescans work already done. Returns slices for
+    exactly the requested `cases`.
+
+    Note: the cache assumes a fixed `min_tumor_pixels`. If you change it, delete the
+    cache file first.
     """
+    requested = list(cases)
+    cached: dict[str, list[int]] = {}
     if cache_csv and os.path.exists(cache_csv):
         with open(cache_csv, newline="") as f:
-            return [(row[0], int(row[1])) for row in csv.reader(f)]
+            for row in csv.reader(f):
+                if row:
+                    cached.setdefault(row[0], []).append(int(row[1]))
 
-    index: list[tuple[str, int]] = []
-    for case_dir in cases:
+    missing = [c for c in requested if c not in cached]
+    new_rows: list[tuple[str, int]] = []
+    for case_dir in missing:
         seg = np.asarray(nib.load(_seg_path(case_dir)).dataobj)  # (H, W, D)
         per_slice = (seg > 0).sum(axis=(0, 1))  # tumor pixels per axial slice
-        for z in np.where(per_slice >= min_tumor_pixels)[0]:
-            index.append((case_dir, int(z)))
+        zs = [int(z) for z in np.where(per_slice >= min_tumor_pixels)[0]]
+        cached[case_dir] = zs
+        new_rows.extend((case_dir, z) for z in zs)
 
-    if cache_csv:
+    if cache_csv and new_rows:
         os.makedirs(os.path.dirname(cache_csv) or ".", exist_ok=True)
-        with open(cache_csv, "w", newline="") as f:
-            csv.writer(f).writerows(index)
-    return index
+        with open(cache_csv, "a", newline="") as f:  # append only the new cases
+            csv.writer(f).writerows(new_rows)
+
+    return [(c, z) for c in requested for z in cached.get(c, [])]
 
 
 # ----------------------------------------------------------------------------
@@ -83,10 +96,11 @@ def build_slice_index(
 # ----------------------------------------------------------------------------
 
 class BratsSliceDataset(Dataset):
-    """Yields {"image": (4,H,W) float32, "label": (1,H,W) raw seg} for one slice.
+    """Yields {"image": (4,H,W) float32, "label": (H,W) raw seg} for one slice.
 
-    Raw seg keeps BraTS labels {0,1,2,4}; the transform pipeline converts them to
-    the 3 overlapping regions (TC, WT, ET).
+    Raw seg keeps BraTS labels {0,1,2,4} and is left WITHOUT a channel dim, because
+    ConvertToMultiChannelBasedOnBratsClassesd builds the 3 region-channels (TC, WT,
+    ET) itself — giving it a channel dim would produce a spurious extra axis.
     """
 
     def __init__(self, index: list[tuple[str, int]], transform=None):
@@ -104,8 +118,7 @@ class BratsSliceDataset(Dataset):
             for m in MODALITIES
         ]
         image = np.stack(channels, axis=0)  # (4, H, W)
-        seg = np.asarray(nib.load(_seg_path(case_dir)).dataobj[..., z], dtype=np.float32)
-        label = seg[np.newaxis]  # (1, H, W)
+        label = np.asarray(nib.load(_seg_path(case_dir)).dataobj[..., z], dtype=np.float32)  # (H, W)
 
         sample = {"image": image, "label": label}
         if self.transform is not None:
@@ -144,6 +157,39 @@ def eval_transforms(size: int = 192):
 # Splitting helper
 # ----------------------------------------------------------------------------
 
+def case_split(cases, val_frac: float = 0.2, seed: int = 42):
+    """Deterministically split a case list into (train_cases, val_cases) at the
+    CASE level. The single source of truth for splits, so every method (local,
+    FL, centralized) sees the exact same per-hospital validation cases."""
+    cs = sorted(set(cases))
+    rng = np.random.default_rng(seed)
+    rng.shuffle(cs)
+    n_val = max(1, int(len(cs) * val_frac))
+    val = set(cs[:n_val])
+    return [c for c in cs if c not in val], sorted(val)
+
+
+def loaders_for_cases(cases, batch_size=8, size=192, workers=0, index_cache=None, val_frac=0.2):
+    """Build (train_loader, val_loader, split) for one set of cases (e.g. a
+    hospital), splitting it into train/val by case. Reused by local-only, the
+    FLARE client, and fine-tune."""
+    train_cases, val_cases = case_split(cases, val_frac)
+    return loaders_from_case_lists(train_cases, val_cases, batch_size, size, workers, index_cache)
+
+
+def loaders_from_case_lists(train_cases, val_cases, batch_size=8, size=192, workers=0, index_cache=None):
+    """Build (train_loader, val_loader, split) from explicit train/val case lists.
+    Used by the centralized run (train on the union of all hospitals' train cases,
+    val on the union of their val cases — no leakage)."""
+    train_index = build_slice_index(train_cases, cache_csv=index_cache)
+    val_index = build_slice_index(val_cases, cache_csv=index_cache)
+    train_ds = BratsSliceDataset(train_index, train_transforms(size))
+    val_ds = BratsSliceDataset(val_index, eval_transforms(size))
+    train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True, num_workers=workers)
+    val_loader = DataLoader(val_ds, batch_size=batch_size, num_workers=workers)
+    return train_loader, val_loader, Split(train=train_index, val=val_index)
+
+
 @dataclass
 class Split:
     train: list[tuple[str, int]]
@@ -151,12 +197,10 @@ class Split:
 
 
 def split_by_case(index: list[tuple[str, int]], val_frac: float = 0.2, seed: int = 42) -> Split:
-    """Split by CASE (not slice) so slices from one patient never leak across sets."""
-    cases = sorted({c for c, _ in index})
-    rng = np.random.default_rng(seed)
-    rng.shuffle(cases)
-    n_val = max(1, int(len(cases) * val_frac))
-    val_cases = set(cases[:n_val])
-    train = [(c, z) for c, z in index if c not in val_cases]
-    val = [(c, z) for c, z in index if c in val_cases]
+    """Split a slice index by CASE (not slice) so slices from one patient never
+    leak across sets. Uses the same `case_split` as everything else."""
+    _, val_cases = case_split([c for c, _ in index], val_frac, seed)
+    val_set = set(val_cases)
+    train = [(c, z) for c, z in index if c not in val_set]
+    val = [(c, z) for c, z in index if c in val_set]
     return Split(train=train, val=val)

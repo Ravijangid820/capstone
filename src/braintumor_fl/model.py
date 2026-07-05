@@ -12,8 +12,14 @@ from monai.metrics import DiceMetric
 from monai.networks.nets import UNet
 
 
-def build_unet(in_channels: int = 4, out_channels: int = 3) -> UNet:
-    """2D U-Net sized to fit a 4GB GPU comfortably at 192x192."""
+def build_unet(in_channels: int = 4, out_channels: int = 3, norm: str = "batch") -> UNet:
+    """2D U-Net sized to fit a 4GB GPU comfortably at 192x192.
+
+    Defaults to BatchNorm (`norm="batch"`) because it's the setting FedBN targets:
+    BatchNorm's running stats capture each scanner's intensity fingerprint, so
+    keeping them local per hospital IS the personalization. All experiments
+    (centralized, local, FedAvg, FedBN) use the same norm for a fair comparison.
+    """
     return UNet(
         spatial_dims=2,
         in_channels=in_channels,
@@ -21,6 +27,7 @@ def build_unet(in_channels: int = 4, out_channels: int = 3) -> UNet:
         channels=(16, 32, 64, 128, 256),
         strides=(2, 2, 2, 2),
         num_res_units=2,
+        norm=norm,
     )
 
 

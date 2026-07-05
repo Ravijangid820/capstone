@@ -16,3 +16,8 @@ data/
 *.nii.gz
 runs/
 lightning_logs/
+
+# FLARE workspace + experiment artifacts
+fl_workspace/
+results/**/_index_*.csv
+results/**/*.pt
