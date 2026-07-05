@@ -4,6 +4,9 @@ Capstone: 2D brain-tumor segmentation on **BraTS/FeTS**, federated across hospit
 with **NVIDIA FLARE + MONAI**, using **personalized FL** (primarily **FedBN**) to
 handle the scanner/protocol heterogeneity between institutions.
 
+- 📚 **Full documentation (authoritative, current):** [docs/](docs/) — idea, goal,
+  hypotheses, architecture, data pipeline, methods, running, evaluation, design
+  decisions, and roadmap, in detail. Start at [docs/01-overview.md](docs/01-overview.md).
 - **Plan & research question:** [PLAN.md](PLAN.md)
 - **Data access:** [DATA.md](DATA.md)
 - **How to run everything (in WSL2):** [WSL.md](WSL.md)
