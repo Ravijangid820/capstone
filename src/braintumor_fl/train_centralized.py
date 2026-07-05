@@ -20,7 +20,7 @@ import os
 import torch
 
 from .data import case_split, find_cases, loaders_from_case_lists
-from .model import build_loss, build_metric, build_unet
+from .model import BratsUNet, build_loss, build_metric
 from .partition import get_partitions, partitioned_splits
 from .trainer import evaluate, get_device, train_one_epoch
 
@@ -56,7 +56,7 @@ def train(args) -> None:
     train_loader, val_loader, split = build_training_loaders(args)
     print(f"[data] slices: {len(split.train)} train / {len(split.val)} val")
 
-    model = build_unet().to(device)
+    model = BratsUNet().to(device)
     loss_fn = build_loss()
     metric = build_metric()
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)

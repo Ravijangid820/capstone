@@ -17,7 +17,7 @@ import torch
 from torch.utils.data import DataLoader
 
 from braintumor_fl.data import BratsSliceDataset, build_slice_index, case_split, eval_transforms
-from braintumor_fl.model import build_metric, build_unet
+from braintumor_fl.model import BratsUNet, build_metric
 from braintumor_fl.partition import get_partitions
 from braintumor_fl.results import write_scores
 from braintumor_fl.trainer import evaluate, get_device
@@ -41,7 +41,7 @@ def main() -> None:
 
     device = get_device()
     state = torch.load(args.model, map_location=device)
-    model = build_unet(norm=args.norm).to(device)
+    model = BratsUNet(norm=args.norm).to(device)
     model.load_state_dict(state)
     metric = build_metric()
 

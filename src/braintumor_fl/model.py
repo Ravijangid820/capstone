@@ -7,6 +7,7 @@ multi-label problem: sigmoid activation + per-channel Dice (not softmax).
 from __future__ import annotations
 
 import torch
+import torch.nn as nn
 from monai.losses import DiceLoss
 from monai.metrics import DiceMetric
 from monai.networks.nets import UNet
@@ -29,6 +30,27 @@ def build_unet(in_channels: int = 4, out_channels: int = 3, norm: str = "batch")
         num_res_units=2,
         norm=norm,
     )
+
+
+class BratsUNet(nn.Module):
+    """FLARE-serializable wrapper around the MONAI U-Net.
+
+    NVIDIA FLARE rebuilds the server's initial model from a JSON config by
+    introspecting constructor args from instance attributes. MONAI's UNet stores
+    `spatial_dims` under a different attribute name, so FLARE drops that required
+    arg and can't reconstruct it. This wrapper takes only optional args, so FLARE
+    always reconstructs it correctly (empty/partial args fall back to defaults).
+
+    Use this EVERYWHERE (not raw build_unet) so state-dict keys are identical
+    across the centralized, local-only, and federated code paths.
+    """
+
+    def __init__(self, in_channels: int = 4, out_channels: int = 3, norm: str = "batch"):
+        super().__init__()
+        self.net = build_unet(in_channels, out_channels, norm)
+
+    def forward(self, x):
+        return self.net(x)
 
 
 def build_loss() -> DiceLoss:

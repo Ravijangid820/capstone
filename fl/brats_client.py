@@ -25,7 +25,7 @@ from braintumor_fl.data import (
     split_by_case,
     train_transforms,
 )
-from braintumor_fl.model import build_metric, build_unet
+from braintumor_fl.model import BratsUNet, build_metric
 from braintumor_fl.partition import client_cases
 from braintumor_fl.personalization import keep_local_keys, load_global
 from braintumor_fl.results import write_scores
@@ -71,7 +71,7 @@ def main() -> None:
     )
 
     device = get_device()
-    model = build_unet().to(device)
+    model = BratsUNet().to(device)
     keep_local = keep_local_keys(model, args.personalization)
 
     index_cache = os.path.join(args.results_dir, f"_index_c{args.client_index}.csv")

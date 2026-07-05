@@ -30,7 +30,7 @@ from nvflare.app_opt.pt.job_config.model import PTModel
 from nvflare.job_config.api import FedJob
 from nvflare.job_config.script_runner import ScriptRunner
 
-from braintumor_fl.model import build_unet
+from braintumor_fl.model import BratsUNet
 from braintumor_fl.partition import get_partitions
 
 
@@ -66,7 +66,7 @@ def main() -> None:
 
     job = FedJob(name=f"brats_{args.method}")
     job.to_server(FedAvg(num_clients=n_clients, num_rounds=args.rounds))
-    job.to_server(PTModel(build_unet()))
+    job.to_server(PTModel(BratsUNet()))
 
     src = "--fets-csv " + fets_csv if fets_csv else f"--n-clients {n_clients}"
     for i in range(n_clients):

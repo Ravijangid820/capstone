@@ -19,7 +19,7 @@ import os
 import torch
 
 from braintumor_fl.data import loaders_for_cases
-from braintumor_fl.model import build_loss, build_metric, build_unet
+from braintumor_fl.model import BratsUNet, build_loss, build_metric
 from braintumor_fl.partition import get_partitions
 from braintumor_fl.results import write_scores
 from braintumor_fl.trainer import evaluate, get_device, train_one_epoch
@@ -30,7 +30,7 @@ def train_one_client(cases, args, device, site) -> dict:
         cases, args.batch_size, args.size, args.workers,
         index_cache=os.path.join(args.results_dir, args.method, f"_index_{site}.csv"),
     )
-    model = build_unet().to(device)
+    model = BratsUNet().to(device)
     loss_fn = build_loss()
     metric = build_metric()
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
