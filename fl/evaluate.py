@@ -16,9 +16,15 @@ import os
 import torch
 from torch.utils.data import DataLoader
 
-from braintumor_fl.data import BratsSliceDataset, build_slice_index, case_split, eval_transforms
+from braintumor_fl.data import (
+    BratsSliceDataset,
+    SiteShift,
+    build_slice_index,
+    case_split,
+    eval_transforms,
+)
 from braintumor_fl.model import BratsUNet, build_metric
-from braintumor_fl.partition import get_partitions
+from braintumor_fl.partition import case_site_map, get_partitions
 from braintumor_fl.results import write_scores
 from braintumor_fl.trainer import evaluate, get_device
 
@@ -37,6 +43,8 @@ def main() -> None:
     p.add_argument("--size", type=int, default=192)
     p.add_argument("--workers", type=int, default=2)
     p.add_argument("--results-dir", default="results")
+    p.add_argument("--synthetic-shift", action="store_true",
+                   help="apply deterministic per-hospital scanner shift (synthetic non-IID)")
     args = p.parse_args()
 
     device = get_device()
@@ -47,8 +55,10 @@ def main() -> None:
 
     parts = get_partitions(args.data_root, args.n_clients or None,
                            args.fets_csv or None, args.max_cases)
+    site_shift = SiteShift(case_site_map(parts)) if args.synthetic_shift else None
     os.makedirs(os.path.join(args.results_dir, args.method), exist_ok=True)
-    print(f"[eval] {args.model} on {len(parts)} hospitals (norm={args.norm})")
+    print(f"[eval] {args.model} on {len(parts)} hospitals (norm={args.norm})"
+          f"{' | synthetic-shift' if site_shift else ''}")
 
     for i, cases in enumerate(parts):
         site = f"site-{i + 1}"
@@ -56,7 +66,7 @@ def main() -> None:
         val_index = build_slice_index(
             val_cases, cache_csv=os.path.join(args.results_dir, args.method, f"_index_{site}.csv")
         )
-        val_ds = BratsSliceDataset(val_index, eval_transforms(args.size))
+        val_ds = BratsSliceDataset(val_index, eval_transforms(args.size), site_shift)
         val_loader = DataLoader(val_ds, batch_size=args.batch_size, num_workers=args.workers)
 
         scores = evaluate(model, val_loader, metric, device)

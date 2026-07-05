@@ -20,23 +20,24 @@ from torch.utils.data import DataLoader
 import nvflare.client as flare
 from braintumor_fl.data import (
     BratsSliceDataset,
+    SiteShift,
     build_slice_index,
     eval_transforms,
     split_by_case,
     train_transforms,
 )
 from braintumor_fl.model import BratsUNet, build_metric
-from braintumor_fl.partition import client_cases
+from braintumor_fl.partition import case_site_map, client_cases, get_partitions
 from braintumor_fl.personalization import keep_local_keys, load_global
 from braintumor_fl.results import write_scores
 from braintumor_fl.trainer import evaluate, get_device, local_train
 
 
-def build_loaders(cases, batch_size, size, workers, index_cache):
+def build_loaders(cases, batch_size, size, workers, index_cache, site_shift=None):
     index = build_slice_index(cases, cache_csv=index_cache)
     split = split_by_case(index)
-    train_ds = BratsSliceDataset(split.train, train_transforms(size))
-    val_ds = BratsSliceDataset(split.val, eval_transforms(size))
+    train_ds = BratsSliceDataset(split.train, train_transforms(size), site_shift)
+    val_ds = BratsSliceDataset(split.val, eval_transforms(size), site_shift)
     train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True, num_workers=workers)
     val_loader = DataLoader(val_ds, batch_size=batch_size, num_workers=workers)
     return train_loader, val_loader
@@ -52,6 +53,8 @@ def parse_args():
     p.add_argument("--client-index", type=int, required=True)
     p.add_argument("--max-cases", type=int, default=0)
     p.add_argument("--personalization", choices=["fedavg", "fedbn", "personal_head"], default="fedavg")
+    p.add_argument("--synthetic-shift", action="store_true",
+                   help="apply deterministic per-hospital scanner shift (synthetic non-IID)")
     p.add_argument("--prox-mu", type=float, default=0.0, help=">0 enables FedProx")
     p.add_argument("--epochs", type=int, default=1, help="local epochs per round")
     p.add_argument("--lr", type=float, default=5e-4)
@@ -70,13 +73,20 @@ def main() -> None:
         n_clients=args.n_clients or None, fets_csv=fets_csv, max_cases=args.max_cases,
     )
 
+    # Same deterministic case->site map every method uses, so THIS client's cases
+    # get exactly the scanner shift their hospital gets in the centralized/local runs.
+    site_shift = None
+    if args.synthetic_shift:
+        parts = get_partitions(args.data_root, args.n_clients or None, fets_csv, args.max_cases)
+        site_shift = SiteShift(case_site_map(parts))
+
     device = get_device()
     model = BratsUNet().to(device)
     keep_local = keep_local_keys(model, args.personalization)
 
     index_cache = os.path.join(args.results_dir, f"_index_c{args.client_index}.csv")
     train_loader, val_loader = build_loaders(
-        my_cases, args.batch_size, args.size, args.workers, index_cache
+        my_cases, args.batch_size, args.size, args.workers, index_cache, site_shift
     )
     metric = build_metric()
     n_train, n_val = len(train_loader.dataset), len(val_loader.dataset)

@@ -85,6 +85,13 @@ def client_cases(
     return get_partitions(data_root, n_clients, fets_csv, max_cases)[client_index]
 
 
+def case_site_map(partitions: list[list[str]]) -> dict[str, int]:
+    """Flatten a partition into {case_dir: 0-based site index}. Used to drive the
+    synthetic per-hospital scanner shift consistently across every method: because
+    partitions are deterministic, each case maps to the same site everywhere."""
+    return {case: i for i, cases in enumerate(partitions) for case in cases}
+
+
 def partitioned_splits(partitions: list[list[str]], val_frac: float = 0.2, seed: int = 42):
     """Per-hospital case-level train/val splits, aggregated for the centralized run.
 

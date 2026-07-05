@@ -43,6 +43,8 @@ def parse_args():
     p.add_argument("--epochs", type=int, default=1, help="local epochs per round")
     p.add_argument("--method", default="fedavg", help="result tag: fedavg/fedprox/fedbn/personal_head")
     p.add_argument("--personalization", choices=["fedavg", "fedbn", "personal_head"], default="fedavg")
+    p.add_argument("--synthetic-shift", action="store_true",
+                   help="apply deterministic per-hospital scanner shift (synthetic non-IID)")
     p.add_argument("--prox-mu", type=float, default=0.0)
     p.add_argument("--max-cases", type=int, default=0)
     p.add_argument("--batch-size", type=int, default=8)
@@ -69,6 +71,7 @@ def main() -> None:
     job.to_server(PTModel(BratsUNet()))
 
     src = "--fets-csv " + fets_csv if fets_csv else f"--n-clients {n_clients}"
+    shift_flag = " --synthetic-shift" if args.synthetic_shift else ""
     for i in range(n_clients):
         runner = ScriptRunner(
             script="fl/brats_client.py",
@@ -76,7 +79,7 @@ def main() -> None:
                 f"--data-root {data_root} --results-dir {results_dir} --method {args.method} "
                 f"{src} --client-index {i} --personalization {args.personalization} "
                 f"--prox-mu {args.prox_mu} --epochs {args.epochs} --max-cases {args.max_cases} "
-                f"--batch-size {args.batch_size} --workers 0"
+                f"--batch-size {args.batch_size} --workers 0{shift_flag}"
             ),
         )
         job.to(runner, f"site-{i + 1}")

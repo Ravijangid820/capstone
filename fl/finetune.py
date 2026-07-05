@@ -16,9 +16,9 @@ import os
 
 import torch
 
-from braintumor_fl.data import loaders_for_cases
+from braintumor_fl.data import SiteShift, loaders_for_cases
 from braintumor_fl.model import BratsUNet, build_loss, build_metric
-from braintumor_fl.partition import get_partitions
+from braintumor_fl.partition import case_site_map, get_partitions
 from braintumor_fl.results import write_scores
 from braintumor_fl.trainer import evaluate, get_device, train_one_epoch
 
@@ -39,14 +39,18 @@ def main() -> None:
     p.add_argument("--workers", type=int, default=2)
     p.add_argument("--method", default="finetune")
     p.add_argument("--results-dir", default="results")
+    p.add_argument("--synthetic-shift", action="store_true",
+                   help="apply deterministic per-hospital scanner shift (synthetic non-IID)")
     args = p.parse_args()
 
     device = get_device()
     global_state = torch.load(args.global_model, map_location=device)
     parts = get_partitions(args.data_root, args.n_clients or None,
                            args.fets_csv or None, args.max_cases)
+    site_shift = SiteShift(case_site_map(parts)) if args.synthetic_shift else None
     os.makedirs(os.path.join(args.results_dir, args.method), exist_ok=True)
-    print(f"[finetune] {len(parts)} hospitals from {args.global_model} | {args.ft_epochs} epochs")
+    print(f"[finetune] {len(parts)} hospitals from {args.global_model} | {args.ft_epochs} epochs"
+          f"{' | synthetic-shift' if site_shift else ''}")
 
     loss_fn = build_loss()
     metric = build_metric()
@@ -55,6 +59,7 @@ def main() -> None:
         train_loader, val_loader, split = loaders_for_cases(
             cases, args.batch_size, args.size, args.workers,
             index_cache=os.path.join(args.results_dir, args.method, f"_index_{site}.csv"),
+            site_shift=site_shift,
         )
         model = BratsUNet().to(device)
         model.load_state_dict(global_state)

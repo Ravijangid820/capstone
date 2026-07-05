@@ -19,15 +19,16 @@ import os
 
 import torch
 
-from .data import case_split, find_cases, loaders_from_case_lists
+from .data import SiteShift, case_split, find_cases, loaders_from_case_lists
 from .model import BratsUNet, build_loss, build_metric
-from .partition import get_partitions, partitioned_splits
+from .partition import case_site_map, get_partitions, partitioned_splits
 from .trainer import evaluate, get_device, train_one_epoch
 
 
 def build_training_loaders(args):
     """Centralized train/val loaders. If partition args are given, train on the
     union of hospital train-cases and validate on the union of their val-cases."""
+    site_shift = None
     if args.fets_csv or args.n_clients:
         parts = get_partitions(
             os.path.abspath(args.data_root),
@@ -36,13 +37,18 @@ def build_training_loaders(args):
             args.max_cases,
         )
         all_train, all_val, _ = partitioned_splits(parts, args.val_frac)
+        if args.synthetic_shift:  # each pooled case keeps ITS hospital's scanner shift
+            site_shift = SiteShift(case_site_map(parts))
     else:
+        if args.synthetic_shift:
+            raise SystemExit("--synthetic-shift requires --n-clients or --fets-csv (needs hospitals)")
         cases = find_cases(args.data_root)
         if args.max_cases:
             cases = cases[: args.max_cases]
         all_train, all_val = case_split(cases, args.val_frac)
     return loaders_from_case_lists(
-        all_train, all_val, args.batch_size, args.size, args.workers, args.index_cache
+        all_train, all_val, args.batch_size, args.size, args.workers, args.index_cache,
+        site_shift=site_shift,
     )
 
 
@@ -87,6 +93,8 @@ def main() -> None:
     p.add_argument("--max-cases", type=int, default=0, help="0 = all cases")
     p.add_argument("--n-clients", type=int, default=0, help="partition-consistent training over N even hospitals")
     p.add_argument("--fets-csv", default="", help="partition-consistent training over real FeTS hospitals")
+    p.add_argument("--synthetic-shift", action="store_true",
+                   help="apply deterministic per-hospital scanner shift (synthetic non-IID)")
     p.add_argument("--epochs", type=int, default=20)
     p.add_argument("--batch-size", type=int, default=8)
     p.add_argument("--lr", type=float, default=5e-4, help="cosine-decayed over epochs")
