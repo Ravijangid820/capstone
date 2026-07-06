@@ -26,6 +26,11 @@ is CPU-bound on data loading), and the current run mechanics.
 | 08 | [Design decisions](08-design-decisions.md) | A rationale log for every non-obvious choice, with the reasoning and the failure it prevents. |
 | 09 | [Roadmap](09-roadmap.md) | Current status, next steps, the real-FeTS swap, and stretch goals. |
 
+**Diagram-first companion:** [Pipeline walkthrough](pipeline-walkthrough.md) — follows a
+single MRI slice through the whole pipeline (load → scanner shift → transforms → cache
+boundary → federated round) with Mermaid flow diagrams and the tensor shape at every
+stage. The best place to start if you want the *flow* before the detail.
+
 ## One-paragraph summary
 
 Hospitals can't pool patient MRIs (privacy), but a model trained at just one
