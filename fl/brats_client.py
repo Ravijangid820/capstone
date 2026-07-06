@@ -53,6 +53,7 @@ def parse_args():
     p.add_argument("--personalization", choices=["fedavg", "fedbn", "personal_head"], default="fedavg")
     p.add_argument("--synthetic-shift", action="store_true",
                    help="apply deterministic per-hospital scanner shift (synthetic non-IID)")
+    p.add_argument("--cache-dir", default="", help="ABSOLUTE preprocess-cache dir (FLARE drops env)")
     p.add_argument("--prox-mu", type=float, default=0.0, help=">0 enables FedProx")
     p.add_argument("--epochs", type=int, default=1, help="local epochs per round")
     p.add_argument("--lr", type=float, default=5e-4)
@@ -65,6 +66,8 @@ def parse_args():
 def main() -> None:
     args = parse_args()
     fets_csv = args.fets_csv or None
+    if args.cache_dir:  # FLARE drops the parent env; re-set so make_dataset finds the cache
+        os.environ["BRATS_CACHE_DIR"] = args.cache_dir
 
     my_cases = client_cases(
         args.data_root, args.client_index,

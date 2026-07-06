@@ -73,6 +73,11 @@ def main() -> None:
 
     src = "--fets-csv " + fets_csv if fets_csv else f"--n-clients {n_clients}"
     shift_flag = " --synthetic-shift" if args.synthetic_shift else ""
+    # FLARE's ScriptRunner does NOT inherit the parent env, so BRATS_CACHE_DIR does
+    # not reach the client -> pass the (absolute) cache dir explicitly, else the FL
+    # clients fall back to the slow online preprocessing path.
+    cache_dir = os.environ.get("BRATS_CACHE_DIR")
+    cache_flag = f" --cache-dir {os.path.abspath(cache_dir)}" if cache_dir else ""
     for i in range(n_clients):
         runner = ScriptRunner(
             script="fl/brats_client.py",
@@ -80,7 +85,7 @@ def main() -> None:
                 f"--data-root {data_root} --results-dir {results_dir} --method {args.method} "
                 f"{src} --client-index {i} --personalization {args.personalization} "
                 f"--prox-mu {args.prox_mu} --epochs {args.epochs} --max-cases {args.max_cases} "
-                f"--batch-size {args.batch_size} --workers {args.workers}{shift_flag}"
+                f"--batch-size {args.batch_size} --workers {args.workers}{shift_flag}{cache_flag}"
             ),
         )
         job.to(runner, f"site-{i + 1}")
