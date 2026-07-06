@@ -21,6 +21,7 @@ from scipy.ndimage import gaussian_filter
 from monai.transforms import (
     Compose,
     ConvertToMultiChannelBasedOnBratsClassesd,
+    Lambdad,
     NormalizeIntensityd,
     RandFlipd,
     RandRotate90d,
@@ -233,10 +234,20 @@ class BratsSliceDataset(Dataset):
 # must run online). Keeping them as shared lists guarantees the cached path and the
 # online path apply the exact same transforms in the exact same order.
 
+def _clip_norm(x):
+    """Bound z-normalized intensities to +/-5 sigma. The aggressive scanner-shift
+    gamma can push a few voxels to ~14 sigma, which destabilizes training (a gradient
+    explosion NaNs the weights, and NaN-skip can't recover). Clipping the pathological
+    tail keeps the per-hospital histogram-shape heterogeneity while making training
+    stable. Works on numpy arrays and torch/MetaTensors alike."""
+    return x.clip(-5.0, 5.0)
+
+
 def _deterministic_list(size: int):
     return [
         ConvertToMultiChannelBasedOnBratsClassesd(keys="label"),  # (1,H,W)->(3,H,W)
         NormalizeIntensityd(keys="image", nonzero=True, channel_wise=True),
+        Lambdad(keys="image", func=_clip_norm),  # stability: bound extreme gamma outliers
         Resized(keys=["image", "label"], spatial_size=(size, size), mode=("bilinear", "nearest")),
     ]
 
@@ -331,7 +342,9 @@ def split_by_case(index: list[tuple[str, int]], val_frac: float = 0.2, seed: int
 # a stale cache can never silently poison results.
 
 def cache_key(site_shift, size: int) -> str:
-    """Short hash identifying a cache: depends on image size + the exact shift."""
+    """Short hash identifying a cache: depends on image size, the exact shift, AND
+    the case->site partitioning (changing --n-clients / MAX_CASES reassigns cases to
+    different hospitals -> different baked-in shift -> must rebuild)."""
     h = hashlib.sha1()
     h.update(f"size={size};".encode())
     if site_shift is None:
@@ -339,6 +352,9 @@ def cache_key(site_shift, size: int) -> str:
     else:
         h.update(b"shift=on;")
         h.update(json.dumps(SITE_PROFILES, sort_keys=True).encode())
+        # per-case site assignment, keyed by basename (portable, path-agnostic)
+        items = sorted((os.path.basename(c), s) for c, s in site_shift.case_site.items())
+        h.update(json.dumps(items).encode())
     return h.hexdigest()[:12]
 
 
