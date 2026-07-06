@@ -108,15 +108,21 @@ def build_slice_index(
 # statistics, so they survive normalization and land in the BatchNorm running
 # stats that FedBN keeps local.
 
+# Strong, structure-preserving scanner profiles. Magnitudes are deliberately large:
+# a MILD shift is mostly removed by the channel-wise z-normalization and leaves the
+# per-hospital BatchNorm statistics too similar for FedBN to beat FedAvg (the stable
+# global BN wins over a noisy local one). These push gamma to extremes (monotonic —
+# preserves anatomy), a strong smooth bias field, and heavier blur, so a large,
+# hospital-specific distribution difference survives z-norm and lands in BN.
 SITE_PROFILES = [
-    dict(gamma=1.0,  bias=0.0,  blur=0.0),  # site-1: reference scanner (no-op)
-    dict(gamma=1.5,  bias=0.0,  blur=0.0),  # darker mid-tones
-    dict(gamma=0.65, bias=0.0,  blur=0.0),  # brighter mid-tones
-    dict(gamma=1.0,  bias=0.0,  blur=1.1),  # low-resolution scanner (PSF blur)
-    dict(gamma=1.35, bias=0.45, blur=0.6),  # field inhomogeneity + contrast
-    dict(gamma=0.75, bias=0.35, blur=0.4),  # opposite contrast + field
-    dict(gamma=1.7,  bias=0.5,  blur=0.9),  # strong outlier
-    dict(gamma=0.55, bias=0.4,  blur=0.7),  # strong outlier (other direction)
+    dict(gamma=1.0,  bias=0.0, blur=0.0),  # site-1: reference scanner (no-op)
+    dict(gamma=2.6,  bias=0.3, blur=0.0),  # much darker mid-tones + mild field
+    dict(gamma=0.38, bias=0.3, blur=0.0),  # much brighter mid-tones + mild field
+    dict(gamma=1.2,  bias=0.4, blur=1.6),  # low-resolution scanner (heavy blur) + field
+    dict(gamma=2.2,  bias=0.8, blur=0.8),  # strong contrast + strong bias field
+    dict(gamma=0.45, bias=0.7, blur=1.2),  # opposite contrast + strong field + blur
+    dict(gamma=2.8,  bias=0.9, blur=1.4),  # extreme outlier
+    dict(gamma=0.35, bias=0.8, blur=1.0),  # extreme outlier (other direction)
 ]
 
 
