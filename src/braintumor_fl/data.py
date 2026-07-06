@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import csv
 import glob
+import hashlib
+import json
 import os
 from dataclasses import dataclass
 
@@ -226,27 +228,35 @@ class BratsSliceDataset(Dataset):
 # Transforms
 # ----------------------------------------------------------------------------
 
-def train_transforms(size: int = 192):
-    return Compose([
+# The pipeline splits into a DETERMINISTIC prefix (same output every epoch — this is
+# what the preprocessing cache stores) and a RANDOM augmentation suffix (train only,
+# must run online). Keeping them as shared lists guarantees the cached path and the
+# online path apply the exact same transforms in the exact same order.
+
+def _deterministic_list(size: int):
+    return [
         ConvertToMultiChannelBasedOnBratsClassesd(keys="label"),  # (1,H,W)->(3,H,W)
         NormalizeIntensityd(keys="image", nonzero=True, channel_wise=True),
         Resized(keys=["image", "label"], spatial_size=(size, size), mode=("bilinear", "nearest")),
+    ]
+
+
+def _augment_list():
+    return [
         RandFlipd(keys=["image", "label"], prob=0.5, spatial_axis=0),
         RandFlipd(keys=["image", "label"], prob=0.5, spatial_axis=1),
         RandRotate90d(keys=["image", "label"], prob=0.3),
         RandScaleIntensityd(keys="image", factors=0.1, prob=0.3),
         RandShiftIntensityd(keys="image", offsets=0.1, prob=0.3),
-        ToTensord(keys=["image", "label"]),
-    ])
+    ]
+
+
+def train_transforms(size: int = 192):
+    return Compose(_deterministic_list(size) + _augment_list() + [ToTensord(keys=["image", "label"])])
 
 
 def eval_transforms(size: int = 192):
-    return Compose([
-        ConvertToMultiChannelBasedOnBratsClassesd(keys="label"),
-        NormalizeIntensityd(keys="image", nonzero=True, channel_wise=True),
-        Resized(keys=["image", "label"], spatial_size=(size, size), mode=("bilinear", "nearest")),
-        ToTensord(keys=["image", "label"]),
-    ])
+    return Compose(_deterministic_list(size) + [ToTensord(keys=["image", "label"])])
 
 
 # ----------------------------------------------------------------------------
@@ -282,8 +292,8 @@ def loaders_from_case_lists(train_cases, val_cases, batch_size=8, size=192, work
     val on the union of their val cases — no leakage)."""
     train_index = build_slice_index(train_cases, cache_csv=index_cache)
     val_index = build_slice_index(val_cases, cache_csv=index_cache)
-    train_ds = BratsSliceDataset(train_index, train_transforms(size), site_shift)
-    val_ds = BratsSliceDataset(val_index, eval_transforms(size), site_shift)
+    train_ds = make_dataset(train_index, size, train=True, site_shift=site_shift)
+    val_ds = make_dataset(val_index, size, train=False, site_shift=site_shift)
     train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True, num_workers=workers)
     val_loader = DataLoader(val_ds, batch_size=batch_size, num_workers=workers)
     return train_loader, val_loader, Split(train=train_index, val=val_index)
@@ -303,3 +313,111 @@ def split_by_case(index: list[tuple[str, int]], val_frac: float = 0.2, seed: int
     train = [(c, z) for c, z in index if c not in val_set]
     val = [(c, z) for c, z in index if c in val_set]
     return Split(train=train, val=val)
+
+
+# ----------------------------------------------------------------------------
+# Preprocessing cache — materialize the deterministic pipeline once
+# ----------------------------------------------------------------------------
+#
+# The deterministic prefix (site shift -> label->regions -> z-norm -> resize) is
+# identical every epoch AND across every method, yet the online path recomputes it
+# ~hundreds of times over a full run (every epoch of centralized/local + every FL
+# round). We compute it ONCE into a flat memmap keyed by (shift config, size);
+# training then reads the ready tensors and applies only the cheap random
+# augmentation -> the run becomes GPU-bound instead of CPU-bound.
+#
+# Enabled by setting env var BRATS_CACHE_DIR (after building with build_preprocess_
+# cache). The key includes SITE_PROFILES, so changing the shift yields a new key and
+# a stale cache can never silently poison results.
+
+def cache_key(site_shift, size: int) -> str:
+    """Short hash identifying a cache: depends on image size + the exact shift."""
+    h = hashlib.sha1()
+    h.update(f"size={size};".encode())
+    if site_shift is None:
+        h.update(b"shift=none")
+    else:
+        h.update(b"shift=on;")
+        h.update(json.dumps(SITE_PROFILES, sort_keys=True).encode())
+    return h.hexdigest()[:12]
+
+
+def build_preprocess_cache(index, site_shift, size, cache_dir, log_every=2000):
+    """Materialize the deterministic pipeline for every (case, slice) in `index`
+    into a flat memmap under cache_dir/<key>/. Idempotent: a complete matching cache
+    is reused. Returns the cache subdir path."""
+    key = cache_key(site_shift, size)
+    d = os.path.join(cache_dir, key)
+    manifest_path = os.path.join(d, "manifest.json")
+    n = len(index)
+    if os.path.exists(manifest_path):
+        m = json.load(open(manifest_path))
+        if m.get("complete") and m.get("n") == n:
+            print(f"[cache] up-to-date: {d} ({n} slices)")
+            return d
+    os.makedirs(d, exist_ok=True)
+    img_mm = np.memmap(os.path.join(d, "img.dat"), dtype=np.float16, mode="w+", shape=(n, 4, size, size))
+    lbl_mm = np.memmap(os.path.join(d, "lbl.dat"), dtype=np.uint8, mode="w+", shape=(n, 3, size, size))
+    det = Compose(_deterministic_list(size))
+    print(f"[cache] building {n} slices -> {d}", flush=True)
+    for i, (case_dir, z) in enumerate(index):
+        channels = [np.asarray(nib.load(_modality_path(case_dir, mod)).dataobj[..., z], dtype=np.float32)
+                    for mod in MODALITIES]
+        image = np.stack(channels, axis=0)
+        if site_shift is not None:
+            image = site_shift(image, case_dir)
+        label = np.asarray(nib.load(_seg_path(case_dir)).dataobj[..., z], dtype=np.float32)
+        out = det({"image": image, "label": label})
+        img_mm[i] = np.asarray(out["image"], dtype=np.float16)
+        lbl_mm[i] = np.asarray(out["label"], dtype=np.uint8)
+        if i % log_every == 0:
+            print(f"[cache] {i}/{n}", flush=True)
+    img_mm.flush(); lbl_mm.flush()
+    del img_mm, lbl_mm
+    # Key rows by case BASENAME (not full path): robust to relative-vs-absolute
+    # data-root across steps, and portable across machines (e.g. Colab).
+    json.dump({"complete": True, "n": n, "size": size, "key": key,
+               "index": [[os.path.basename(c), int(z)] for c, z in index]}, open(manifest_path, "w"))
+    print(f"[cache] done: {d}", flush=True)
+    return d
+
+
+class CachedSliceDataset(Dataset):
+    """Reads deterministic tensors from a prebuilt memmap cache and applies only the
+    cheap random augmentation (train) or nothing (eval). The site shift is already
+    baked into the cache, so it is NOT re-applied here."""
+
+    def __init__(self, index, cache_subdir, size, train: bool):
+        self.index = index
+        m = json.load(open(os.path.join(cache_subdir, "manifest.json")))
+        n = m["n"]
+        # manifest index is keyed by case basename (see build_preprocess_cache)
+        self.row = {(bn, int(z)): i for i, (bn, z) in enumerate(m["index"])}
+        self.img = np.memmap(os.path.join(cache_subdir, "img.dat"), dtype=np.float16, mode="r",
+                             shape=(n, 4, size, size))
+        self.lbl = np.memmap(os.path.join(cache_subdir, "lbl.dat"), dtype=np.uint8, mode="r",
+                             shape=(n, 3, size, size))
+        post = _augment_list() + [ToTensord(keys=["image", "label"])] if train else [ToTensord(keys=["image", "label"])]
+        self.post = Compose(post)
+
+    def __len__(self):
+        return len(self.index)
+
+    def __getitem__(self, i):
+        case_dir, z = self.index[i]
+        r = self.row[(os.path.basename(case_dir), int(z))]
+        sample = {"image": np.asarray(self.img[r], dtype=np.float32),
+                  "label": np.asarray(self.lbl[r], dtype=np.float32)}
+        return self.post(sample)
+
+
+def make_dataset(index, size, train: bool, site_shift=None):
+    """Build the right dataset: the memmap cache if BRATS_CACHE_DIR points at a built
+    cache for this (shift, size); otherwise the online BratsSliceDataset."""
+    cache_dir = os.environ.get("BRATS_CACHE_DIR")
+    if cache_dir:
+        sub = os.path.join(cache_dir, cache_key(site_shift, size))
+        if os.path.exists(os.path.join(sub, "manifest.json")):
+            return CachedSliceDataset(index, sub, size, train)
+    tf = train_transforms(size) if train else eval_transforms(size)
+    return BratsSliceDataset(index, tf, site_shift)

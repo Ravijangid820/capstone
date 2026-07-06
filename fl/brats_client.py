@@ -19,12 +19,10 @@ from torch.utils.data import DataLoader
 
 import nvflare.client as flare
 from braintumor_fl.data import (
-    BratsSliceDataset,
     SiteShift,
     build_slice_index,
-    eval_transforms,
+    make_dataset,
     split_by_case,
-    train_transforms,
 )
 from braintumor_fl.model import BratsUNet, build_metric
 from braintumor_fl.partition import case_site_map, client_cases, get_partitions
@@ -36,8 +34,8 @@ from braintumor_fl.trainer import evaluate, get_device, local_train
 def build_loaders(cases, batch_size, size, workers, index_cache, site_shift=None):
     index = build_slice_index(cases, cache_csv=index_cache)
     split = split_by_case(index)
-    train_ds = BratsSliceDataset(split.train, train_transforms(size), site_shift)
-    val_ds = BratsSliceDataset(split.val, eval_transforms(size), site_shift)
+    train_ds = make_dataset(split.train, size, train=True, site_shift=site_shift)
+    val_ds = make_dataset(split.val, size, train=False, site_shift=site_shift)
     train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True, num_workers=workers)
     val_loader = DataLoader(val_ds, batch_size=batch_size, num_workers=workers)
     return train_loader, val_loader

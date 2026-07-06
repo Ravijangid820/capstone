@@ -17,11 +17,10 @@ import torch
 from torch.utils.data import DataLoader
 
 from braintumor_fl.data import (
-    BratsSliceDataset,
     SiteShift,
     build_slice_index,
     case_split,
-    eval_transforms,
+    make_dataset,
 )
 from braintumor_fl.model import BratsUNet, build_metric
 from braintumor_fl.partition import case_site_map, get_partitions
@@ -66,7 +65,7 @@ def main() -> None:
         val_index = build_slice_index(
             val_cases, cache_csv=os.path.join(args.results_dir, args.method, f"_index_{site}.csv")
         )
-        val_ds = BratsSliceDataset(val_index, eval_transforms(args.size), site_shift)
+        val_ds = make_dataset(val_index, args.size, train=False, site_shift=site_shift)
         val_loader = DataLoader(val_ds, batch_size=args.batch_size, num_workers=args.workers)
 
         scores = evaluate(model, val_loader, metric, device)

@@ -35,6 +35,19 @@ fi
 SHIFT="${SHIFT:---synthetic-shift}"
 case "$SPLIT" in *fets*) SHIFT="";; esac
 
+# Preprocessing cache: materialize the deterministic pipeline once (the CPU-heavy
+# part) so all steps read ready tensors and the run becomes GPU-bound. On by
+# default; CACHE=0 to disable. Keyed by shift+size, so it auto-rebuilds when
+# SITE_PROFILES change. BRATS_CACHE_DIR is read by the dataset in every step
+# (inherited by the FLARE client subprocesses too).
+CACHE="${CACHE:-1}"
+CACHE_DIR="${CACHE_DIR:-data/cache}"
+if [ "$CACHE" = "1" ]; then
+  echo "### 0/8 build preprocess cache (once)"
+  uv run python fl/build_cache.py --data-root "$DR" $SPLIT --size 192 $EXTRA $SHIFT --cache-dir "$CACHE_DIR"
+  export BRATS_CACHE_DIR="$CACHE_DIR"
+fi
+
 echo "### 1/8 centralized ceiling"
 uv run python -m braintumor_fl.train_centralized --data-root "$DR" $SPLIT --epochs "$EPOCHS" --workers "$WORKERS" --batch-size "$BATCH" $EXTRA $SHIFT --out data/centralized_unet.pt
 echo "### 2/8 centralized per-hospital eval"
