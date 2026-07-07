@@ -10,6 +10,8 @@ federated client, so there is exactly one training code path.
 
 from __future__ import annotations
 
+import os
+
 import torch
 
 from . import REGIONS
@@ -18,6 +20,15 @@ from .model import build_loss, build_metric, logits_to_preds
 
 def get_device() -> torch.device:
     return torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
+def _amp(device) -> bool:
+    """Mixed precision (fp16) is OFF by default. The aggressive scanner shift can make
+    an fp16 activation overflow, which corrupts BatchNorm's running stats (training
+    loss stays fine but eval Dice collapses to 0 — and those BN stats are exactly what
+    FedBN personalizes). fp32 avoids the overflow. Set BRATS_AMP=1 to re-enable AMP on
+    a stable config where 4GB memory is tight."""
+    return device.type == "cuda" and os.environ.get("BRATS_AMP", "0") == "1"
 
 
 def _prox_term(model, global_params, mu: float):
@@ -44,7 +55,7 @@ def train_one_epoch(model, loader, optimizer, scaler, loss_fn, device, grad_clip
         images = batch["image"].to(device)
         labels = batch["label"].to(device)
         optimizer.zero_grad(set_to_none=True)
-        with torch.autocast(device_type=device.type, enabled=device.type == "cuda"):
+        with torch.autocast(device_type=device.type, enabled=_amp(device)):
             loss = loss_fn(model(images), labels)
             if prox_mu > 0:
                 loss = loss + _prox_term(model, global_params, prox_mu)
@@ -72,7 +83,7 @@ def local_train(model, loader, epochs: int, lr: float, device, grad_clip: float 
     model.to(device)
     loss_fn = build_loss()
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-    scaler = torch.amp.GradScaler(device.type, enabled=device.type == "cuda")
+    scaler = torch.amp.GradScaler(device.type, enabled=_amp(device))
     if global_params is not None:
         global_params = {k: v.to(device) for k, v in global_params.items()}
     for _ in range(epochs):
@@ -92,7 +103,7 @@ def evaluate(model, loader, metric=None, device=None) -> dict[str, float]:
     for batch in loader:
         images = batch["image"].to(device)
         labels = batch["label"].to(device)
-        with torch.autocast(device_type=device.type, enabled=device.type == "cuda"):
+        with torch.autocast(device_type=device.type, enabled=_amp(device)):
             logits = model(images)
         metric(y_pred=logits_to_preds(logits), y=labels)
     per_region = metric.aggregate()
