@@ -29,6 +29,7 @@ def main() -> None:
     p.add_argument("--synthetic-shift", action="store_true")
     p.add_argument("--cache-dir", default="data/cache")
     p.add_argument("--index-cache", default="data/slice_index.csv")
+    p.add_argument("--workers", type=int, default=0, help="build processes (0 = auto)")
     args = p.parse_args()
 
     parts = get_partitions(args.data_root, args.n_clients or None,
@@ -37,8 +38,8 @@ def main() -> None:
     site_shift = SiteShift(case_site_map(parts)) if args.synthetic_shift else None
     index = build_slice_index(all_cases, cache_csv=args.index_cache)
     print(f"[build_cache] {len(all_cases)} cases | {len(index)} slices | "
-          f"shift={'on' if site_shift else 'off'} | size={args.size}")
-    build_preprocess_cache(index, site_shift, args.size, args.cache_dir)
+          f"shift={'on' if site_shift else 'off'} | size={args.size} | workers={args.workers or 'auto'}")
+    build_preprocess_cache(index, site_shift, args.size, args.cache_dir, workers=args.workers)
 
 
 if __name__ == "__main__":

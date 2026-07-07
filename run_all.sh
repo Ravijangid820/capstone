@@ -44,7 +44,7 @@ CACHE="${CACHE:-1}"
 CACHE_DIR="${CACHE_DIR:-data/cache}"
 if [ "$CACHE" = "1" ]; then
   echo "### 0/8 build preprocess cache (once)"
-  uv run python fl/build_cache.py --data-root "$DR" $SPLIT --size 192 $EXTRA $SHIFT --cache-dir "$CACHE_DIR"
+  uv run python fl/build_cache.py --data-root "$DR" $SPLIT --size 192 $EXTRA $SHIFT --cache-dir "$CACHE_DIR" --workers "$WORKERS"
   export BRATS_CACHE_DIR="$CACHE_DIR"
 fi
 

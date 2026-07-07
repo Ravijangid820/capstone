@@ -358,10 +358,38 @@ def cache_key(site_shift, size: int) -> str:
     return h.hexdigest()[:12]
 
 
-def build_preprocess_cache(index, site_shift, size, cache_dir, log_every=2000):
-    """Materialize the deterministic pipeline for every (case, slice) in `index`
-    into a flat memmap under cache_dir/<key>/. Idempotent: a complete matching cache
-    is reused. Returns the cache subdir path."""
+def _preprocess_slice(case_dir, z, site_shift, det):
+    """Load one slice, apply the (optional) shift + deterministic transforms."""
+    channels = [np.asarray(nib.load(_modality_path(case_dir, mod)).dataobj[..., z], dtype=np.float32)
+                for mod in MODALITIES]
+    image = np.stack(channels, axis=0)
+    if site_shift is not None:
+        image = site_shift(image, case_dir)
+    label = np.asarray(nib.load(_seg_path(case_dir)).dataobj[..., z], dtype=np.float32)
+    out = det({"image": image, "label": label})
+    return np.asarray(out["image"], dtype=np.float16), np.asarray(out["label"], dtype=np.uint8)
+
+
+def _cache_worker(task):
+    """Build one chunk of the cache in a worker process, writing to a DISJOINT row
+    range of the shared memmap (safe: no two workers touch the same rows)."""
+    lo, items, site_shift, size, img_path, lbl_path, n = task
+    img_mm = np.memmap(img_path, dtype=np.float16, mode="r+", shape=(n, 4, size, size))
+    lbl_mm = np.memmap(lbl_path, dtype=np.uint8, mode="r+", shape=(n, 3, size, size))
+    det = Compose(_deterministic_list(size))
+    for j, (case_dir, z) in enumerate(items):
+        img, lbl = _preprocess_slice(case_dir, z, site_shift, det)
+        img_mm[lo + j] = img
+        lbl_mm[lo + j] = lbl
+    img_mm.flush(); lbl_mm.flush()
+    return len(items)
+
+
+def build_preprocess_cache(index, site_shift, size, cache_dir, workers=None):
+    """Materialize the deterministic pipeline for every (case, slice) in `index` into
+    a flat memmap under cache_dir/<key>/. Parallelized across worker processes, each
+    writing a disjoint row range (the loop is CPU-bound, so this uses all cores).
+    Idempotent: a complete matching cache is reused. Returns the cache subdir path."""
     key = cache_key(site_shift, size)
     d = os.path.join(cache_dir, key)
     manifest_path = os.path.join(d, "manifest.json")
@@ -372,26 +400,30 @@ def build_preprocess_cache(index, site_shift, size, cache_dir, log_every=2000):
             print(f"[cache] up-to-date: {d} ({n} slices)")
             return d
     os.makedirs(d, exist_ok=True)
-    img_mm = np.memmap(os.path.join(d, "img.dat"), dtype=np.float16, mode="w+", shape=(n, 4, size, size))
-    lbl_mm = np.memmap(os.path.join(d, "lbl.dat"), dtype=np.uint8, mode="w+", shape=(n, 3, size, size))
-    det = Compose(_deterministic_list(size))
-    print(f"[cache] building {n} slices -> {d}", flush=True)
-    for i, (case_dir, z) in enumerate(index):
-        channels = [np.asarray(nib.load(_modality_path(case_dir, mod)).dataobj[..., z], dtype=np.float32)
-                    for mod in MODALITIES]
-        image = np.stack(channels, axis=0)
-        if site_shift is not None:
-            image = site_shift(image, case_dir)
-        label = np.asarray(nib.load(_seg_path(case_dir)).dataobj[..., z], dtype=np.float32)
-        out = det({"image": image, "label": label})
-        img_mm[i] = np.asarray(out["image"], dtype=np.float16)
-        lbl_mm[i] = np.asarray(out["label"], dtype=np.uint8)
-        if i % log_every == 0:
-            print(f"[cache] {i}/{n}", flush=True)
-    img_mm.flush(); lbl_mm.flush()
-    del img_mm, lbl_mm
-    # Key rows by case BASENAME (not full path): robust to relative-vs-absolute
-    # data-root across steps, and portable across machines (e.g. Colab).
+    img_path, lbl_path = os.path.join(d, "img.dat"), os.path.join(d, "lbl.dat")
+    # pre-allocate the memmap files; workers then open them mode="r+"
+    a = np.memmap(img_path, dtype=np.float16, mode="w+", shape=(n, 4, size, size)); a.flush(); del a
+    b = np.memmap(lbl_path, dtype=np.uint8, mode="w+", shape=(n, 3, size, size)); b.flush(); del b
+
+    if workers is None or workers <= 0:
+        workers = min(os.cpu_count() or 4, 12)
+    # ~500-slice chunks: keys rows by basename (portable) via the manifest below
+    chunk = max(1, min(500, (n + workers - 1) // workers))
+    tasks = [(lo, index[lo:lo + chunk], site_shift, size, img_path, lbl_path, n)
+             for lo in range(0, n, chunk)]
+    workers = max(1, min(workers, len(tasks)))
+    print(f"[cache] building {n} slices -> {d}  ({workers} workers, {len(tasks)} chunks)", flush=True)
+
+    done = 0
+    if workers == 1:
+        for t in tasks:
+            done += _cache_worker(t); print(f"[cache] {done}/{n}", flush=True)
+    else:
+        import multiprocessing as mp
+        with mp.get_context("fork").Pool(workers) as pool:
+            for c in pool.imap_unordered(_cache_worker, tasks):
+                done += c; print(f"[cache] {done}/{n}", flush=True)
+
     json.dump({"complete": True, "n": n, "size": size, "key": key,
                "index": [[os.path.basename(c), int(z)] for c, z in index]}, open(manifest_path, "w"))
     print(f"[cache] done: {d}", flush=True)
