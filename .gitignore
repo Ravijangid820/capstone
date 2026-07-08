@@ -21,3 +21,8 @@ lightning_logs/
 fl_workspace/
 results/**/_index_*.csv
 results/**/*.pt
+
+# Run artifacts — the committed split manifest under artifacts/splits/ IS tracked;
+# per-run logs/checkpoints are not.
+artifacts/runs/
+artifacts/**/checkpoints/

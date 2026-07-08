@@ -25,21 +25,29 @@ FedAvg, and FedBN on brain-tumor segmentation.
 | Phase | State |
 |---|---|
 | 0. Data acquisition & prep | ✅ done — compressed + unzipped in Google Drive; unzipped locally on D: |
-| 1. Docs & scaffolding | 🔨 in progress |
+| 1. Docs & design | ✅ done — full structured doc set (see below) |
 | 2. Model choice | ✅ decided — build **both** 2D & 3D (dimension-parametric, 2D first, 3D feasibility-gated) |
-| 2b. Data pipeline (Colab) | ⬜ next |
-| 3. Hospital partition + synthetic non-IID | ⬜ |
-| 4. Model + centralized baseline | ⬜ |
-| 5. FL methods (local / FedAvg / FedBN) | ⬜ |
-| 6. Experiments | ⬜ |
-| 7. Analysis (H1/H2/H3) | ⬜ |
-| 8. Report | ⬜ |
+| 3. Hospital partition (4 hospitals, 1 outlier) | 🔨 in progress — deterministic split |
+| 4. Data pipeline (Colab) — preprocess + cache | ⬜ |
+| 5. Model + centralized baseline | ⬜ |
+| 6. FL methods (local / FedAvg / FedBN) | ⬜ |
+| 7. Experiments | ⬜ |
+| 8. Analysis (H1/H2/H3) → report | ⬜ |
 
 ## Documentation
 
-- [`docs/methodology.md`](docs/methodology.md) — research design: heterogeneity, methods, model, evaluation, experiment matrix.
-- [`docs/data.md`](docs/data.md) — dataset, labels, and the reproducible data-prep pipeline.
-- [`docs/progress-log.md`](docs/progress-log.md) — dated lab notebook of decisions and milestones.
+Start at the [documentation index](docs/README.md). The set is split by concern so each doc stays focused:
+
+| Doc | Scope |
+|---|---|
+| [methodology.md](docs/methodology.md) | Research design — question, hypotheses, methods, evaluation (the *why*) |
+| [data.md](docs/data.md) | Dataset spec, labels, and the reproducible data-prep pipeline |
+| [architecture.md](docs/architecture.md) | System architecture, end-to-end flow, module layout, logging strategy |
+| [data-pipeline.md](docs/data-pipeline.md) | Case → hospital partition, synthetic shift, preprocessing, caching, sampling |
+| [federated-learning.md](docs/federated-learning.md) | The FL round loop; FedAvg / FedBN / local-only aggregation |
+| [experiments.md](docs/experiments.md) | Experiment matrix, evaluation protocol, how H1/H2/H3 are measured |
+| [specs.md](docs/specs.md) | Reference sheet — hyperparameters, model dims, hardware, seeds, artifact layout |
+| [progress-log.md](docs/progress-log.md) | Dated lab notebook of decisions and milestones |
 
 ## Repository layout
 

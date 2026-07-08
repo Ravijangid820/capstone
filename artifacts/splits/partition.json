@@ -1,0 +1,6293 @@
+{
+  "assignment": {
+    "BraTS2021_00000": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00002": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00003": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_00005": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00006": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00008": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00009": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_00011": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00012": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00014": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00016": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00017": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00018": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00019": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00020": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00021": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00022": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00024": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00025": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00026": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00028": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00030": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00031": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00032": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00033": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00035": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00036": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00043": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00044": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00045": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00046": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00048": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00049": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00051": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00052": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00053": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00054": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00056": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00058": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00059": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00060": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00061": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00062": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00063": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00064": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00066": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00068": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00070": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00071": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00072": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00074": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00077": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00078": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00081": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00084": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00085": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00087": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00088": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00089": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00090": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00094": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00095": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00096": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00097": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00098": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00099": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00100": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00101": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00102": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00103": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_00104": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_00105": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00106": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00107": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00108": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00109": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00110": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00111": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00112": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00113": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00115": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00116": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00117": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00118": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00120": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00121": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00122": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00123": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00124": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00126": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00127": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00128": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00130": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00131": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00132": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00133": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00134": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00136": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00137": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00138": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00139": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00140": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00142": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00143": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00144": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00146": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00147": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00148": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00149": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00150": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00151": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00152": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00154": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00155": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00156": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_00157": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00158": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00159": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00160": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00162": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00165": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_00166": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00167": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00170": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00171": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00172": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00176": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00177": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00178": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00183": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00184": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00185": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00186": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00187": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00188": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00191": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_00192": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00193": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00194": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00195": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00196": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00199": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00201": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00203": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00204": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00206": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00207": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00209": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00210": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00211": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00212": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00214": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00216": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00217": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00218": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00219": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00220": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00221": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00222": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00227": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00228": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00230": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00231": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00233": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_00234": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00235": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00236": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00237": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00238": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00239": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00240": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00241": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00242": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00243": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00246": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00247": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00249": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00250": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00251": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00253": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00254": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00258": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00259": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00260": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00261": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00262": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00263": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00266": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00267": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00269": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00270": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00271": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00273": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00274": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00275": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00280": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00281": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00282": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00283": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00284": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00285": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00286": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00288": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00289": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00290": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00291": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00292": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00293": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00294": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00296": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00297": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00298": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00299": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00300": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00301": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00303": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00304": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00305": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00306": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00309": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00310": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00311": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00312": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00313": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_00314": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00316": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00317": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00318": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00320": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_00321": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00322": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00324": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00325": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00327": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00328": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00329": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00331": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00332": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00334": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00336": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00338": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00339": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00340": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_00341": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00343": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00344": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00346": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00347": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00348": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00349": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00350": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00351": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00352": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00353": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00356": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00359": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00360": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00364": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00366": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00367": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00369": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00370": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00371": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00373": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00375": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00376": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00377": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00378": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00379": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00380": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00382": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00383": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_00386": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00387": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00388": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00389": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00390": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00391": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00392": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00395": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00397": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00399": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00400": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00401": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00402": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00403": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_00404": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00405": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_00406": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00407": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00409": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00410": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00412": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00413": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00414": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00416": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00417": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00418": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00419": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00421": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00423": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00425": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00426": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00429": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00430": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00431": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00432": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00433": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00436": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00440": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00441": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00442": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00443": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00444": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_00445": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00446": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00448": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00449": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00451": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00452": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00453": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00454": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00455": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00456": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00457": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00459": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00464": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00466": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00468": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00469": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00470": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00472": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00477": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00478": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_00479": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00480": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00481": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00483": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00485": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00488": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00491": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00493": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00494": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00495": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00496": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00498": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00499": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00500": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00501": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00502": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00504": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00505": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00506": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00507": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00510": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00511": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00512": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00513": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00514": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00516": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00517": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00518": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00519": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00520": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00523": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00524": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00525": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00526": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00528": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00529": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00530": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00532": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00533": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00537": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00538": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00539": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00540": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00542": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00543": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00544": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00545": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00547": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00548": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00549": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00550": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00551": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00552": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00554": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00555": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_00556": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00557": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00558": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00559": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_00561": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_00563": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00565": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00567": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00568": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00569": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00570": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00571": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00572": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00574": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00575": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00576": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00577": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00578": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00579": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00580": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00581": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00582": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00583": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00584": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00586": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00587": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00588": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00589": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00590": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00591": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00593": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00594": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00596": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00597": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00598": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00599": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00601": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00602": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00604": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00605": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00606": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00607": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00608": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00610": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_00611": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00612": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00613": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00615": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00616": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00618": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00619": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00620": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00621": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00622": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00623": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00624": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00625": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00626": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00628": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00630": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00631": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00636": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00638": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00639": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00640": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00641": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00642": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00645": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00646": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_00649": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00650": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00651": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00652": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00654": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00655": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00656": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00657": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00658": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00659": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00661": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00663": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00667": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00668": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00674": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00675": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00676": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00677": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00679": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_00680": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00682": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00683": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00684": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00685": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00686": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00687": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00688": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00689": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00690": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00691": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00692": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00693": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00694": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00697": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00698": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00703": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00704": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00705": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00706": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00707": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_00708": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00709": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00714": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00715": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00716": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00718": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00723": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00724": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00725": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00727": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_00728": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00729": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_00730": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00731": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00732": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00733": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00734": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00735": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00736": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00737": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00739": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00740": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00742": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00744": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00746": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00747": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00750": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00751": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00753": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00756": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00757": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00758": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00759": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00760": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00764": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00765": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00767": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00768": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00772": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00773": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00774": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_00775": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00777": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00778": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00780": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00781": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00782": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00784": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00787": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00788": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00789": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00791": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00792": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00793": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00795": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00796": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00797": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00799": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00800": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00801": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00802": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00803": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00804": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00805": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00806": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00807": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00808": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00809": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00810": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00811": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00814": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00816": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00818": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00819": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00820": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00823": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00824": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00828": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00830": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00831": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_00834": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_00836": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00837": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00838": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00839": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_00840": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_00999": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01000": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01001": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01002": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01003": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01004": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01005": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01007": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01008": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01009": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01010": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01011": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01012": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01013": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01014": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01015": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01016": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01017": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01018": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01019": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01020": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01021": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01022": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01023": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01024": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01025": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01026": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01027": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01028": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01029": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01030": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01031": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01032": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01033": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01034": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01035": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01036": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01037": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01038": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01039": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01040": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01041": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01042": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01043": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01044": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01045": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01046": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01047": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01048": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01049": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01050": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01051": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01052": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01053": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01054": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01055": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01056": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01057": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01058": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01059": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01060": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01061": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01062": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01063": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01064": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01065": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01066": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01067": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01068": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01069": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01070": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01071": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01072": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01073": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01074": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01075": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01076": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01077": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01078": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01079": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01080": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01081": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01082": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01083": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01084": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01085": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01086": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01087": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01088": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01089": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01090": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01091": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01092": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01093": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01094": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01095": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01096": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01097": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01098": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01099": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01100": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01101": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01102": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01103": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01104": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01105": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01106": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01107": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01108": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01109": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01110": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01111": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01112": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01113": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01114": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01115": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01116": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01117": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01118": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01119": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01120": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01121": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01122": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01123": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01124": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01125": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01126": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01127": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01128": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01129": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01130": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01131": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01132": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01133": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01134": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01135": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01136": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01137": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01138": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01139": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01140": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01141": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01142": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01143": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01144": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01145": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01146": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01147": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01148": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01149": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01150": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01151": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01152": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01153": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01154": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01155": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01156": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01157": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01158": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01159": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01160": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01161": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01162": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01163": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01164": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01165": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01166": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01167": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01168": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01169": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01170": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01171": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01172": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01173": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01174": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01175": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01176": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01177": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01178": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01179": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01180": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01181": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01182": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01183": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01184": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01185": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01186": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01187": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01188": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01189": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01190": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01191": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01192": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01193": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01194": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01195": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01196": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01197": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01198": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01199": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01200": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01201": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01202": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01203": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01204": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01205": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01206": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01207": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01208": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01209": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01210": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01211": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01212": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01213": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01214": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01215": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01216": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01217": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01218": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01219": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01220": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01221": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01222": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01223": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01224": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01225": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01226": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01227": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01228": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01229": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01230": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01231": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01232": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01233": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01234": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01235": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01236": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01237": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01238": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01239": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01240": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01241": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01242": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01243": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01244": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01245": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01246": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01247": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01248": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01249": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01250": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01251": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01252": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01253": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01254": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01255": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01256": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01257": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01258": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01259": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01260": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01261": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01262": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01263": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01264": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01265": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01266": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01267": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01268": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01269": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01270": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01271": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01272": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01273": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01274": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01275": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01276": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01277": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01278": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01279": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01280": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01281": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01282": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01283": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01284": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01285": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01286": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01287": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01288": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01289": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01290": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01291": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01292": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01293": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01294": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01295": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01296": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01297": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01298": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01299": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01300": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01301": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01302": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01303": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01304": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01305": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01306": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01307": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01308": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01309": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01310": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01311": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01312": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01313": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01314": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01315": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01316": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01317": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01318": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01319": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01320": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01321": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01322": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01323": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01324": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01325": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01326": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01327": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01328": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01329": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01330": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01331": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01332": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01333": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01334": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01335": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01336": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01337": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01338": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01339": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01340": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01341": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01342": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01343": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01344": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01345": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01346": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01347": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01348": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01349": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01350": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01351": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01352": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01353": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01354": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01355": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01356": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01357": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01358": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01359": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01360": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01361": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01362": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01363": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01364": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01365": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01366": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01367": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01368": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01369": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01370": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01371": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01372": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01373": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01374": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01375": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01376": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01377": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01378": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01379": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01380": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01381": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01382": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01383": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01384": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01385": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01386": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01387": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01388": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01389": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01390": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01391": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01392": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01393": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01394": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01395": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01396": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01397": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01398": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01399": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01400": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01401": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01402": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01403": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01404": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01405": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01406": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01407": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01408": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01409": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01410": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01411": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01412": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01413": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01414": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01415": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01416": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01417": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01418": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01419": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01420": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01421": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01422": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01423": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01424": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01425": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01426": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01427": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01428": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01429": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01430": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01431": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01432": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01433": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01434": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01435": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01436": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01437": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01438": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01439": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01440": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01441": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01442": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01443": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01444": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01445": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01446": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01447": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01448": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01449": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01450": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01451": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01452": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01453": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01454": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01455": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01456": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01457": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01458": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01459": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01460": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01461": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01462": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01463": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01464": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01465": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01466": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01467": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01468": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01469": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01470": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01471": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01472": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01473": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01474": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01475": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01476": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01477": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01478": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01479": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01480": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01481": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01482": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01483": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01484": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01485": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01486": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01487": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01488": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01489": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01490": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01491": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01492": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01493": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01494": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01495": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01496": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01497": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01498": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01499": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01500": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01501": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01502": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01503": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01504": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01505": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01506": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01507": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01508": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01509": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01510": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01511": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01512": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01513": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01514": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01515": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01516": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01517": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01518": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01519": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01520": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01521": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01522": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01523": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01524": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01525": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01526": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01527": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01528": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01529": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01530": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01531": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01532": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01533": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01534": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01535": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01536": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01537": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01538": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01539": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01540": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01541": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01542": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01543": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01544": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01545": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01546": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01547": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01548": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01549": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01550": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01551": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01552": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01553": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01554": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01555": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01556": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01557": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01558": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01559": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01560": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01561": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01562": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01563": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01564": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01565": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01566": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01567": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01568": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01569": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01570": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01571": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01572": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01573": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01574": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01575": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01576": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01577": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01578": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01579": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01580": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01581": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01582": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01583": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01584": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01585": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01586": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01587": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01588": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01589": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01590": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01591": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01592": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01593": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01594": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01595": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01596": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01597": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01598": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01599": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01600": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01601": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01602": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01603": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01604": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01605": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01606": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01607": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01608": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01609": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01610": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01611": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01612": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01613": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01614": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01615": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01616": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01617": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01618": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01619": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01620": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01621": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01622": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01623": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01624": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01625": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01626": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01627": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01628": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01629": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01630": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01631": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01632": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01633": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01634": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01635": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01636": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01637": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01638": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01639": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01640": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01641": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01642": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01643": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01644": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01645": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01646": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01647": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01648": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01649": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01650": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01651": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01652": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01653": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01654": {
+      "hospital": "H2",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01655": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01656": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01657": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01658": {
+      "hospital": "H3",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01659": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01660": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01661": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "test"
+    },
+    "BraTS2021_01662": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "train"
+    },
+    "BraTS2021_01663": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01664": {
+      "hospital": "H1",
+      "is_outlier": false,
+      "split": "test"
+    },
+    "BraTS2021_01665": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    },
+    "BraTS2021_01666": {
+      "hospital": "H4",
+      "is_outlier": true,
+      "split": "train"
+    }
+  },
+  "meta": {
+    "n_cases": 1251,
+    "num_hospitals": 4,
+    "outlier": "H4",
+    "seed": 42,
+    "test_per_hospital": 62,
+    "train_per_hospital_knob": 150
+  },
+  "per_hospital": {
+    "H1": {
+      "is_outlier": false,
+      "test": 62,
+      "total": 313,
+      "train": 251
+    },
+    "H2": {
+      "is_outlier": false,
+      "test": 62,
+      "total": 313,
+      "train": 251
+    },
+    "H3": {
+      "is_outlier": false,
+      "test": 62,
+      "total": 313,
+      "train": 251
+    },
+    "H4": {
+      "is_outlier": true,
+      "test": 62,
+      "total": 312,
+      "train": 250
+    }
+  }
+}

@@ -48,7 +48,24 @@ A dated lab notebook: what was done, what was decided, and *why*. Newest entries
   spike** on the T4 → run the 3D FL study only if the spike passes; otherwise report the spike and
   keep 2D as the deliverable.
 
+### 2026-07-08 — Split decided + full doc set + hardware measured
+- **Hospitals: K = 4** (3 typical + 1 outlier). Split = partition-then-split, ~1000 train / ~251 test,
+  `train_per_hospital` as a knob (~120–150) so H1 stays visible.
+- **FL framework: custom sequential PyTorch loop** (not NVIDIA FLARE) — clients share one GPU, so peak
+  VRAM = one model regardless of K; FedBN = skip BN keys in the average. FLARE's multi-process clients
+  risked OOM on the 4 GB card.
+- **Hardware probes (RTX 3050):** 3D U-Net *fits in memory* (96³ = 0.88–1.78 GB, 128³/base16 = 2.06 GB);
+  per-step 0.2–0.5 s. So local 3D is viable for testing; speed (not memory) is the limiter for full sweeps.
+- **Docs:** added a structured set with Mermaid diagrams — `architecture`, `data-pipeline`,
+  `federated-learning`, `experiments`, `specs`, plus a docs index. Logging strategy defined (run.log +
+  metrics.jsonl + committed split manifest).
+
+### 2026-07-08 — Partition built + verified
+- First code: `src/fedbrats/` scaffolding (`config`, `logging_utils`, `partition`) + `scripts/build_partition.py`.
+- Ran it: 1251 cases → **H1–H3 = 251 train / 62 test, H4 (outlier) = 250 train / 62 test** → **1003 train / 248 test**.
+- Verified **deterministic** (identical md5 on re-run) and consistent (all 1251 assigned once, splits valid).
+- Manifest committed at `artifacts/splits/partition.json` — the source-of-truth split for every run.
+
 ### Next
-- Build the Colab data pipeline (2D first): load a working subset from Drive → preprocess
-  (z-norm, crop) → compact training cache.
-- Partition into hospitals + apply the synthetic scanner shift for non-IID.
+- Preprocessing + data module: load case → scanner shift → crop → z-norm → sample (2D/3D) → cache.
+- Then the 2D U-Net + Dice metric + a centralized sanity run on Colab.

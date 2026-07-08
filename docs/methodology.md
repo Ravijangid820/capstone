@@ -23,7 +23,9 @@ protocols shift the image distribution. A single global model (FedAvg) is pulled
 
 - **Dataset:** BraTS 2021 (see [`data.md`](data.md)) — multi-modal 3D brain MRI with expert
   tumor masks. Details, labels, and prep there.
-- **Hospitals:** we partition cases into *K* simulated hospitals (starting point **K = 3–5**).
+- **Hospitals:** we partition the cases into **K = 4** simulated hospitals (decided). Three are
+  "typical" sites; **one is a designated outlier** with the strongest scanner shift, to drive H2/H3.
+  Cases are assigned deterministically (fixed seed) — exact split in [`data-pipeline.md`](data-pipeline.md).
 - **Non-IID source — synthetic scanner shift.** Each hospital applies a fixed, hospital-specific
   image transform to emulate its scanner: **gamma (contrast) shift + smooth bias field + slight
   blur**. These are *nonlinear / spatial* on purpose, so they **survive per-image z-normalization**
@@ -88,9 +90,8 @@ Each FL run: *R* communication rounds × *E* local epochs; log per-round per-hos
 ## 8. Open decisions (to resolve as we build)
 
 1. ~~2D vs 3D model~~ — **resolved: build both**, dimension-parametric, 2D first, 3D feasibility-gated (§5).
-2. **Number of hospitals** K and how many cases per hospital.
-3. **FL execution:** a lightweight custom FL loop on Colab vs. a framework (the earlier version
-   used NVIDIA FLARE, which was heavy for this setting; a plain PyTorch round-loop may be simpler
-   and more transparent for a study).
-4. **Shift strength** for the outlier hospital (must be strong enough to show H2 but clinically
-   plausible).
+2. ~~Number of hospitals~~ — **resolved: K = 4** (3 typical + 1 outlier); split in [`data-pipeline.md`](data-pipeline.md).
+3. ~~FL execution~~ — **resolved: a lightweight custom PyTorch round-loop.** Clients run *sequentially*,
+   sharing one GPU (no OOM risk on a 4 GB card), and FedBN is a one-line filter on the aggregation.
+   NVIDIA FLARE is dropped as too heavy/risky for a small-GPU simulation. See [`federated-learning.md`](federated-learning.md).
+4. **Shift strength** for the outlier hospital — still to calibrate (strong enough for H2, clinically plausible).
