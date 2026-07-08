@@ -56,7 +56,7 @@ land in `artifacts/` on WSL**.
 | cache | size | where |
 |---|---|---|
 | smoke (≤3 cases/hospital) | ~1 GB | `artifacts/cache` (default) — fine anywhere |
-| full (1251 cases) | **~44 GB** | `FEDBRATS_CACHE_DIR=/mnt/d/capstone_data/cache` |
+| full (1251 cases) | **~44 GB** | `FEDBRATS_CACHE_DIR=/mnt/d/data/cache` |
 | Colab | ~44 GB | `/content/cache` (auto-detected; ephemeral local SSD) |
 
 Measured: 24 cases → 837 MB, i.e. **~35 MB/case** (fp16 volume + uint8 masks).
@@ -75,7 +75,7 @@ uv run python scripts/run_experiment.py --method fedbn --dim 2d
 ```powershell
 # Windows (PowerShell). The Linux .venv cannot be reused — rebuild it.
 uv sync                                  # nvflare is skipped by its platform marker
-uv run python scripts/build_cache.py --workers 8 --data-root D:/capstone_data/unzipped
+uv run python scripts/build_cache.py --workers 8 --data-root D:/data/unzipped
 uv run python scripts/run_experiment.py --method fedbn --dim 2d
 ```
 

@@ -22,14 +22,18 @@ REGIONS = ("wt", "tc", "et")
 
 
 def _default_data_root() -> Path:
-    """Unzipped BraTS cases. Same physical D: drive from WSL2 and from Windows."""
+    """Unzipped BraTS cases (1251 dirs of `.nii`). Same physical D: drive from WSL2 and Windows.
+
+    `load_case` reads `.nii` and `.nii.gz` alike, so pointing this at the compressed set
+    (`D:/data/BraTS2021_Training_Data`, 13 GB) also works -- slower to decode, far less I/O.
+    """
     if env := os.environ.get("FEDBRATS_DATA_ROOT"):
         return Path(env)
     if sys.platform == "win32":
-        return Path("D:/capstone_data/unzipped")
+        return Path("D:/data/unzipped")
     if Path("/content/drive/MyDrive/capstone/unzipped").exists():   # colab
         return Path("/content/drive/MyDrive/capstone/unzipped")
-    return Path("/mnt/d/capstone_data/unzipped")
+    return Path("/mnt/d/data/unzipped")
 
 
 def _default_cache_dir() -> Path:

@@ -61,7 +61,7 @@ Per volume uncompressed: 240·240·155·2 bytes ≈ **17.9 MB**. Per case (5 vol
 | Location | Form | Size | Purpose |
 |---|---|---|---|
 | `data/BraTS2021_Training_Data/` (local) | compressed `.nii.gz` | 13 GB | original source |
-| `/mnt/d/capstone_data/unzipped/` (local D: drive) | raw `.nii` | 114 GB | local access / quick checks |
+| `/mnt/d/data/unzipped/` (local D: drive) | raw `.nii` | 114 GB | local access / quick checks |
 | `Drive/MyDrive/capstone/brats-2021-task1.zip` | compressed archive | 13 GB | durable source for Colab |
 | `Drive/MyDrive/capstone/unzipped/` | raw `.nii` | 114 GB | **training data for Colab** |
 
@@ -75,7 +75,7 @@ Per volume uncompressed: 240·240·155·2 bytes ≈ **17.9 MB**. Per case (5 vol
 ```bash
 .venv/bin/python unzip_data.py   # decompress every .nii.gz -> .nii onto D:
 ```
-Idempotent (skips done files) and atomic (temp-file + rename). Targets `/mnt/d/capstone_data/unzipped/`.
+Idempotent (skips done files) and atomic (temp-file + rename). Targets `/mnt/d/data/unzipped/`.
 
 ### Colab (the path we actually use for training)
 Run [`../colab_setup.ipynb`](../colab_setup.ipynb) top-to-bottom:
