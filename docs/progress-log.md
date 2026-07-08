@@ -51,9 +51,10 @@ A dated lab notebook: what was done, what was decided, and *why*. Newest entries
 ### 2026-07-08 — Split decided + full doc set + hardware measured
 - **Hospitals: K = 4** (3 typical + 1 outlier). Split = partition-then-split, ~1000 train / ~251 test,
   `train_per_hospital` as a knob (~120–150) so H1 stays visible.
-- **FL framework: custom sequential PyTorch loop** (not NVIDIA FLARE) — clients share one GPU, so peak
-  VRAM = one model regardless of K; FedBN = skip BN keys in the average. FLARE's multi-process clients
-  risked OOM on the 4 GB card.
+- **FL framework: custom loop now, FLARE later** — build a custom sequential PyTorch round-loop first
+  (clients share one GPU, so peak VRAM = one model regardless of K; FedBN = skip BN keys in the average)
+  to get transparent H1/H2/H3 results fast, then port to NVIDIA FLARE as a framework demonstration.
+  (Correction: FLARE *can* be configured to share one GPU — it's the extra setup/opacity we defer, not a hard OOM wall.)
 - **Hardware probes (RTX 3050):** 3D U-Net *fits in memory* (96³ = 0.88–1.78 GB, 128³/base16 = 2.06 GB);
   per-step 0.2–0.5 s. So local 3D is viable for testing; speed (not memory) is the limiter for full sweeps.
 - **Docs:** added a structured set with Mermaid diagrams — `architecture`, `data-pipeline`,
@@ -66,6 +67,48 @@ A dated lab notebook: what was done, what was decided, and *why*. Newest entries
 - Verified **deterministic** (identical md5 on re-run) and consistent (all 1251 assigned once, splits valid).
 - Manifest committed at `artifacts/splits/partition.json` — the source-of-truth split for every run.
 
+### 2026-07-08 — Found (and fixed) the blur-halo bug
+- Trying to reproduce the shift verification through `preprocess()`, hospitals produced **different
+  array shapes**. Cause: `apply_shift`'s Gaussian blur smears brain intensity into BraTS's exactly-zero
+  background, and the brain mask was taken *after* the shift — so it grew with blur σ
+  (H1 +112k voxels … **H4 +833k, a 57% inflated "brain"**).
+- Why it mattered: hospital-dependent crop shapes, z-norm computed over the halo, and **hospital
+  identity leaking as geometry** — a FedBN "recovery" of H4 could have been an artifact.
+- **Fix:** derive mask + bbox from the *unshifted* volume, then `apply_shift(...) * mask`. All four
+  hospitals now share one shape; pairwise post-z-norm diffs 0.095–0.388 σ, H4 margin **+0.149 σ**,
+  linear shift still washes out to **0.0000**.
+- Lesson: the docs recorded the shift as "verified", but the check had been run on a path that skipped
+  the crop. *Verify through the real code path.*
+
+### 2026-07-08 — Approach settled, custom FL loop built
+- **Environments: WSL2 *and* native Windows** both supported for the custom loop. FLARE stays
+  Linux-only (it imports the POSIX `resource` module) → moved to an optional extra with a platform
+  marker so `uv sync` on Windows doesn't install a package that cannot import. New
+  [`environments.md`](environments.md) captures the portability contract (`__main__` guards, picklable
+  workers, no hardcoded paths, memmap handles, `num_workers=0` on Windows).
+- **Matched compute (new decision):** local-only and centralized train `R × E` epochs — the same total
+  local epochs a hospital spends across a federated run. Otherwise H1 just measures FedAvg's ~R× larger
+  training budget.
+- **Eval scope (new decision):** diagonal headline + a 4×4 cross-hospital matrix for local-only at the
+  final round. Forced a `metrics.jsonl` schema change: `hospital` → `model_hospital` + `test_hospital`.
+- **Per-volume Dice (new decision):** predict all slices → stack → score the volume. Mean-of-per-slice
+  Dice inflates scores. Plus the BraTS empty-GT convention (empty pred on empty GT = 1.0), without
+  which the ET column is meaningless.
+- **Code:** `data` (cache + samplers), `model` (MONAI U-Net + `bn_keys`), `metrics`, `train`,
+  `federated` (one round loop, four methods), `scripts/build_cache.py`, `scripts/run_experiment.py`.
+- **Three traps handled:** FedBN state lives in `state_dict()` (buffers!), `num_batches_tracked` is
+  int64 and is *copied* not averaged, and BN keys are found by **module type** — MONAI names them
+  `...adn.N.bias`, so substring matching would have silently collapsed FedBN into FedAvg.
+- **Verified:** 18 invariants pass (halo fix, `bn_keys` coverage, Dice conventions, dtype preservation,
+  *FedBN with K=1 ≡ local-only*, *averaging identical states ≡ that state*). All four methods smoke-run
+  end to end in 2D **and** 3D on the RTX 3050. Cache: 24 cases in 56 s (4 workers), 837 MB → ~35 MB/case.
+- **Also fixed:** `pyproject.toml` still pointed hatch at `src/braintumor_fl`, which no longer exists —
+  a fresh clone + `uv sync` would have failed. (It only worked here via a stale editable-install `.pth`.)
+- **Caught by the smoke run:** `pad_to_multiple` was padding `(W, Z)` instead of `(H, W)` in 2D
+  evaluation, so the U-Net's skip connections mismatched on odd in-plane dims.
+
 ### Next
-- Preprocessing + data module: load case → scanner shift → crop → z-norm → sample (2D/3D) → cache.
-- Then the 2D U-Net + Dice metric + a centralized sanity run on Colab.
+- Full 2D matrix on Colab: build the cache (~44 GB, `/content`), then run E0–E3 (centralized, local,
+  FedAvg, FedBN) with `R=20–30`, `E=1–2`.
+- Read H1/H2/H3 off `metrics.jsonl`; **calibrate the shift strength if H2 does not appear.**
+- Then the 3D feasibility spike on the T4 (memory is fine; speed is the gate).

@@ -91,7 +91,16 @@ Each FL run: *R* communication rounds × *E* local epochs; log per-round per-hos
 
 1. ~~2D vs 3D model~~ — **resolved: build both**, dimension-parametric, 2D first, 3D feasibility-gated (§5).
 2. ~~Number of hospitals~~ — **resolved: K = 4** (3 typical + 1 outlier); split in [`data-pipeline.md`](data-pipeline.md).
-3. ~~FL execution~~ — **resolved: a lightweight custom PyTorch round-loop.** Clients run *sequentially*,
-   sharing one GPU (no OOM risk on a 4 GB card), and FedBN is a one-line filter on the aggregation.
-   NVIDIA FLARE is dropped as too heavy/risky for a small-GPU simulation. See [`federated-learning.md`](federated-learning.md).
-4. **Shift strength** for the outlier hospital — still to calibrate (strong enough for H2, clinically plausible).
+3. ~~FL execution~~ — **resolved: custom loop now, FLARE later.** Build a lightweight custom PyTorch
+   round-loop first (clients sequential on one GPU; FedBN = a one-line filter on the aggregation) to get
+   the H1/H2/H3 results fast and transparently; then **port to NVIDIA FLARE** as a real-framework
+   demonstration once the science is validated. See [`federated-learning.md`](federated-learning.md).
+4. ~~Shift strength~~ — **provisionally calibrated** (γ/bias/blur per hospital, H4 outlier margin
+   +0.149 σ after z-norm; a linear shift washes out to 0.000). The real calibration is whether **H2**
+   appears once we train — revisit then. See [`data-pipeline.md`](data-pipeline.md) §2.
+5. ~~Compute budget for local-only~~ — **resolved: `R × E` epochs**, matched to what a hospital spends
+   across the whole federated run, so H1 tests collaboration rather than training length.
+6. ~~Evaluation scope~~ — **resolved: diagonal headline + a 4×4 cross-hospital matrix for local-only**
+   at the final round. See [`experiments.md`](experiments.md) §2.
+7. ~~Local execution environment~~ — **resolved: WSL2 *and* native Windows both supported** for the
+   custom loop; the FLARE port is Linux-only. See [`environments.md`](environments.md).

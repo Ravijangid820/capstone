@@ -27,12 +27,13 @@ FedAvg, and FedBN on brain-tumor segmentation.
 | 0. Data acquisition & prep | ✅ done — compressed + unzipped in Google Drive; unzipped locally on D: |
 | 1. Docs & design | ✅ done — full structured doc set (see below) |
 | 2. Model choice | ✅ decided — build **both** 2D & 3D (dimension-parametric, 2D first, 3D feasibility-gated) |
-| 3. Hospital partition (4 hospitals, 1 outlier) | 🔨 in progress — deterministic split |
-| 4. Data pipeline (Colab) — preprocess + cache | ⬜ |
-| 5. Model + centralized baseline | ⬜ |
-| 6. FL methods (local / FedAvg / FedBN) | ⬜ |
-| 7. Experiments | ⬜ |
+| 3. Hospital partition (4 hospitals, 1 outlier) | ✅ done — deterministic, verified, manifest committed |
+| 4. Data pipeline — preprocess + cache | ✅ done — fp16 memmap cache, resumable, ~35 MB/case |
+| 5. Model + train/eval loop | ✅ done — MONAI U-Net (2D/3D), per-volume Dice |
+| 6. FL engine (centralized / local / FedAvg / FedBN) | ✅ done — custom sequential loop, smoke-tested |
+| 7. Experiments — full 2D matrix on Colab | 🔨 next |
 | 8. Analysis (H1/H2/H3) → report | ⬜ |
+| 9. *(optional)* NVIDIA FLARE port | ⬜ Linux/Colab only |
 
 ## Documentation
 
@@ -47,21 +48,46 @@ Start at the [documentation index](docs/README.md). The set is split by concern 
 | [federated-learning.md](docs/federated-learning.md) | The FL round loop; FedAvg / FedBN / local-only aggregation |
 | [experiments.md](docs/experiments.md) | Experiment matrix, evaluation protocol, how H1/H2/H3 are measured |
 | [specs.md](docs/specs.md) | Reference sheet — hyperparameters, model dims, hardware, seeds, artifact layout |
+| [environments.md](docs/environments.md) | Windows / WSL2 / Colab — what runs where, portability contract, recipes |
 | [progress-log.md](docs/progress-log.md) | Dated lab notebook of decisions and milestones |
 
 ## Repository layout
 
 ```
+src/fedbrats/        The library: config, partition, shift, data, model, metrics, train, federated
+scripts/             Entrypoints: build_partition.py, build_cache.py, run_experiment.py
+docs/                Project documentation (see above)
 unzip_data.py        Local one-off: decompress .nii.gz -> .nii onto the D: drive
 colab_setup.ipynb    Colab: download from Kaggle -> stream-unzip in batches -> Google Drive
-docs/                Project documentation (see above)
 pyproject.toml       Python environment (managed with uv)
 ```
 
+## Quickstart
+
+```bash
+uv sync                                   # Linux: add --extra flare for the (optional) FLARE port
+uv run python scripts/build_partition.py  # deterministic split -> artifacts/splits/partition.json
+
+# Smoke the whole pipeline in ~2 minutes, on any OS:
+uv run python scripts/build_cache.py --max-cases 3 --workers 4
+uv run python scripts/run_experiment.py --method fedbn --rounds 2 \
+    --max-train-cases 3 --max-test-cases 2
+
+# The real thing (Colab T4; cache dir auto-resolves to /content/cache):
+uv run python scripts/build_cache.py --workers 8
+for m in centralized local fedavg fedbn; do
+    uv run python scripts/run_experiment.py --method $m --dim 2d
+done
+```
+
+Results stream to `artifacts/runs/<method>_<dim>_<seed>/metrics.jsonl`.
+
 ## Compute
 
-- **Local:** WSL2, RTX 3050 Laptop (4 GB VRAM) — used for data prep and quick checks only.
+- **Local:** WSL2 **or** native Windows, RTX 3050 Laptop (4 GB VRAM) — data prep and quick checks.
+  NVIDIA FLARE runs on WSL2 only ([why](docs/environments.md)).
 - **Training:** Google Colab **T4 (16 GB VRAM)**, with the dataset staged in Google Drive.
+- **Cache:** ~35 MB/case → ~44 GB for all 1251. Set `FEDBRATS_CACHE_DIR` to keep it off `C:`.
 
 ## Reproducing the data prep
 

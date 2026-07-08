@@ -11,7 +11,8 @@ Project docs, split by concern so each stays focused and maintainable. Suggested
 | 5 | [federated-learning.md](federated-learning.md) | The FL round loop and how FedAvg / FedBN / local-only aggregate — the **training engine**. |
 | 6 | [experiments.md](experiments.md) | Experiment matrix, evaluation protocol, and exactly how each hypothesis is measured. |
 | 7 | [specs.md](specs.md) | Reference sheet — hyperparameters, model dims, hardware numbers, seeds, artifact/log layout. |
-| 8 | [progress-log.md](progress-log.md) | Dated lab notebook — decisions and milestones with rationale. |
+| 8 | [environments.md](environments.md) | Windows / WSL2 / Colab — what runs where, the portability contract, run recipes. |
+| 9 | [progress-log.md](progress-log.md) | Dated lab notebook — decisions and milestones with rationale. |
 
 ## One-screen orientation
 

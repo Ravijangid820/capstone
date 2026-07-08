@@ -73,24 +73,27 @@ flowchart LR
 
 ```
 src/fedbrats/
-  config.py          dataclasses: paths, hospitals, hyperparameters, dim
+  config.py          dataclasses: paths (per-platform), hospitals, hyperparameters, dim
   logging_utils.py   console + file logger, JSONL metrics writer
   partition.py       cases → hospitals → train/test  (writes the manifest)
   shift.py           per-hospital synthetic scanner shift
-  data.py            load case · preprocess · sampler (2D/3D) · cache · Dataset
-  model.py           U-Net, 2D/3D via dim flag (BatchNorm)
-  metrics.py         Dice WT/TC/ET
-  train.py           one local training / eval loop
-  federated.py       round loop: local-only · FedAvg · FedBN · centralized
+  data.py            load case · preprocess · cache (fp16 memmap) · 2D/3D samplers · Dataset
+  model.py           BratsUNet (MONAI, 2D/3D via dim flag, BatchNorm) + bn_keys()
+  metrics.py         per-volume Dice WT/TC/ET (BraTS empty-GT convention)
+  train.py           one local training loop + full-volume evaluation
+  federated.py       one round loop expressing all four methods + aggregation
 scripts/
   build_partition.py run the partition, print + save the manifest
-  run_centralized.py train the base model
-  run_federated.py   run an FL method end to end
+  build_cache.py     materialize the preprocessing cache (resumable, parallel)
+  run_experiment.py  --method {centralized,local,fedavg,fedbn} --dim {2d,3d}
 notebooks/
   colab_setup.ipynb  data acquisition (download → stream-unzip → Drive)
   colab_train.ipynb  thin driver: clone repo + run a scripts/ entrypoint on the T4
-artifacts/           git-ignored run outputs (see specs.md)
+artifacts/           git-ignored run outputs + cache (see specs.md)
 ```
+
+Every `scripts/` entrypoint carries an `if __name__ == "__main__":` guard — mandatory under
+Windows `spawn`. See [environments.md](environments.md).
 
 ## 5. Logging & artifacts strategy
 
@@ -116,11 +119,15 @@ flowchart LR
 
 | Env | Role | Notes |
 |---|---|---|
-| **Local — RTX 3050 (4 GB)** | data prep, quick sanity, 2D runs, 3D *tests* | sequential FL sim fits (one model on GPU at a time) |
+| **Windows-native — RTX 3050 (4 GB)** | quick 2D checks, cache builds | fast `D:\`; **no FLARE** (POSIX-only `resource`) |
+| **WSL2 — RTX 3050 (4 GB)** | dev, smoke runs, FLARE smoke | matches Colab (`fork`); `/mnt/d` is slow |
 | **Colab — T4 (16 GB)** | full training, heavy 3D sweeps | data staged in Drive; cache built on local disk per session |
 
 Because the FL loop runs clients **sequentially**, peak VRAM is one model's footprint regardless of the
 number of hospitals — see [federated-learning](federated-learning.md) §4.
+
+Full matrix, the Windows compatibility contract, and per-environment recipes:
+[environments.md](environments.md).
 
 ## 7. Reproducibility
 

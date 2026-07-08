@@ -33,10 +33,27 @@ flowchart TD
 ```
 
 - **Metric:** Dice on the three regions **WT** (whole tumor), **TC** (tumor core), **ET** (enhancing).
+- **Per volume, never per slice.** For 2D we predict every axial slice, stack them into a volume, and
+  score *that*. The mean of per-slice Dice is not the per-case Dice — it inflates scores, because
+  empty slices score 1.0 for free.
+- **Empty ground truth (matters for ET).** BraTS convention: empty prediction on empty GT scores 1.0;
+  any false positive scores 0.0. Without this the ET column is meaningless.
 - **Two views:** per-hospital Dice (for the outlier claims) and the mean across hospitals (for the average
   claims). Reported per method.
 - **FedBN eval:** each hospital uses the shared weights + *its own* BN layers.
+- **Timing:** score **after aggregation, before the next round's local training** — see
+  [federated-learning](federated-learning.md).
 - Every score is appended to `metrics.jsonl`; tables/plots are generated from that file.
+
+### Scope — diagonal, plus a cross-matrix for local-only
+
+The headline numbers are the **diagonal**: each hospital's model on its own test set
+(`model_hospital == test_hospital`). That is all H1/H2/H3 require.
+
+Additionally, at the **final round only**, every local-only model is scored on all four test sets — a
+4×4 matrix. Its off-diagonal cells are direct evidence the synthetic shift creates a genuine domain
+gap (H4's model should collapse on H1–H3). It is run once rather than per round, since it costs 16×
+a diagonal evaluation.
 
 ## 3. How each hypothesis is measured
 
@@ -47,6 +64,15 @@ flowchart TD
 | **H3** | personalization recovers the outlier | `mean_dice(FedBN) ≥ mean_dice(FedAvg)` **and** `dice(FedBN, H4) ≥ dice(FedAvg, H4)` (closing the H2 gap) |
 
 Centralized (E0) frames all of the above as "how close to the pooled ceiling did we get."
+
+> **Matched compute — what makes H1 a real test.** FedAvg gives each hospital `R × E` local epochs.
+> Local-only therefore also trains `R × E` epochs, so the *only* difference between them is
+> aggregation. Had local-only trained for `E` epochs, H1 would be near-guaranteed and would merely be
+> measuring FedAvg's ~R× larger training budget. Centralized likewise trains `R × E` epochs on the
+> pooled set.
+
+> **Identical init.** All four methods start from the same seeded random weights (`build_model` seeds
+> `torch` before construction), so no comparison is confounded by initialization luck.
 
 ## 4. Results (to be filled)
 
