@@ -1,7 +1,7 @@
 [project]
-name = "braintumor-fl"
+name = "fedbrats"
 version = "0.1.0"
-description = "Personalized Federated Learning for 2D brain tumor segmentation (BraTS/FeTS) with NVIDIA FLARE + MONAI"
+description = "Personalized federated learning (FedBN) for brain tumor segmentation on BraTS 2021"
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
 dependencies = [
@@ -9,8 +9,6 @@ dependencies = [
     "monai>=1.3",
     "nibabel>=5.2",          # read .nii.gz MRI volumes
     "einops>=0.7",           # some MONAI networks need it
-    # Federated learning
-    "nvflare>=2.5",
     # Core DL
     "torch>=2.2",
     "torchvision>=0.17",
@@ -27,6 +25,11 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# NVIDIA FLARE is Linux-only: it imports the POSIX-only stdlib `resource` module
+# (nvflare/fuel/f3/cellnet/net_agent.py). Installing it on Windows succeeds but importing
+# it raises ModuleNotFoundError. The Phase-2 FLARE port therefore runs on WSL2/Colab only;
+# the custom loop (federated.py) runs everywhere. See docs/environments.md.
+flare = ["nvflare>=2.5 ; sys_platform != 'win32'"]
 # Differential privacy — only if we add the Phase-4 privacy stretch goal.
 dp = ["opacus>=1.5"]
 
@@ -35,11 +38,12 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/braintumor_fl"]
+packages = ["src/fedbrats"]
 
 # ---------------------------------------------------------------------------
 # CUDA torch for the RTX 3050 (Ampere). Pulls torch/torchvision from the cu124
 # index instead of CPU wheels. Delete this block for CPU-only.
+# Windows and Linux both have cu124 wheels on this index.
 # ---------------------------------------------------------------------------
 [tool.uv.sources]
 torch = { index = "pytorch-cu124" }
