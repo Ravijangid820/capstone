@@ -60,6 +60,18 @@ Numbers from probes on the actual hardware (see [progress-log](progress-log.md))
 
 → 3D **fits in memory** locally at 96³/128³; speed is the limiter for full sweeps.
 
+**Measured throughput** (RTX 3050, fp32, 2D, batch 8, 192²):
+
+| Operation | Cost | Full-run implication |
+|---|---|---|
+| Training step | 48 ms | 600 steps/round → 0.5 min |
+| Full-volume evaluation | 0.41 s / volume | 248 volumes/round → **1.7 min** |
+| Preprocess + cache one case | 2.3 s (4 workers) | 848 cases → ≈ 33 min |
+| Cache size | 35 MB / case | 848 cases → ≈ 30 GB |
+
+→ **Evaluation costs 3.5× training** per round. The run is eval-bound, not train-bound. Full 2D
+matrix (4 methods × 25 rounds): ≈ 3.7 h on the 3050, ≈ 2.5 h on a T4. See [workflow.md](workflow.md) §4.
+
 **Training — Colab T4, 16 GB** (heavy runs; ~100 GB ephemeral local disk).
 
 ## 6. Reproducibility

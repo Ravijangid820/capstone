@@ -86,9 +86,7 @@ scripts/
   build_partition.py run the partition, print + save the manifest
   build_cache.py     materialize the preprocessing cache (resumable, parallel)
   run_experiment.py  --method {centralized,local,fedavg,fedbn} --dim {2d,3d}
-notebooks/
-  colab_setup.ipynb  data acquisition (download → stream-unzip → Drive)
-  colab_train.ipynb  thin driver: clone repo + run a scripts/ entrypoint on the T4
+colab_setup.ipynb    data acquisition (download → stream-unzip → Drive)  [repo root]
 artifacts/           git-ignored run outputs + cache (see specs.md)
 ```
 

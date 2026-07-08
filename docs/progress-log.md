@@ -107,8 +107,25 @@ A dated lab notebook: what was done, what was decided, and *why*. Newest entries
 - **Caught by the smoke run:** `pad_to_multiple` was padding `(W, Z)` instead of `(H, W)` in 2D
   evaluation, so the U-Net's skip connections mismatched on odd in-plane dims.
 
+### 2026-07-08 — Costed the full run: it is eval-bound, not train-bound
+- Benchmarked the real code paths on the 3050 before committing a Colab session: **48 ms/training step**,
+  **0.41 s per full-volume evaluation**, 2.3 s/case to cache (4 workers), 35 MB/case.
+- **Surprise:** scoring 248 test volumes each round costs **1.7 min vs 0.5 min of training — 3.5×**.
+  The run is dominated by evaluation, which the design docs gave no hint of. Full 2D matrix
+  (4 methods × 25 rounds) ≈ 3.7 h on the 3050, ≈ 2.5 h on a T4 — one session, so no change needed.
+  Lever if ever required: subsample per-round eval, full test set at the final round only.
+- Added [`workflow.md`](workflow.md) — the pipeline in order, measured costs, and the decision gates —
+  as the doc to read before running. Also published as a shareable page for supervisor review.
+- **Sequencing decided:** run **E0 (centralized) alone first** (~35 min). It exercises the whole
+  pipeline; if WT Dice does not climb past ~0.7 the fault is data/loss, debuggable with one model rather
+  than four hospitals and an aggregator.
+- Two knobs flagged as *guesses, not evidence*: `R = 25` (chosen before seeing any learning curve) and
+  `train_per_hospital = 150` (justified by reasoning about H1's visibility). If H1 comes out weak,
+  raising the cap weakens it further; lowering it toward ~80 sharpens it.
+
 ### Next
-- Full 2D matrix on Colab: build the cache (~44 GB, `/content`), then run E0–E3 (centralized, local,
-  FedAvg, FedBN) with `R=20–30`, `E=1–2`.
-- Read H1/H2/H3 off `metrics.jsonl`; **calibrate the shift strength if H2 does not appear.**
+- Colab: build the cache (`--max-cases 150` → 848 cases, ~30 GB on `/content`).
+- Run **E0 first** as the sanity gate, then E1–E3 (local, FedAvg, FedBN) at `R=25`, `E=1`.
+- Read H1/H2/H3 off `metrics.jsonl`; **calibrate the shift strength if H2 does not appear** — fix
+  `shift.py`, not the engine (the cache key invalidates automatically).
 - Then the 3D feasibility spike on the T4 (memory is fine; speed is the gate).

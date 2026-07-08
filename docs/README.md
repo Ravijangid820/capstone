@@ -5,14 +5,15 @@ Project docs, split by concern so each stays focused and maintainable. Suggested
 | # | Doc | Read it for |
 |---|---|---|
 | 1 | [methodology.md](methodology.md) | The research question, hypotheses (H1/H2/H3), methods compared, evaluation — the **why**. |
-| 2 | [data.md](data.md) | BraTS 2021 spec, labels/regions, and the reproducible data-acquisition pipeline. |
-| 3 | [architecture.md](architecture.md) | System components, end-to-end data/training flow, module layout, logging strategy — the **big picture**. |
-| 4 | [data-pipeline.md](data-pipeline.md) | Case → hospital partition, synthetic scanner shift, preprocessing, caching, sampling — the **data engineering**. |
-| 5 | [federated-learning.md](federated-learning.md) | The FL round loop and how FedAvg / FedBN / local-only aggregate — the **training engine**. |
-| 6 | [experiments.md](experiments.md) | Experiment matrix, evaluation protocol, and exactly how each hypothesis is measured. |
-| 7 | [specs.md](specs.md) | Reference sheet — hyperparameters, model dims, hardware numbers, seeds, artifact/log layout. |
-| 8 | [environments.md](environments.md) | Windows / WSL2 / Colab — what runs where, the portability contract, run recipes. |
-| 9 | [progress-log.md](progress-log.md) | Dated lab notebook — decisions and milestones with rationale. |
+| 2 | [workflow.md](workflow.md) | **Start here to run it.** The four runs, the pipeline in order, measured costs, and the decision gates. |
+| 3 | [data.md](data.md) | BraTS 2021 spec, labels/regions, and the reproducible data-acquisition pipeline. |
+| 4 | [architecture.md](architecture.md) | System components, end-to-end data/training flow, module layout, logging strategy — the **big picture**. |
+| 5 | [data-pipeline.md](data-pipeline.md) | Case → hospital partition, synthetic scanner shift, preprocessing, caching, sampling — the **data engineering**. |
+| 6 | [federated-learning.md](federated-learning.md) | The FL round loop and how FedAvg / FedBN / local-only aggregate — the **training engine**. |
+| 7 | [experiments.md](experiments.md) | Experiment matrix, evaluation protocol, and exactly how each hypothesis is measured. |
+| 8 | [specs.md](specs.md) | Reference sheet — hyperparameters, model dims, hardware numbers, seeds, artifact/log layout. |
+| 9 | [environments.md](environments.md) | Windows / WSL2 / Colab — what runs where, the portability contract, run recipes. |
+| 10 | [progress-log.md](progress-log.md) | Dated lab notebook — decisions and milestones with rationale. |
 
 ## One-screen orientation
 

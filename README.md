@@ -42,6 +42,7 @@ Start at the [documentation index](docs/README.md). The set is split by concern 
 | Doc | Scope |
 |---|---|
 | [methodology.md](docs/methodology.md) | Research design — question, hypotheses, methods, evaluation (the *why*) |
+| [workflow.md](docs/workflow.md) | **Start here to run it** — the four runs, pipeline order, measured costs, decision gates |
 | [data.md](docs/data.md) | Dataset spec, labels, and the reproducible data-prep pipeline |
 | [architecture.md](docs/architecture.md) | System architecture, end-to-end flow, module layout, logging strategy |
 | [data-pipeline.md](docs/data-pipeline.md) | Case → hospital partition, synthetic shift, preprocessing, caching, sampling |
