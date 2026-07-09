@@ -22,18 +22,22 @@ REGIONS = ("wt", "tc", "et")
 
 
 def _default_data_root() -> Path:
-    """Unzipped BraTS cases (1251 dirs of `.nii`). Same physical D: drive from WSL2 and Windows.
+    """BraTS cases: 1251 dirs of `.nii` (unzipped, 114 GB) or `.nii.gz` (as shipped, 13 GB).
 
-    `load_case` reads `.nii` and `.nii.gz` alike, so pointing this at the compressed set
-    (`D:/data/BraTS2021_Training_Data`, 13 GB) also works -- slower to decode, far less I/O.
+    `load_case` reads both, so either layout works; unzipped decodes ~2x faster. Probe the
+    known locations rather than hardcoding one -- the unzipped copy has lived under both
+    `D:/data/` and the repo's own `data/`. Override with FEDBRATS_DATA_ROOT.
     """
     if env := os.environ.get("FEDBRATS_DATA_ROOT"):
         return Path(env)
-    if sys.platform == "win32":
-        return Path("D:/data/unzipped")
-    if Path("/content/drive/MyDrive/capstone/unzipped").exists():   # colab
-        return Path("/content/drive/MyDrive/capstone/unzipped")
-    return Path("/mnt/d/data/unzipped")
+    external = ([Path("D:/data/unzipped")] if sys.platform == "win32" else
+                [Path("/content/drive/MyDrive/capstone/unzipped"),    # colab
+                 Path("/content/drive/MyDrive/capstone/BraTS2021_Training_Data"),
+                 Path("/mnt/d/data/unzipped")])                       # wsl2 view of D:
+    candidates = [*external,
+                  _REPO / "data" / "unzipped",                        # preferred: fast, local
+                  _REPO / "data" / "BraTS2021_Training_Data"]         # fallback: compressed
+    return next((c for c in candidates if c.exists()), candidates[-1])
 
 
 def _default_cache_dir() -> Path:

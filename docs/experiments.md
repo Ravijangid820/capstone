@@ -74,24 +74,46 @@ Centralized (E0) frames all of the above as "how close to the pooled ceiling did
 > **Identical init.** All four methods start from the same seeded random weights (`build_model` seeds
 > `torch` before construction), so no comparison is confounded by initialization luck.
 
-## 4. Results (to be filled)
+## 4. Results — 2D backbone (R=25, E=1, seed 42, 150 train/hospital)
 
-### 2D backbone — mean Dice across hospitals
+Run on the RTX 3050; `metrics.jsonl` per run under `artifacts/runs/`. Regenerate the verdicts with
+`python scripts/analyze.py --dim 2d` and the figures with `python scripts/plot_results.py`.
+
+### Mean Dice across hospitals (diagonal)
 
 | Method | WT | TC | ET |
 |---|---|---|---|
-| Centralized (ceiling) | – | – | – |
-| Local-only | – | – | – |
-| FedAvg | – | – | – |
-| FedBN | – | – | – |
+| Centralized (ceiling) | 0.852 | 0.835 | 0.794 |
+| Local-only (floor) | 0.853 | 0.831 | 0.787 |
+| FedAvg | 0.835 | 0.817 | 0.764 |
+| FedBN | 0.852 | 0.828 | 0.779 |
 
-### 2D backbone — per-hospital WT Dice (outlier = H4)
+### Per-hospital WT Dice (outlier = H4)
 
 | Method | H1 | H2 | H3 | H4 (outlier) |
 |---|---|---|---|---|
-| Local-only | – | – | – | – |
-| FedAvg | – | – | – | – |
-| FedBN | – | – | – | – |
+| Local-only | 0.848 | 0.863 | 0.842 | **0.857** |
+| FedAvg | **0.883** | **0.884** | 0.838 | **0.737** |
+| FedBN | 0.866 | 0.866 | 0.849 | **0.829** |
+
+### Verdicts
+
+| Hyp. | Test | Observed (WT) | Verdict |
+|---|---|---|---|
+| **H1** | mean(FedAvg) ≥ mean(Local) | 0.835 vs 0.853 | **not supported** |
+| **H2** | dice(FedAvg, H4) < dice(Local, H4) | 0.737 vs 0.857 | **supported** |
+| **H3** | mean(FedBN) ≥ mean(FedAvg) **and** dice(FedBN,H4) ≥ dice(FedAvg,H4) | 0.852 ≥ 0.835 and 0.829 ≥ 0.737 | **supported** |
+
+**Reading of the result.** FedAvg *improves* the three typical hospitals over local-only
+(H1 0.848→0.883, H2 0.863→0.884) — collaboration helps where scanners are alike — but **collapses on
+the outlier** (H4 0.857→0.737). That single collapse drags the mean below local-only, so H1 fails *as
+stated*, not because federation is useless but because one compromise global model cannot serve both
+the cluster and the outlier. That is precisely the gap FedBN closes: keeping BatchNorm local **recovers
+H4 (0.737→0.829)** while retaining the collaboration gains on the cluster, landing a mean (0.852) that
+ties local-only and the centralized ceiling and beats FedAvg — **without pooling any data**. The
+cross-hospital matrix corroborates the domain gap: the H1 model scores only 0.671 on H4, its worst cell.
+
+Figures: `artifacts/figures/{learning_curves_wt,per_hospital_wt,outlier_h4_wt}.png`.
 
 *(3D tables added if the feasibility spike passes.)*
 

@@ -50,9 +50,11 @@ def main() -> int:
     ap.add_argument("--workers", type=int, default=0, help="processes (0 = serial)")
     ap.add_argument("--data-root", type=str, default=None, help="override the unzipped data root")
     ap.add_argument("--cache-dir", type=str, default=None, help="override the cache directory")
+    ap.add_argument("--seed", type=int, default=None,
+                    help="seed for the shift's bias field (changes the cache key; default 42)")
     args = ap.parse_args()
 
-    cfg = Config()
+    cfg = Config(seed=args.seed) if args.seed is not None else Config()
     if args.data_root:
         cfg.paths.data_root = Path(args.data_root)
     if args.cache_dir:

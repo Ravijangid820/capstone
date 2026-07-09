@@ -69,7 +69,7 @@ Starting (calibrated) parameters — `src/fedbrats/shift.py`:
 | **H4 (outlier)** | **1.85** | **0.34** | **1.7** |
 
 Verified on a real case: after z-normalization the hospitals still differ (pairwise mean abs. diff
-0.10–0.38 σ), H4 is the clear outlier (**margin +0.128 σ** over the most-distant typical hospital), and
+0.10–0.38 σ), H4 is the clear outlier (**margin +0.149 σ** over the most-distant typical hospital), and
 a purely *linear* shift washes out to **0.000** (confirming the shift must be nonlinear). The strength is
 a single knob — the real calibration is whether **H2** appears once we train; revisit then.
 

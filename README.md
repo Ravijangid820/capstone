@@ -31,9 +31,30 @@ FedAvg, and FedBN on brain-tumor segmentation.
 | 4. Data pipeline — preprocess + cache | ✅ done — fp16 memmap cache, resumable, ~35 MB/case |
 | 5. Model + train/eval loop | ✅ done — MONAI U-Net (2D/3D), per-volume Dice |
 | 6. FL engine (centralized / local / FedAvg / FedBN) | ✅ done — custom sequential loop, smoke-tested |
-| 7. Experiments — full 2D matrix on Colab | 🔨 next |
-| 8. Analysis (H1/H2/H3) → report | ⬜ |
-| 9. *(optional)* NVIDIA FLARE port | ⬜ Linux/Colab only |
+| 7. Experiments — full 2D matrix | ✅ done — ran locally (RTX 3050), all four methods, R=25 |
+| 8. Analysis (H1/H2/H3) → report | ✅ done — **H2 & H3 supported, H1 not** (see below) |
+| 9. 3D feasibility spike → 3D matrix | ⬜ next — memory fits; speed is the gate |
+| 10. *(optional)* NVIDIA FLARE port | ⬜ Linux/Colab only |
+
+## Results (2D)
+
+Full 2D matrix, R=25, seed 42, 150 train/hospital. Final-round WT Dice on each hospital's own test set:
+
+| Method | mean | H1 | H2 | H3 | H4 (outlier) |
+|---|---|---|---|---|---|
+| Centralized (ceiling) | 0.852 | 0.866 | 0.868 | 0.844 | 0.828 |
+| Local-only (floor) | 0.853 | 0.848 | 0.863 | 0.842 | **0.857** |
+| FedAvg | 0.835 | 0.883 | 0.884 | 0.838 | **0.737** |
+| FedBN | 0.852 | 0.866 | 0.866 | 0.849 | **0.829** |
+
+- **H2 ✅** — FedAvg's one global model **fails the outlier** (H4 0.737 vs local 0.857).
+- **H3 ✅** — FedBN **recovers the outlier** (0.737 → 0.829) and beats FedAvg on the mean, tying
+  local-only and the centralized ceiling **without pooling data** — the headline result.
+- **H1 ❌ (as stated)** — mean(FedAvg) 0.835 < mean(local) 0.853. FedAvg *helps* the three typical
+  hospitals but the outlier's collapse drags the average down. Not "federation is useless" — it is the
+  motivation for FedBN, which then delivers.
+
+Details and figures: [experiments.md](docs/experiments.md#4-results--2d-backbone-r25-e1-seed-42-150-trainhospital) · `artifacts/figures/`. Regenerate: `python scripts/analyze.py --dim 2d`.
 
 ## Documentation
 

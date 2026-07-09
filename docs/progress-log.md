@@ -123,9 +123,38 @@ A dated lab notebook: what was done, what was decided, and *why*. Newest entries
   `train_per_hospital = 150` (justified by reasoning about H1's visibility). If H1 comes out weak,
   raising the cap weakens it further; lowering it toward ~80 sharpens it.
 
+### 2026-07-09 — Full 2D matrix run locally + results (H2 & H3 supported, H1 not)
+- **Ran the whole 2D matrix on the RTX 3050** (not Colab): built the 848-case cache (29 GB on `D:`,
+  ~14 min, 6 workers), then E0→E1→E2→E3 at `R=25, E=1`. Total ~6 h wall-clock.
+- **Data-root fix:** the committed `config.py` pointed at `D:/data/unzipped`, which no longer existed
+  (the unzipped 114 GB set lives at `data/unzipped/`). Made `_default_data_root` *probe* candidate
+  locations instead of hardcoding one, so a fresh run finds the data on any of the machines we use.
+- **Sanity gate passed decisively:** E0 centralized hit WT 0.81 at round 1, ceiling ~0.852.
+- **Results (final-round diagonal WT):** centralized 0.852, local 0.853, FedAvg 0.835, FedBN 0.852.
+  Per-hospital H4: local 0.857, **FedAvg 0.737 (collapse)**, **FedBN 0.829 (recovered)**.
+  - **H2 supported** — FedAvg fails the outlier (0.737 < 0.857). The synthetic shift is well
+    calibrated; `shift.py` needs no change.
+  - **H3 supported** — FedBN recovers H4 (0.737→0.829) *and* beats FedAvg on the mean (0.852 ≥ 0.835),
+    tying local-only and the centralized ceiling **without pooling data**.
+  - **H1 not supported** — mean(FedAvg) 0.835 < mean(local) 0.853. But FedAvg *improves* the three
+    typical hospitals (H1 0.848→0.883, H2 0.863→0.884); the outlier's 0.12 collapse alone drags the
+    mean below local. Not "federation is useless" — "one global model can't serve cluster + outlier."
+    This is the strongest possible motivation for FedBN, and FedBN delivers.
+- **Tooling added:** `scripts/analyze.py` (reads `metrics.jsonl` → H1/H2/H3 verdicts + cross-matrix),
+  `scripts/plot_results.py` (3 figures under `artifacts/figures/`), and `colab/` notebooks that mirror
+  the run on a T4.
+- **Perf side-quest (measured, not guessed):** the run is **I/O-bound** on this box — the per-round
+  4-client working set (~22 GB) exceeds page cache (~14 GB), so cases re-read cold from `D:` each round
+  (E0: 273 ms/step real vs 40 ms warm). Confirmed the docs' call that `num_workers=0` is fastest on
+  Windows (spawn IPC pickling each 9 MB batch costs more than it saves: nw=0 143 ms/step vs nw=4 155);
+  larger batches help only warm (~15%, VRAM fine) and would break matched-compute + force a full
+  restart, so **kept batch 8 / nw=0**. The real speedup lives on Colab (local SSD + more RAM), which
+  the notebooks already use. *(Lesson relearned: a stray orchestrator subshell survived a TaskStop and
+  launched E1 early, contaminating the first worker benchmark — always confirm the process is dead.)*
+
 ### Next
-- Colab: build the cache (`--max-cases 150` → 848 cases, ~30 GB on `/content`).
-- Run **E0 first** as the sanity gate, then E1–E3 (local, FedAvg, FedBN) at `R=25`, `E=1`.
-- Read H1/H2/H3 off `metrics.jsonl`; **calibrate the shift strength if H2 does not appear** — fix
-  `shift.py`, not the engine (the cache key invalidates automatically).
-- Then the 3D feasibility spike on the T4 (memory is fine; speed is the gate).
+- **Analysis is done for 2D** — tables in [experiments.md](experiments.md#4-results--2d-backbone-r25-e1-seed-42-150-trainhospital), figures in `artifacts/figures/`.
+- **3D feasibility spike** on the T4 (memory is fine; speed is the gate). If it passes, repeat the
+  matrix in 3D and add the "does the story hold in 3D?" comparison.
+- *(optional)* NVIDIA FLARE port as a framework demonstration — the science is now settled on the
+  custom loop.
