@@ -113,11 +113,43 @@ H4 (0.737→0.829)** while retaining the collaboration gains on the cluster, lan
 ties local-only and the centralized ceiling and beats FedAvg — **without pooling any data**. The
 cross-hospital matrix corroborates the domain gap: the H1 model scores only 0.671 on H4, its worst cell.
 
-Figures: `artifacts/figures/{learning_curves_wt,per_hospital_wt,outlier_h4_wt}.png`.
+Figures: `artifacts/figures/{learning_curves_wt_2d,per_hospital_wt_2d,outlier_h4_wt_2d}.png`.
+## 5. Results — 3D backbone (R=25, E=1, seed 42, 150 train/hospital)
 
-*(3D tables added if the feasibility spike passes.)*
+### Mean Dice across hospitals (diagonal)
 
-## 5. 3D feasibility spike (gate before E0–E3 in 3D)
+| Method | WT | TC | ET |
+|---|---|---|---|
+| Centralized (ceiling) | 0.880 | 0.836 | 0.793 |
+| Local-only (floor) | 0.852 | 0.778 | 0.751 |
+| FedAvg | 0.859 | 0.801 | 0.770 |
+| FedBN | 0.834 | 0.781 | 0.746 |
+
+### Per-hospital WT Dice (outlier = H4)
+
+| Method | H1 | H2 | H3 | H4 (outlier) |
+|---|---|---|---|---|
+| Local-only | 0.871 | 0.872 | 0.844 | **0.819** |
+| FedAvg | 0.862 | 0.866 | 0.859 | **0.848** |
+| FedBN | 0.844 | 0.863 | 0.797 | **0.833** |
+
+### Verdicts (3D)
+
+| Hyp. | Test | Observed (WT) | Verdict |
+|---|---|---|---|
+| **H1** | mean(FedAvg) ≥ mean(Local) | 0.859 vs 0.852 | **supported** |
+| **H2** | dice(FedAvg, H4) < dice(Local, H4) | 0.848 vs 0.819 | **not supported** |
+| **H3** | mean(FedBN) ≥ mean(FedAvg) **and** dice(FedBN,H4) ≥ dice(FedAvg,H4) | 0.834 ≥ 0.859 and 0.833 ≥ 0.848 | **not supported** |
+
+**Reading of the 3D result.** Unlike 2D, the 3D backbone results show that **FedAvg does not fail the outlier** (H2 is not supported). On the outlier (H4), FedAvg (0.848) outperforms local-only (0.819) by a wide margin, and FedAvg beats local-only on average (0.859 vs 0.852, supporting H1). Consequently, local personalization via FedBN is counterproductive (mean WT 0.834 vs FedAvg 0.859).
+
+This divergence is explained by two factors:
+1. **Data scarcity & overfitting in 3D:** Training a 3D model with only 150 local cases (batch size 1) is highly prone to overfitting. The collaborative pooling in FedAvg provides a strong regularizing effect that greatly improves performance across all clients, including the outlier.
+2. **Poor local BN estimation:** Keeping BatchNorm layers local (FedBN) requires clients to estimate running statistics on small local datasets. In 3D, 150 samples are insufficient to robustly estimate these statistics, causing local BN layers to degenerate and degrade overall model performance.
+
+Figures: `artifacts/figures/{learning_curves_wt_3d,per_hospital_wt_3d,outlier_h4_wt_3d}.png`.
+
+## 6. 3D feasibility spike (gate before E0–E3 in 3D)
 
 Before running the full 3D matrix, one measurement decides go/no-go:
 

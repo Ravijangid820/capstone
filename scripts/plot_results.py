@@ -1,14 +1,16 @@
-"""Plot the 2D results from metrics.jsonl into artifacts/figures/.
+"""Plot the results from metrics.jsonl into artifacts/figures/.
 
-    python scripts/plot_results.py
+    python scripts/plot_results.py --dim 2d
+    python scripts/plot_results.py --dim 3d
 
 Three figures:
-  learning_curves_wt.png   mean diagonal WT Dice vs round, per method
-  per_hospital_wt.png      final-round WT per hospital, per method (outlier = H4)
-  outlier_h4_wt.png        the story in one panel: H4 WT vs round, per method
+  learning_curves_wt_<dim>.png   mean diagonal WT Dice vs round, per method
+  per_hospital_wt_<dim>.png      final-round WT per hospital, per method (outlier = H4)
+  outlier_h4_wt_<dim>.png        the story in one panel: H4 WT vs round, per method
 """
 from __future__ import annotations
 
+import argparse
 import json
 import statistics
 import sys
@@ -27,8 +29,8 @@ COLORS = {"centralized": "#6b7280", "local": "#2563eb", "fedavg": "#f59e0b", "fe
 HOS = ["H1", "H2", "H3", "H4"]
 
 
-def load(runs_dir: Path, method: str) -> list[dict]:
-    f = runs_dir / f"{method}_2d_42" / "metrics.jsonl"
+def load(runs_dir: Path, method: str, dim: str) -> list[dict]:
+    f = runs_dir / f"{method}_{dim}_42" / "metrics.jsonl"
     if not f.exists():
         return []
     return [json.loads(l) for l in f.read_text().splitlines() if l.strip()]
@@ -40,12 +42,21 @@ def is_diag(r: dict) -> bool:
 
 
 def main() -> int:
-    cfg = Config()
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("--dim", default="2d", choices=("2d", "3d"))
+    args = ap.parse_args()
+
+    dim = args.dim
+    cfg = Config(dim=dim)
     runs = cfg.paths.runs
     out = cfg.paths.artifacts / "figures"
     out.mkdir(parents=True, exist_ok=True)
-    data = {m: load(runs, m) for m in METHODS}
+    data = {m: load(runs, m, dim) for m in METHODS}
     present = [m for m in METHODS if data[m]]
+
+    if not present:
+        print(f"No runs found for dim={dim} under {runs}")
+        return 1
 
     # --- 1. learning curves: mean diagonal WT vs round -----------------------------------
     fig, ax = plt.subplots(figsize=(7.5, 4.8))
@@ -59,11 +70,11 @@ def main() -> int:
                 color=COLORS[m], label=m)
     ax.set_xlabel("round")
     ax.set_ylabel("mean diagonal WT Dice")
-    ax.set_title("Learning curves — mean WT Dice across hospitals")
+    ax.set_title(f"Learning curves ({dim.upper()}) — mean WT Dice across hospitals")
     ax.legend()
     ax.grid(alpha=0.3)
     fig.tight_layout()
-    fig.savefig(out / "learning_curves_wt.png", dpi=130)
+    fig.savefig(out / f"learning_curves_wt_{dim}.png", dpi=130)
     plt.close(fig)
 
     # --- 2. final per-hospital WT bars ---------------------------------------------------
@@ -87,11 +98,11 @@ def main() -> int:
     ax.set_xticklabels([h + (" *" if h == cfg.outlier_hospital else "") for h in HOS])
     ax.set_ylabel("final WT Dice")
     ax.set_ylim(0.6, 0.95)
-    ax.set_title("Final per-hospital WT Dice  (* = outlier)")
+    ax.set_title(f"Final per-hospital WT Dice ({dim.upper()})  (* = outlier)")
     ax.legend()
     ax.grid(axis="y", alpha=0.3)
     fig.tight_layout()
-    fig.savefig(out / "per_hospital_wt.png", dpi=130)
+    fig.savefig(out / f"per_hospital_wt_{dim}.png", dpi=130)
     plt.close(fig)
 
     # --- 3. the outlier story: H4 WT vs round --------------------------------------------
@@ -105,15 +116,15 @@ def main() -> int:
         ax.plot(xs, [by_round[x] for x in xs], marker="o", ms=3, color=COLORS[m], label=m)
     ax.set_xlabel("round")
     ax.set_ylabel(f"{cfg.outlier_hospital} (outlier) WT Dice")
-    ax.set_title(f"The outlier: {cfg.outlier_hospital} WT Dice vs round")
+    ax.set_title(f"The outlier ({dim.upper()}): {cfg.outlier_hospital} WT Dice vs round")
     ax.legend()
     ax.grid(alpha=0.3)
     fig.tight_layout()
-    fig.savefig(out / "outlier_h4_wt.png", dpi=130)
+    fig.savefig(out / f"outlier_h4_wt_{dim}.png", dpi=130)
     plt.close(fig)
 
     print(f"wrote 3 figures to {out}")
-    for f in sorted(out.glob("*.png")):
+    for f in sorted(out.glob(f"*_{dim}.png")):
         print(" ", f.name)
     return 0
 
