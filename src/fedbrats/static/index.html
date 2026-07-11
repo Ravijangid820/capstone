@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalized FL Segmentation Demo</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="glow-container">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+    </div>
+    
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo-area">
+                <span class="logo-icon">🧠</span>
+                <div class="logo-text">
+                    <h1>FedBrats Demo</h1>
+                    <p>Personalized Federated Learning for Brain Tumor Segmentation</p>
+                </div>
+            </div>
+            <div class="status-badge" id="server-status">
+                <span class="pulse-dot"></span> Backend Active
+            </div>
+        </header>
+
+        <!-- Main Dashboard -->
+        <main class="dashboard-grid">
+            
+            <!-- Sidebar Controls -->
+            <section class="control-panel glass">
+                <h2>Control Panel</h2>
+                
+                <div class="input-group">
+                    <label for="case-select">Select Patient Case</label>
+                    <select id="case-select" class="custom-select">
+                        <option value="" disabled selected>Loading cases...</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="dim-select">Model Dimension</label>
+                    <div class="toggle-buttons" id="dim-toggle">
+                        <button class="toggle-btn active" data-value="2d">2D U-Net</button>
+                        <button class="toggle-btn" data-value="3d">3D U-Net</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="hospital-select">Hospital Scanner Shift</label>
+                    <select id="hospital-select" class="custom-select">
+                        <option value="None">None (Unshifted/Global)</option>
+                        <option value="H1">Hospital 1 (Mild Shift)</option>
+                        <option value="H2">Hospital 2 (Mild Shift)</option>
+                        <option value="H3">Hospital 3 (Medium Shift)</option>
+                        <option value="H4" selected>Hospital 4 (Strong Outlier Shift)</option>
+                    </select>
+                    <div class="helper-text" id="shift-desc">Strong contrast shift, multiplicative bias, and blur.</div>
+                </div>
+
+                <div class="input-group">
+                    <label for="method-select">FL Training Method</label>
+                    <select id="method-select" class="custom-select">
+                        <option value="centralized">Centralized Ceiling (E0)</option>
+                        <option value="local">Local-only Model (E1)</option>
+                        <option value="fedavg">FedAvg Global Model (E2)</option>
+                        <option value="fedbn" selected>FedBN Personalized Model (E3)</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <div class="slider-header">
+                        <label for="slice-slider">Axial Slice Index</label>
+                        <span id="slice-val">--</span>
+                    </div>
+                    <input type="range" id="slice-slider" min="0" max="154" value="80" class="custom-range">
+                </div>
+
+                <button id="predict-btn" class="primary-btn">
+                    <span class="btn-icon">⚡</span> Run Segmentation
+                </button>
+            </section>
+
+            <!-- Viewer Area -->
+            <section class="viewer-panel glass">
+                <div class="viewer-header">
+                    <div class="tabs">
+                        <button class="tab-btn active" data-mod="flair">FLAIR</button>
+                        <button class="tab-btn" data-mod="t1">T1</button>
+                        <button class="tab-btn" data-mod="t1ce">T1ce</button>
+                        <button class="tab-btn" data-mod="t2">T2</button>
+                    </div>
+                    <div class="legend">
+                        <span class="legend-item"><span class="color-dot wt"></span> Whole Tumor (WT)</span>
+                        <span class="legend-item"><span class="color-dot tc"></span> Tumor Core (TC)</span>
+                        <span class="legend-item"><span class="color-dot et"></span> Enhancing Tumor (ET)</span>
+                    </div>
+                </div>
+
+                <div class="viewer-grid">
+                    <!-- Modality Image -->
+                    <div class="view-card">
+                        <h3>Input MRI Scan</h3>
+                        <div class="canvas-wrapper">
+                            <img id="mri-img" class="mri-display" alt="MRI input image" />
+                            <div class="loading-overlay" id="loading-mri">
+                                <div class="spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ground Truth Overlay -->
+                    <div class="view-card">
+                        <h3>Ground Truth Mask</h3>
+                        <div class="canvas-wrapper">
+                            <img id="gt-img" class="mri-display" alt="Ground truth mask overlay" />
+                            <div class="loading-overlay" id="loading-gt">
+                                <div class="spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prediction Overlay -->
+                    <div class="view-card">
+                        <h3>Model Prediction</h3>
+                        <div class="canvas-wrapper">
+                            <img id="pred-img" class="mri-display" alt="Model segmentation prediction" />
+                            <div class="loading-overlay" id="loading-pred">
+                                <div class="spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quantitative Metrics -->
+            <section class="metrics-panel glass">
+                <h2>Quantitative Metrics</h2>
+                <div class="metrics-container">
+                    <div class="metric-card">
+                        <h3>Whole Tumor (WT) Dice</h3>
+                        <div class="gauge-wrapper">
+                            <svg class="progress-ring" width="120" height="120">
+                                <circle class="progress-ring__circle-bg" stroke="#1f2937" stroke-width="8" fill="transparent" r="50" cx="60" cy="60"/>
+                                <circle id="wt-ring" class="progress-ring__circle wt" stroke="#10b981" stroke-width="8" stroke-dasharray="314.16 314.16" stroke-dashoffset="314.16" fill="transparent" r="50" cx="60" cy="60"/>
+                            </svg>
+                            <div class="gauge-value" id="wt-val">--</div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <h3>Tumor Core (TC) Dice</h3>
+                        <div class="gauge-wrapper">
+                            <svg class="progress-ring" width="120" height="120">
+                                <circle class="progress-ring__circle-bg" stroke="#1f2937" stroke-width="8" fill="transparent" r="50" cx="60" cy="60"/>
+                                <circle id="tc-ring" class="progress-ring__circle tc" stroke="#3b82f6" stroke-width="8" stroke-dasharray="314.16 314.16" stroke-dashoffset="314.16" fill="transparent" r="50" cx="60" cy="60"/>
+                            </svg>
+                            <div class="gauge-value" id="tc-val">--</div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <h3>Enhancing Tumor (ET) Dice</h3>
+                        <div class="gauge-wrapper">
+                            <svg class="progress-ring" width="120" height="120">
+                                <circle class="progress-ring__circle-bg" stroke="#1f2937" stroke-width="8" fill="transparent" r="50" cx="60" cy="60"/>
+                                <circle id="et-ring" class="progress-ring__circle et" stroke="#ec4899" stroke-width="8" stroke-dasharray="314.16 314.16" stroke-dashoffset="314.16" fill="transparent" r="50" cx="60" cy="60"/>
+                            </svg>
+                            <div class="gauge-value" id="et-val">--</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="experiment-context card-glass">
+                    <h3>Project Insights</h3>
+                    <p id="insight-text">
+                        Select a patient, hospital shift parameters, and federated training method, then click **Run Segmentation** to visualize model performance in real time.
+                    </p>
+                </div>
+            </section>
+
+        </main>
+        
+        <footer class="app-footer">
+            <p>Capstone Project — Personalized Federated Learning on BraTS 2021.</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
