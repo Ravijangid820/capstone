@@ -16,6 +16,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadingMri = document.getElementById('loading-mri');
     const loadingGt = document.getElementById('loading-gt');
     const loadingPred = document.getElementById('loading-pred');
+    const loading3d = document.getElementById('loading-3d');
+    
+    // View Toggles
+    const grid2D = document.getElementById('grid-2d');
+    const viewport3D = document.getElementById('viewport-3d');
+    const mode2DBtn = document.getElementById('mode-2d-btn');
+    const mode3DBtn = document.getElementById('mode-3d-btn');
     
     // Rings
     const wtRing = document.getElementById('wt-ring');
@@ -29,6 +36,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let casesData = {};
     let activeModality = 'flair';
     let activeDim = '2d';
+    let activeViewMode = '2d'; // '2d' | '3d'
+    let currentInferenceResult = null; // cached metrics
+    
+    // Three.js State
+    let scene, camera, renderer, controls;
+    let tumorGroup = null;
 
     // Scanner Shift Descriptions
     const SHIFT_INFO = {
@@ -52,6 +65,176 @@ document.addEventListener('DOMContentLoaded', () => {
         valueElement.innerText = (value * 100).toFixed(1) + '%';
     }
 
+    // Three.js Scene Setup
+    function init3D() {
+        const container = document.getElementById('canvas-3d-container');
+        if (!container) return;
+
+        // Clear container first
+        container.innerHTML = '';
+
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0a0f1d);
+
+        camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 1, 1000);
+        camera.position.set(0, 0, 160);
+
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.rotateSpeed = 0.8;
+        controls.zoomSpeed = 1.0;
+
+        // Lights
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+
+        const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.7);
+        dirLight1.position.set(1, 1, 1).normalize();
+        scene.add(dirLight1);
+
+        const dirLight2 = new THREE.DirectionalLight(0xffffff, 0.3);
+        dirLight2.position.set(-1, -1, -1).normalize();
+        scene.add(dirLight2);
+
+        // Group to hold tumor meshes
+        tumorGroup = new THREE.Group();
+        scene.add(tumorGroup);
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            if (controls) controls.update();
+            if (tumorGroup) {
+                // Gentle slow auto-rotate when not dragging
+                if (!controls.state === -1) {
+                    tumorGroup.rotation.y += 0.003;
+                }
+            }
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Resize handler
+        window.addEventListener('resize', onWindowResize);
+    }
+
+    function onWindowResize() {
+        const container = document.getElementById('canvas-3d-container');
+        if (!container || !renderer || !camera) return;
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+    }
+
+    // Build 3D meshes inside Three.js scene
+    function update3DMeshes(meshes) {
+        if (!tumorGroup) return;
+
+        // Clear old meshes
+        while(tumorGroup.children.length > 0) { 
+            const obj = tumorGroup.children[0];
+            obj.geometry.dispose();
+            obj.material.dispose();
+            tumorGroup.remove(obj); 
+        }
+
+        const colors = {
+            wt: 0x10b981, // WT - Green
+            tc: 0x3b82f6, // TC - Blue
+            et: 0xec4899  // ET - Pink/Red
+        };
+
+        const opacities = {
+            wt: 0.25,
+            tc: 0.45,
+            et: 0.80
+        };
+
+        let hasAnyGeometry = false;
+
+        Object.keys(meshes).forEach(name => {
+            const meshData = meshes[name];
+            if (!meshData.vertices || meshData.vertices.length === 0) return;
+
+            const geometry = new THREE.BufferGeometry();
+            
+            // Flatten verts and faces
+            const verts = new Float32Array(meshData.vertices.flat());
+            const indices = new Uint32Array(meshData.faces.flat());
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(verts, 3));
+            geometry.setIndex(new THREE.BufferAttribute(indices, 1));
+            geometry.computeVertexNormals();
+
+            const material = new THREE.MeshPhongMaterial({
+                color: colors[name],
+                transparent: true,
+                opacity: opacities[name],
+                side: THREE.DoubleSide,
+                shininess: 40,
+                specular: 0x222222
+            });
+
+            const mesh = new THREE.Mesh(geometry, material);
+            tumorGroup.add(mesh);
+            hasAnyGeometry = true;
+        });
+
+        if (hasAnyGeometry) {
+            // Re-center camera to frame the meshes
+            const box = new THREE.Box3().setFromObject(tumorGroup);
+            const size = box.getSize(new THREE.Vector3());
+            const maxDim = Math.max(size.x, size.y, size.z);
+            
+            // Zoom camera to fit bounding box
+            const fov = camera.fov * (Math.PI / 180);
+            let cameraZ = Math.abs(maxDim / 2 / Math.tan(fov / 2));
+            cameraZ *= 1.4; // multiplier to pad the frame
+            camera.position.set(0, 0, cameraZ);
+            camera.lookAt(new THREE.Vector3(0, 0, 0));
+            if (controls) {
+                controls.target.set(0, 0, 0);
+                controls.update();
+            }
+        }
+    }
+
+    // Toggle 2D / 3D mode views
+    mode2DBtn.addEventListener('click', () => {
+        mode2DBtn.classList.add('active');
+        mode3DBtn.classList.remove('active');
+        grid2D.style.display = 'grid';
+        viewport3D.style.display = 'none';
+        activeViewMode = '2d';
+    });
+
+    mode3DBtn.addEventListener('click', () => {
+        mode3DBtn.classList.add('active');
+        mode2DBtn.classList.remove('active');
+        grid2D.style.display = 'none';
+        viewport3D.style.display = 'block';
+        activeViewMode = '3d';
+
+        // Lazy initialize the scene on first switch
+        if (!scene) {
+            init3D();
+        } else {
+            // Trigger container resize
+            setTimeout(onWindowResize, 50);
+        }
+        
+        // If we already have predicted segmentations, load 3D mesh
+        if (currentInferenceResult && tumorGroup && tumorGroup.children.length === 0) {
+            fetch3DGeometry();
+        }
+    });
+
     // Toggle dimension buttons (2D vs 3D)
     document.querySelectorAll('#dim-toggle button').forEach(button => {
         button.addEventListener('click', (e) => {
@@ -69,7 +252,6 @@ document.addEventListener('DOMContentLoaded', () => {
             button.classList.add('active');
             activeModality = button.dataset.mod;
             if (caseSelect.value) {
-                // If a case is loaded, trigger update of input view
                 updateViews();
             }
         });
@@ -140,6 +322,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         sliceVal.innerText = sliceSlider.value;
         
+        // Clear cached 3D prediction mesh
+        currentInferenceResult = null;
+        if (tumorGroup) {
+            while(tumorGroup.children.length > 0) {
+                const obj = tumorGroup.children[0];
+                obj.geometry.dispose();
+                obj.material.dispose();
+                tumorGroup.remove(obj);
+            }
+        }
+        
         // Load default views
         updateViews();
     }
@@ -178,6 +371,44 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Fetch and render 3D meshes
+    async function fetch3DGeometry() {
+        const caseId = caseSelect.value;
+        const hospital = hospitalSelect.value;
+        const method = methodSelect.value;
+        
+        if (!caseId || !scene) return;
+
+        loading3d.style.display = 'flex';
+
+        try {
+            const res = await fetch('/api/mesh', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    case_id: caseId,
+                    dim: activeDim,
+                    method: method,
+                    hospital: hospital
+                })
+            });
+
+            if (!res.ok) throw new Error('Mesh generation failed');
+            const data = await res.json();
+            
+            if (data.error) {
+                console.error(data.error);
+                return;
+            }
+
+            update3DMeshes(data);
+        } catch (err) {
+            console.error('3D mesh loading error:', err);
+        } finally {
+            loading3d.style.display = 'none';
+        }
+    }
+
     // Run Segmentation Prediction
     async function runInference() {
         const caseId = caseSelect.value;
@@ -195,8 +426,10 @@ document.addEventListener('DOMContentLoaded', () => {
         setGauge(wtRing, wtVal, null);
         setGauge(tcRing, tcVal, null);
         setGauge(etRing, etVal, null);
+        currentInferenceResult = null;
 
         try {
+            // Run slice-level predict
             const res = await fetch('/api/predict', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -213,14 +446,35 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!res.ok) throw new Error('Prediction request failed');
             const result = await res.json();
             
+            if (result.error) {
+                insightText.innerHTML = `<span class="text-danger">Error: ${result.error}</span>`;
+                return;
+            }
+
             predImg.src = 'data:image/png;base64,' + result.pred_base64;
             
-            // Animate and set metric gauges
+            // Set gauges
             setGauge(wtRing, wtVal, result.dice.wt);
             setGauge(tcRing, tcVal, result.dice.tc);
             setGauge(etRing, etVal, result.dice.et);
 
+            currentInferenceResult = result;
             updatePostInferenceInsight(result.dice);
+
+            // If 3D viewport is open, trigger mesh rendering
+            if (activeViewMode === '3d') {
+                fetch3DGeometry();
+            } else {
+                // Clear old meshes so it re-fetches if switched to 3D later
+                if (tumorGroup) {
+                    while(tumorGroup.children.length > 0) {
+                        const obj = tumorGroup.children[0];
+                        obj.geometry.dispose();
+                        obj.material.dispose();
+                        tumorGroup.remove(obj);
+                    }
+                }
+            }
         } catch (err) {
             console.error('Prediction error:', err);
             insightText.innerHTML = '<span class="text-danger">Error: Could not run inference. Make sure the backend server is running and the checkpoints exist.</span>';

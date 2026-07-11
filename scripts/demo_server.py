@@ -56,6 +56,8 @@ class DemoHTTPRequestHandler(BaseHTTPRequestHandler):
         url = urllib.parse.urlparse(self.path)
         if url.path == "/api/predict":
             self.handle_api_predict()
+        elif url.path == "/api/mesh":
+            self.handle_api_mesh()
         else:
             self.send_error(404, "Endpoint not found")
 
@@ -242,6 +244,87 @@ class DemoHTTPRequestHandler(BaseHTTPRequestHandler):
             import traceback
             traceback.print_exc()
             self.send_error(500, str(e))
+
+    def handle_api_mesh(self):
+        try:
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            req = json.loads(post_data.decode('utf-8'))
+
+            case_id = req.get("case_id")
+            dim = req.get("dim", "2d")
+            method = req.get("method", "fedbn")
+            hospital = req.get("hospital", "H4")
+
+            if not case_id:
+                self.send_error(400, "Missing case_id")
+                return
+
+            cfg = Config(dim=dim)
+            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+            # Build and load model weights
+            model = build_model(cfg)
+            run_id = cfg.run_id(method)
+            path = cfg.paths.runs / run_id / "checkpoints" / "final.pt"
+
+            if not path.exists():
+                self.send_json({
+                    "error": f"Model checkpoint not found for {method} {dim}."
+                })
+                return
+
+            ckpt = torch.load(path, map_location="cpu")
+            if method == "fedbn":
+                global_w = ckpt["global"]
+                bn_state = ckpt["bn"].get(hospital, {})
+                model.load_state_dict({**global_w, **bn_state})
+            elif isinstance(ckpt, dict) and "global" in ckpt:
+                model.load_state_dict(ckpt["global"])
+            else:
+                model.load_state_dict(ckpt)
+
+            model.to(device)
+            model.eval()
+
+            # Load raw volume & preprocess on-the-fly
+            mods, seg = load_case(cfg.paths.data_root, case_id)
+            h_shift = hospital if hospital != "None" else None
+            x, y, _ = preprocess(mods, seg, hospital=h_shift, seed=cfg.seed, clip=cfg.clip_sigma)
+
+            # Predict volume
+            pred = predict_volume(model, x, cfg, device)
+
+            # Extract 3D surface meshes
+            from skimage.measure import marching_cubes
+
+            meshes = {}
+            regions = ["wt", "tc", "et"]
+            for idx, name in enumerate(regions):
+                ch_volume = pred[idx]
+                if ch_volume.sum() > 5:
+                    try:
+                        verts, faces, normals, values = marching_cubes(ch_volume, level=0.5, step_size=2)
+                        # Center vertices around (0, 0, 0) for stable rotation in Three.js
+                        center = verts.mean(axis=0)
+                        verts_centered = verts - center
+                        meshes[name] = {
+                            "vertices": verts_centered.tolist(),
+                            "faces": faces.tolist()
+                        }
+                    except Exception as me:
+                        print(f"Marching cubes error for region {name}: {me}")
+                        meshes[name] = {"vertices": [], "faces": []}
+                else:
+                    meshes[name] = {"vertices": [], "faces": []}
+
+            self.send_json(meshes)
+
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            self.send_error(500, str(e))
+
 
 
 def run_server(port=8000):
