@@ -145,12 +145,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const colors = {
-            wt: 0x10b981, // WT - Green
-            tc: 0x3b82f6, // TC - Blue
-            et: 0xec4899  // ET - Pink/Red
+            brain: 0x4b5563, // Brain - Cool Gray
+            wt: 0x10b981,    // WT - Green
+            tc: 0x3b82f6,    // TC - Blue
+            et: 0xec4899     // ET - Pink/Red
         };
 
         const opacities = {
+            brain: 0.06,     // Very faint transparent shell
             wt: 0.25,
             tc: 0.45,
             et: 0.80
@@ -177,7 +179,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 transparent: true,
                 opacity: opacities[name],
                 side: THREE.DoubleSide,
-                shininess: 40,
+                // Critical WebGL trick: turn off depth write for the outer brain shell so nested inner objects render correctly
+                depthWrite: name === 'brain' ? false : true,
+                shininess: name === 'brain' ? 10 : 40,
                 specular: 0x222222
             });
 

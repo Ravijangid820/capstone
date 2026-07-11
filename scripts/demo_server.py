@@ -290,7 +290,7 @@ class DemoHTTPRequestHandler(BaseHTTPRequestHandler):
             # Load raw volume & preprocess on-the-fly
             mods, seg = load_case(cfg.paths.data_root, case_id)
             h_shift = hospital if hospital != "None" else None
-            x, y, _ = preprocess(mods, seg, hospital=h_shift, seed=cfg.seed, clip=cfg.clip_sigma)
+            x, y, brain = preprocess(mods, seg, hospital=h_shift, seed=cfg.seed, clip=cfg.clip_sigma)
 
             # Predict volume
             pred = predict_volume(model, x, cfg, device)
@@ -299,15 +299,33 @@ class DemoHTTPRequestHandler(BaseHTTPRequestHandler):
             from skimage.measure import marching_cubes
 
             meshes = {}
+            
+            # 1. Extract the brain surface first to establish the anatomical center
+            brain_center = np.zeros(3)
+            if brain.sum() > 10:
+                try:
+                    # Using step_size=4 for the large brain volume to optimize computation speed
+                    verts, faces, normals, values = marching_cubes(brain.astype(np.uint8), level=0.5, step_size=4)
+                    brain_center = verts.mean(axis=0)
+                    verts_centered = verts - brain_center
+                    meshes["brain"] = {
+                        "vertices": verts_centered.tolist(),
+                        "faces": faces.tolist()
+                    }
+                except Exception as me:
+                    print(f"Marching cubes error for brain: {me}")
+                    meshes["brain"] = {"vertices": [], "faces": []}
+            else:
+                meshes["brain"] = {"vertices": [], "faces": []}
+
+            # 2. Extract nested tumor meshes centered around the same anatomical center
             regions = ["wt", "tc", "et"]
             for idx, name in enumerate(regions):
                 ch_volume = pred[idx]
                 if ch_volume.sum() > 5:
                     try:
                         verts, faces, normals, values = marching_cubes(ch_volume, level=0.5, step_size=2)
-                        # Center vertices around (0, 0, 0) for stable rotation in Three.js
-                        center = verts.mean(axis=0)
-                        verts_centered = verts - center
+                        verts_centered = verts - brain_center
                         meshes[name] = {
                             "vertices": verts_centered.tolist(),
                             "faces": faces.tolist()
