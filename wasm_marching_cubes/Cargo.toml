@@ -1,0 +1,11 @@
+[package]
+name = "wasm_marching_cubes"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+mcubes = "0.1.7"
+lin_alg = "1.4.3"
