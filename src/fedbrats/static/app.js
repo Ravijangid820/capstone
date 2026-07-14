@@ -375,7 +375,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Fetch and render 3D meshes
+    let wasmExports = null;
+
+    // Load WebAssembly Marching Cubes Module
+    async function initWasm() {
+        if (wasmExports) return;
+        try {
+            const response = await fetch('/wasm_marching_cubes.wasm');
+            const bytes = await response.arrayBuffer();
+            const { instance } = await WebAssembly.instantiate(bytes, {});
+            wasmExports = instance.exports;
+            console.log("Marching Cubes WebAssembly initialized successfully!");
+        } catch (err) {
+            console.error("Failed to initialize WebAssembly:", err);
+        }
+    }
+
+    function base64ToUint8Array(base64) {
+        const binaryString = atob(base64);
+        const len = binaryString.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+        return bytes;
+    }
+
+    // Fetch raw binary volumes and run Marching Cubes client-side using WebAssembly (WASM)
     async function fetch3DGeometry() {
         const caseId = caseSelect.value;
         const hospital = hospitalSelect.value;
@@ -386,6 +412,13 @@ document.addEventListener('DOMContentLoaded', () => {
         loading3d.style.display = 'flex';
 
         try {
+            // Initialize WASM if not already done
+            await initWasm();
+            if (!wasmExports) {
+                throw new Error("WebAssembly marching cubes module is not loaded.");
+            }
+
+            // Fetch raw preprocessed binary volumes
             const res = await fetch('/api/mesh', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -397,7 +430,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
             });
 
-            if (!res.ok) throw new Error('Mesh generation failed');
+            if (!res.ok) throw new Error('Failed to fetch raw volume data');
             const data = await res.json();
             
             if (data.error) {
@@ -405,9 +438,88 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            update3DMeshes(data);
+            const [nx, ny, nz] = data.shape;
+
+            // Helper to execute Marching Cubes inside WASM
+            function runWasmMarchingCubes(b64Data, stepSize, level) {
+                if (!b64Data) return { vertices: [], faces: [] };
+                const volumeData = base64ToUint8Array(b64Data);
+                
+                // Write volume bytes to WASM VOLUME_BUFFER memory
+                const volPtr = wasmExports.get_volume_ptr();
+                const wasmVolBuffer = new Uint8Array(wasmExports.memory.buffer, volPtr, volumeData.length);
+                wasmVolBuffer.set(volumeData);
+
+                // Execute in WASM (returns 64-bit integer packed with vertex and index counts)
+                const counts = wasmExports.run_marching_cubes(nx, ny, nz, level, stepSize);
+                
+                // Unpack 64-bit BigInt
+                const vertexCount = Number(counts >> 32n);
+                const indexCount = Number(counts & 0xffffffffn);
+
+                if (vertexCount === 0 || indexCount === 0) {
+                    return { vertices: [], faces: [] };
+                }
+
+                // Read vertices (Float32Array) and faces (Uint32Array) from WASM static output buffers
+                const vertPtr = wasmExports.get_vertex_ptr();
+                const indexPtr = wasmExports.get_index_ptr();
+
+                const vertices = new Float32Array(wasmExports.memory.buffer, vertPtr, vertexCount * 3);
+                const indices = new Uint32Array(wasmExports.memory.buffer, indexPtr, indexCount);
+
+                // Create copies because Three.js owns its BufferAttributes and WASM buffer can overwrite them
+                return {
+                    vertices: Array.from(vertices),
+                    faces: Array.from(indices)
+                };
+            }
+
+            // Run mesh extraction for brain and all tumor regions inside the client browser via WASM
+            const brainMesh = runWasmMarchingCubes(data.brain, 4, 0.5); // step_size=4 for brain
+            const wtMesh = runWasmMarchingCubes(data.wt, 2, 0.5);       // step_size=2 for tumor regions
+            const tcMesh = runWasmMarchingCubes(data.tc, 2, 0.5);
+            const etMesh = runWasmMarchingCubes(data.et, 2, 0.5);
+
+            // Calculate center of brain to align everything perfectly
+            let cx = 0, cy = 0, cz = 0;
+            const vc = brainMesh.vertices.length / 3;
+            if (vc > 0) {
+                for (let i = 0; i < vc; i++) {
+                    cx += brainMesh.vertices[i * 3];
+                    cy += brainMesh.vertices[i * 3 + 1];
+                    cz += brainMesh.vertices[i * 3 + 2];
+                }
+                cx /= vc;
+                cy /= vc;
+                cz /= vc;
+            }
+
+            // Subtract center from all meshes
+            function centerMesh(mesh) {
+                if (!mesh.vertices) return;
+                for (let i = 0; i < mesh.vertices.length; i += 3) {
+                    mesh.vertices[i] -= cx;
+                    mesh.vertices[i + 1] -= cy;
+                    mesh.vertices[i + 2] -= cz;
+                }
+            }
+
+            centerMesh(brainMesh);
+            centerMesh(wtMesh);
+            centerMesh(tcMesh);
+            centerMesh(etMesh);
+
+            // Render meshes in WebGL
+            update3DMeshes({
+                brain: brainMesh,
+                wt: wtMesh,
+                tc: tcMesh,
+                et: etMesh
+            });
+
         } catch (err) {
-            console.error('3D mesh loading error:', err);
+            console.error('WebGL/WASM 3D mesh loading error:', err);
         } finally {
             loading3d.style.display = 'none';
         }

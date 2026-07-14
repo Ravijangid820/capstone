@@ -63,8 +63,8 @@ pub extern "C" fn run_marching_cubes(
     let mc_res = MarchingCubes::new(
         (w, h, d),
         (1.0, 1.0, 1.0),
-        (0.0, 0.0, 0.0),
-        Vec3::new(1.0, 1.0, 1.0),
+        (1.0, 1.0, 1.0), // Changed from (0.0, 0.0, 0.0) to avoid division by zero
+        Vec3::new(0.0, 0.0, 0.0), // Center or offset offset
         values,
         level,
     );
@@ -100,3 +100,43 @@ pub extern "C" fn run_marching_cubes(
 
     ((v_len as u64) << 32) | (i_len as u64)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_marching_cubes() {
+        let w = 10;
+        let h = 10;
+        let d = 10;
+        let mut values = vec![0.0; w * h * d];
+        // Create a sphere of 1s in the center
+        for x in 3..7 {
+            for y in 3..7 {
+                for z in 3..7 {
+                    let idx = z + y * d + x * h * d;
+                    values[idx] = 1.0;
+                }
+            }
+        }
+
+        let mc = MarchingCubes::new(
+            (w, h, d),
+            (1.0, 1.0, 1.0),
+            (1.0, 1.0, 1.0),
+            Vec3::new(0.0, 0.0, 0.0),
+            values,
+            0.5,
+        ).unwrap();
+
+        let mesh = mc.generate(MeshSide::Both);
+        println!("Vertices count: {}", mesh.vertices.len());
+        println!("Indices count: {}", mesh.indices.len());
+        if !mesh.vertices.is_empty() {
+            println!("First vertex posit: {:?}", mesh.vertices[0].posit);
+            println!("First vertex normal: {:?}", mesh.vertices[0].normal);
+        }
+    }
+}
+

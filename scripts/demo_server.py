@@ -45,6 +45,8 @@ class DemoHTTPRequestHandler(BaseHTTPRequestHandler):
             self.serve_file(STATIC_DIR / "style.css", "text/css")
         elif path_str == "/app.js":
             self.serve_file(STATIC_DIR / "app.js", "application/javascript")
+        elif path_str == "/wasm_marching_cubes.wasm":
+            self.serve_file(STATIC_DIR / "wasm_marching_cubes.wasm", "application/wasm")
         elif path_str == "/api/cases":
             self.handle_api_cases()
         elif path_str == "/api/view":
@@ -295,48 +297,16 @@ class DemoHTTPRequestHandler(BaseHTTPRequestHandler):
             # Predict volume
             pred = predict_volume(model, x, cfg, device)
 
-            # Extract 3D surface meshes
-            from skimage.measure import marching_cubes
+            # Package volumes as base64 byte arrays for client-side WASM processing
+            import base64
 
-            meshes = {}
-            
-            # 1. Extract the brain surface first to establish the anatomical center
-            brain_center = np.zeros(3)
-            if brain.sum() > 10:
-                try:
-                    # Using step_size=4 for the large brain volume to optimize computation speed
-                    verts, faces, normals, values = marching_cubes(brain.astype(np.uint8), level=0.5, step_size=4)
-                    brain_center = verts.mean(axis=0)
-                    verts_centered = verts - brain_center
-                    meshes["brain"] = {
-                        "vertices": verts_centered.tolist(),
-                        "faces": faces.tolist()
-                    }
-                except Exception as me:
-                    print(f"Marching cubes error for brain: {me}")
-                    meshes["brain"] = {"vertices": [], "faces": []}
-            else:
-                meshes["brain"] = {"vertices": [], "faces": []}
-
-            # 2. Extract nested tumor meshes centered around the same anatomical center
-            regions = ["wt", "tc", "et"]
-            for idx, name in enumerate(regions):
-                ch_volume = pred[idx]
-                if ch_volume.sum() > 5:
-                    try:
-                        verts, faces, normals, values = marching_cubes(ch_volume, level=0.5, step_size=2)
-                        verts_centered = verts - brain_center
-                        meshes[name] = {
-                            "vertices": verts_centered.tolist(),
-                            "faces": faces.tolist()
-                        }
-                    except Exception as me:
-                        print(f"Marching cubes error for region {name}: {me}")
-                        meshes[name] = {"vertices": [], "faces": []}
-                else:
-                    meshes[name] = {"vertices": [], "faces": []}
-
-            self.send_json(meshes)
+            self.send_json({
+                "shape": list(brain.shape),
+                "brain": base64.b64encode(brain.astype(np.uint8).tobytes()).decode("utf-8"),
+                "wt": base64.b64encode(pred[0].astype(np.uint8).tobytes()).decode("utf-8"),
+                "tc": base64.b64encode(pred[1].astype(np.uint8).tobytes()).decode("utf-8"),
+                "et": base64.b64encode(pred[2].astype(np.uint8).tobytes()).decode("utf-8")
+            })
 
         except Exception as e:
             import traceback
