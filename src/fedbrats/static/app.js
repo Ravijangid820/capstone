@@ -166,12 +166,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const geometry = new THREE.BufferGeometry();
             
-            // Flatten verts and faces
-            const verts = new Float32Array(meshData.vertices.flat());
-            const indices = new Uint32Array(meshData.faces.flat());
-
-            geometry.setAttribute('position', new THREE.BufferAttribute(verts, 3));
-            geometry.setIndex(new THREE.BufferAttribute(indices, 1));
+            // meshData.vertices is already a flat Float32Array (xyz triples)
+            // meshData.indices is already a flat Uint32Array
+            geometry.setAttribute('position', new THREE.BufferAttribute(meshData.vertices, 3));
+            geometry.setIndex(new THREE.BufferAttribute(meshData.indices, 1));
             geometry.computeVertexNormals();
 
             const material = new THREE.MeshPhongMaterial({
@@ -375,22 +373,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    let wasmExports = null;
-
-    // Load WebAssembly Marching Cubes Module
-    async function initWasm() {
-        if (wasmExports) return;
-        try {
-            const response = await fetch('/wasm_marching_cubes.wasm');
-            const bytes = await response.arrayBuffer();
-            const { instance } = await WebAssembly.instantiate(bytes, {});
-            wasmExports = instance.exports;
-            console.log("Marching Cubes WebAssembly initialized successfully!");
-        } catch (err) {
-            console.error("Failed to initialize WebAssembly:", err);
-        }
-    }
-
+    // Base64 → Uint8Array helper
     function base64ToUint8Array(base64) {
         const binaryString = atob(base64);
         const len = binaryString.length;
@@ -401,7 +384,29 @@ document.addEventListener('DOMContentLoaded', () => {
         return bytes;
     }
 
-    // Fetch raw binary volumes and run Marching Cubes client-side using WebAssembly (WASM)
+    // Center a flat Float32Array of xyz triples around a given centroid
+    function centerVertices(vertices, cx, cy, cz) {
+        for (let i = 0; i < vertices.length; i += 3) {
+            vertices[i]     -= cx;
+            vertices[i + 1] -= cy;
+            vertices[i + 2] -= cz;
+        }
+    }
+
+    // Compute centroid of a flat Float32Array of xyz triples
+    function computeCentroid(vertices) {
+        let cx = 0, cy = 0, cz = 0;
+        const count = vertices.length / 3;
+        if (count === 0) return [0, 0, 0];
+        for (let i = 0; i < vertices.length; i += 3) {
+            cx += vertices[i];
+            cy += vertices[i + 1];
+            cz += vertices[i + 2];
+        }
+        return [cx / count, cy / count, cz / count];
+    }
+
+    // Fetch raw binary volumes and run Marching Cubes client-side using pure JavaScript
     async function fetch3DGeometry() {
         const caseId = caseSelect.value;
         const hospital = hospitalSelect.value;
@@ -412,13 +417,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loading3d.style.display = 'flex';
 
         try {
-            // Initialize WASM if not already done
-            await initWasm();
-            if (!wasmExports) {
-                throw new Error("WebAssembly marching cubes module is not loaded.");
-            }
-
-            // Fetch raw preprocessed binary volumes
+            // Fetch raw preprocessed binary volumes from the backend
             const res = await fetch('/api/mesh', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -438,79 +437,37 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const [nx, ny, nz] = data.shape;
+            const dims = data.shape; // [nx, ny, nz] — matches NumPy C-order
 
-            // Helper to execute Marching Cubes inside WASM
-            function runWasmMarchingCubes(b64Data, stepSize, level) {
-                if (!b64Data) return { vertices: [], faces: [] };
-                const volumeData = base64ToUint8Array(b64Data);
-                
-                // Write volume bytes to WASM VOLUME_BUFFER memory
-                const volPtr = wasmExports.get_volume_ptr();
-                const wasmVolBuffer = new Uint8Array(wasmExports.memory.buffer, volPtr, volumeData.length);
-                wasmVolBuffer.set(volumeData);
+            // Decode base64 volumes to Uint8Array
+            const brainVol = base64ToUint8Array(data.brain);
+            const wtVol    = base64ToUint8Array(data.wt);
+            const tcVol    = base64ToUint8Array(data.tc);
+            const etVol    = base64ToUint8Array(data.et);
 
-                // Execute in WASM (returns 64-bit integer packed with vertex and index counts)
-                const counts = wasmExports.run_marching_cubes(nx, ny, nz, level, stepSize);
-                
-                // Unpack 64-bit BigInt
-                const vertexCount = Number(counts >> 32n);
-                const indexCount = Number(counts & 0xffffffffn);
+            // Run pure JS marching cubes on each volume
+            // Brain uses coarser step (4) for performance; tumor regions use finer step (2)
+            console.time('marchingCubes_brain');
+            const brainMesh = marchingCubes(brainVol, dims, 4, 128);
+            console.timeEnd('marchingCubes_brain');
 
-                if (vertexCount === 0 || indexCount === 0) {
-                    return { vertices: [], faces: [] };
-                }
+            console.time('marchingCubes_tumors');
+            const wtMesh = marchingCubes(wtVol, dims, 2, 128);
+            const tcMesh = marchingCubes(tcVol, dims, 2, 128);
+            const etMesh = marchingCubes(etVol, dims, 2, 128);
+            console.timeEnd('marchingCubes_tumors');
 
-                // Read vertices (Float32Array) and faces (Uint32Array) from WASM static output buffers
-                const vertPtr = wasmExports.get_vertex_ptr();
-                const indexPtr = wasmExports.get_index_ptr();
+            console.log(`Brain: ${brainMesh.vertices.length / 3} verts, ${brainMesh.indices.length / 3} tris`);
+            console.log(`WT: ${wtMesh.vertices.length / 3} verts, TC: ${tcMesh.vertices.length / 3} verts, ET: ${etMesh.vertices.length / 3} verts`);
 
-                const vertices = new Float32Array(wasmExports.memory.buffer, vertPtr, vertexCount * 3);
-                const indices = new Uint32Array(wasmExports.memory.buffer, indexPtr, indexCount);
+            // Compute centroid from brain mesh and center all meshes
+            const [cx, cy, cz] = computeCentroid(brainMesh.vertices);
+            centerVertices(brainMesh.vertices, cx, cy, cz);
+            centerVertices(wtMesh.vertices, cx, cy, cz);
+            centerVertices(tcMesh.vertices, cx, cy, cz);
+            centerVertices(etMesh.vertices, cx, cy, cz);
 
-                // Create copies because Three.js owns its BufferAttributes and WASM buffer can overwrite them
-                return {
-                    vertices: Array.from(vertices),
-                    faces: Array.from(indices)
-                };
-            }
-
-            // Run mesh extraction for brain and all tumor regions inside the client browser via WASM
-            const brainMesh = runWasmMarchingCubes(data.brain, 4, 0.5); // step_size=4 for brain
-            const wtMesh = runWasmMarchingCubes(data.wt, 2, 0.5);       // step_size=2 for tumor regions
-            const tcMesh = runWasmMarchingCubes(data.tc, 2, 0.5);
-            const etMesh = runWasmMarchingCubes(data.et, 2, 0.5);
-
-            // Calculate center of brain to align everything perfectly
-            let cx = 0, cy = 0, cz = 0;
-            const vc = brainMesh.vertices.length / 3;
-            if (vc > 0) {
-                for (let i = 0; i < vc; i++) {
-                    cx += brainMesh.vertices[i * 3];
-                    cy += brainMesh.vertices[i * 3 + 1];
-                    cz += brainMesh.vertices[i * 3 + 2];
-                }
-                cx /= vc;
-                cy /= vc;
-                cz /= vc;
-            }
-
-            // Subtract center from all meshes
-            function centerMesh(mesh) {
-                if (!mesh.vertices) return;
-                for (let i = 0; i < mesh.vertices.length; i += 3) {
-                    mesh.vertices[i] -= cx;
-                    mesh.vertices[i + 1] -= cy;
-                    mesh.vertices[i + 2] -= cz;
-                }
-            }
-
-            centerMesh(brainMesh);
-            centerMesh(wtMesh);
-            centerMesh(tcMesh);
-            centerMesh(etMesh);
-
-            // Render meshes in WebGL
+            // Render meshes in Three.js WebGL
             update3DMeshes({
                 brain: brainMesh,
                 wt: wtMesh,
@@ -519,7 +476,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
         } catch (err) {
-            console.error('WebGL/WASM 3D mesh loading error:', err);
+            console.error('3D mesh generation error:', err);
         } finally {
             loading3d.style.display = 'none';
         }

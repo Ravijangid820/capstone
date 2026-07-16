@@ -45,6 +45,8 @@ class DemoHTTPRequestHandler(BaseHTTPRequestHandler):
             self.serve_file(STATIC_DIR / "style.css", "text/css")
         elif path_str == "/app.js":
             self.serve_file(STATIC_DIR / "app.js", "application/javascript")
+        elif path_str == "/marching_cubes.js":
+            self.serve_file(STATIC_DIR / "marching_cubes.js", "application/javascript")
         elif path_str == "/wasm_marching_cubes.wasm":
             self.serve_file(STATIC_DIR / "wasm_marching_cubes.wasm", "application/wasm")
         elif path_str == "/api/cases":
@@ -297,15 +299,16 @@ class DemoHTTPRequestHandler(BaseHTTPRequestHandler):
             # Predict volume
             pred = predict_volume(model, x, cfg, device)
 
-            # Package volumes as base64 byte arrays for client-side WASM processing
+            # Package volumes as base64 byte arrays for client-side JS marching cubes.
+            # Binary masks (0/1) are scaled to (0/255) so the JS isoLevel=128 threshold works.
             import base64
 
             self.send_json({
                 "shape": list(brain.shape),
-                "brain": base64.b64encode(brain.astype(np.uint8).tobytes()).decode("utf-8"),
-                "wt": base64.b64encode(pred[0].astype(np.uint8).tobytes()).decode("utf-8"),
-                "tc": base64.b64encode(pred[1].astype(np.uint8).tobytes()).decode("utf-8"),
-                "et": base64.b64encode(pred[2].astype(np.uint8).tobytes()).decode("utf-8")
+                "brain": base64.b64encode((brain.astype(np.uint8) * 255).tobytes()).decode("utf-8"),
+                "wt": base64.b64encode((pred[0].astype(np.uint8) * 255).tobytes()).decode("utf-8"),
+                "tc": base64.b64encode((pred[1].astype(np.uint8) * 255).tobytes()).decode("utf-8"),
+                "et": base64.b64encode((pred[2].astype(np.uint8) * 255).tobytes()).decode("utf-8")
             })
 
         except Exception as e:
