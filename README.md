@@ -33,7 +33,7 @@ FedAvg, and FedBN on brain-tumor segmentation.
 | 6. FL engine (centralized / local / FedAvg / FedBN) | ✅ done — custom sequential loop, smoke-tested |
 | 7. Experiments — full 2D matrix | ✅ done — ran locally (RTX 3050), all four methods, R=25 |
 | 8. Analysis (H1/H2/H3) → report | ✅ done — **H2 & H3 supported, H1 not** (see below) |
-| 9. 3D feasibility spike → 3D matrix | ⬜ next — memory fits; speed is the gate |
+| 9. 3D feasibility spike → 3D matrix | ✅ done — full 3D matrix completed, hypothesis reversal observed |
 | 10. *(optional)* NVIDIA FLARE port | ⬜ Linux/Colab only |
 
 ## Results (2D)
@@ -55,6 +55,44 @@ Full 2D matrix, R=25, seed 42, 150 train/hospital. Final-round WT Dice on each h
   motivation for FedBN, which then delivers.
 
 Details and figures: [experiments.md](docs/experiments.md#4-results--2d-backbone-r25-e1-seed-42-150-trainhospital) · `artifacts/figures/`. Regenerate: `python scripts/analyze.py --dim 2d`.
+
+## Results (3D)
+
+Full 3D matrix, R=25, seed 42, 150 train/hospital. Final-round WT Dice on each hospital's own test set:
+
+| Method | mean | H1 | H2 | H3 | H4 (outlier) |
+|---|---|---|---|---|---|
+| Centralized (ceiling) | 0.880 | 0.899 | 0.896 | 0.878 | 0.848 |
+| Local-only (floor) | 0.851 | 0.871 | 0.872 | 0.844 | 0.819 |
+| FedAvg | 0.859 | 0.862 | 0.866 | 0.859 | **0.848** |
+| FedBN | 0.834 | 0.844 | 0.862 | 0.797 | **0.833** |
+
+- **H1 ✅** — FedAvg mean (0.859) > local mean (0.851): federation helps on average.
+- **H2 ❌** — FedAvg on H4 (0.848) ≥ local on H4 (0.819): the global model does **not** fail the outlier.
+- **H3 ❌** — FedBN on H4 (0.833) < FedAvg on H4 (0.848): personalization does **not** recover — it's worse.
+
+**Hypothesis reversal vs. 2D:** 3D spatial convolutions act as a natural regularizer,
+making FedAvg robust to scanner shift even on the outlier hospital. FedBN actually
+suffers in 3D because 150 local cases per hospital are insufficient to estimate stable
+3D batch-normalization running statistics — the higher-dimensional feature maps amplify
+the variance, so keeping BN layers local becomes a liability rather than an advantage.
+
+Details and figures: `artifacts/figures/`. Regenerate: `python scripts/analyze.py --dim 3d`.
+
+## Web Demo
+
+An interactive web dashboard lets you visualize and compare segmentations across all four FL methods in real time.
+
+```bash
+uv run python scripts/demo_server.py
+# Open http://localhost:8000
+```
+
+Features:
+- **2D slice viewer** — browse any axial slice across FLAIR, T1, T1ce, T2 modalities
+- **3D rotatable mesh** — isosurface rendering of brain + tumor regions (WT/TC/ET) with orbit controls
+- **Live inference** — run segmentation with any trained model and see Dice scores instantly
+- **Scanner shift simulation** — toggle hospital-specific scanner distortions to see how models respond
 
 ## Documentation
 

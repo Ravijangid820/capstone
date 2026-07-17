@@ -14,6 +14,7 @@ import os
 import sys
 import urllib.parse
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from socketserver import ThreadingMixIn
 from pathlib import Path
 
 # Add src/ to the Python path
@@ -30,6 +31,44 @@ from fedbrats.train import predict_volume
 from fedbrats.metrics import dice_regions
 
 STATIC_DIR = Path(__file__).resolve().parents[1] / "src" / "fedbrats" / "static"
+
+# ─── Model Cache ──────────────────────────────────────────────────────────────
+# Cache loaded models by (dim, method, hospital) to avoid reloading on every
+# request.  For FedBN, the hospital matters because BN weights differ; for all
+# other methods, hospital is ignored in the cache key.
+_model_cache: dict[tuple, torch.nn.Module] = {}
+_device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
+def _get_model(dim: str, method: str, hospital: str):
+    """Return a cached model, loading from checkpoint on first access."""
+    cache_key = (dim, method, hospital if method == "fedbn" else "_global")
+    if cache_key in _model_cache:
+        return _model_cache[cache_key]
+
+    cfg = Config(dim=dim)
+    model = build_model(cfg)
+    run_id = cfg.run_id(method)
+    path = cfg.paths.runs / run_id / "checkpoints" / "final.pt"
+
+    if not path.exists():
+        return None  # caller should handle missing checkpoint
+
+    ckpt = torch.load(path, map_location="cpu")
+    if method == "fedbn":
+        global_w = ckpt["global"]
+        bn_state = ckpt["bn"].get(hospital, {})
+        model.load_state_dict({**global_w, **bn_state})
+    elif isinstance(ckpt, dict) and "global" in ckpt:
+        model.load_state_dict(ckpt["global"])
+    else:
+        model.load_state_dict(ckpt)
+
+    model.to(_device)
+    model.eval()
+    _model_cache[cache_key] = model
+    print(f"  [cache] loaded model: {cache_key}")
+    return model
 
 
 class DemoHTTPRequestHandler(BaseHTTPRequestHandler):
@@ -53,6 +92,8 @@ class DemoHTTPRequestHandler(BaseHTTPRequestHandler):
             self.handle_api_cases()
         elif path_str == "/api/view":
             self.handle_api_view(url.query)
+        elif path_str == "/api/health":
+            self.send_json({"status": "ok", "device": str(_device), "cached_models": len(_model_cache)})
         else:
             self.send_error(404, "File not found")
 
@@ -182,14 +223,10 @@ class DemoHTTPRequestHandler(BaseHTTPRequestHandler):
                 return
 
             cfg = Config(dim=dim)
-            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-            # Build and load model weights
-            model = build_model(cfg)
-            run_id = cfg.run_id(method)
-            path = cfg.paths.runs / run_id / "checkpoints" / "final.pt"
-
-            if not path.exists():
+            # Load model from cache (or checkpoint on first access)
+            model = _get_model(dim, method, hospital)
+            if model is None:
                 self.send_json({
                     "dice": {"wt": 0.0, "tc": 0.0, "et": 0.0},
                     "pred_base64": "",
@@ -197,26 +234,13 @@ class DemoHTTPRequestHandler(BaseHTTPRequestHandler):
                 })
                 return
 
-            ckpt = torch.load(path, map_location="cpu")
-            if method == "fedbn":
-                global_w = ckpt["global"]
-                bn_state = ckpt["bn"].get(hospital, {})
-                model.load_state_dict({**global_w, **bn_state})
-            elif isinstance(ckpt, dict) and "global" in ckpt:
-                model.load_state_dict(ckpt["global"])
-            else:
-                model.load_state_dict(ckpt)
-
-            model.to(device)
-            model.eval()
-
             # Load raw volume & preprocess on-the-fly
             mods, seg = load_case(cfg.paths.data_root, case_id)
             h_shift = hospital if hospital != "None" else None
             x, y, _ = preprocess(mods, seg, hospital=h_shift, seed=cfg.seed, clip=cfg.clip_sigma)
 
             # Predict volume
-            pred = predict_volume(model, x, cfg, device)
+            pred = predict_volume(model, x, cfg, _device)
 
             # Extract slice
             pred_slice = pred[:, :, :, slice_idx]
@@ -265,31 +289,14 @@ class DemoHTTPRequestHandler(BaseHTTPRequestHandler):
                 return
 
             cfg = Config(dim=dim)
-            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-            # Build and load model weights
-            model = build_model(cfg)
-            run_id = cfg.run_id(method)
-            path = cfg.paths.runs / run_id / "checkpoints" / "final.pt"
-
-            if not path.exists():
+            # Load model from cache (or checkpoint on first access)
+            model = _get_model(dim, method, hospital)
+            if model is None:
                 self.send_json({
                     "error": f"Model checkpoint not found for {method} {dim}."
                 })
                 return
-
-            ckpt = torch.load(path, map_location="cpu")
-            if method == "fedbn":
-                global_w = ckpt["global"]
-                bn_state = ckpt["bn"].get(hospital, {})
-                model.load_state_dict({**global_w, **bn_state})
-            elif isinstance(ckpt, dict) and "global" in ckpt:
-                model.load_state_dict(ckpt["global"])
-            else:
-                model.load_state_dict(ckpt)
-
-            model.to(device)
-            model.eval()
 
             # Load raw volume & preprocess on-the-fly
             mods, seg = load_case(cfg.paths.data_root, case_id)
@@ -297,11 +304,10 @@ class DemoHTTPRequestHandler(BaseHTTPRequestHandler):
             x, y, brain = preprocess(mods, seg, hospital=h_shift, seed=cfg.seed, clip=cfg.clip_sigma)
 
             # Predict volume
-            pred = predict_volume(model, x, cfg, device)
+            pred = predict_volume(model, x, cfg, _device)
 
             # Package volumes as base64 byte arrays for client-side JS marching cubes.
             # Binary masks (0/1) are scaled to (0/255) so the JS isoLevel=128 threshold works.
-            import base64
 
             self.send_json({
                 "shape": list(brain.shape),
@@ -318,10 +324,17 @@ class DemoHTTPRequestHandler(BaseHTTPRequestHandler):
 
 
 
+class ThreadingHTTPServer(ThreadingMixIn, HTTPServer):
+    """Handle requests in separate threads so the UI doesn't freeze during inference."""
+    daemon_threads = True
+
+
 def run_server(port=8000):
     server_address = ('', port)
-    httpd = HTTPServer(server_address, DemoHTTPRequestHandler)
+    httpd = ThreadingHTTPServer(server_address, DemoHTTPRequestHandler)
     print(f"Starting brain tumor segmentation demo server on http://localhost:{port}")
+    print(f"  Device: {_device}")
+    print(f"  Static: {STATIC_DIR}")
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:

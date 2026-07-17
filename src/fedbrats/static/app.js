@@ -89,6 +89,8 @@ document.addEventListener('DOMContentLoaded', () => {
         controls.dampingFactor = 0.05;
         controls.rotateSpeed = 0.8;
         controls.zoomSpeed = 1.0;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 1.5;
 
         // Lights
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -110,12 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
         function animate() {
             requestAnimationFrame(animate);
             if (controls) controls.update();
-            if (tumorGroup) {
-                // Gentle slow auto-rotate when not dragging
-                if (!controls.state === -1) {
-                    tumorGroup.rotation.y += 0.003;
-                }
-            }
             renderer.render(scene, camera);
         }
         animate();
@@ -135,6 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Build 3D meshes inside Three.js scene
     function update3DMeshes(meshes) {
         if (!tumorGroup) return;
+        clear3DStatus();
 
         // Clear old meshes
         while(tumorGroup.children.length > 0) { 
@@ -234,6 +231,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // If we already have predicted segmentations, load 3D mesh
         if (currentInferenceResult && tumorGroup && tumorGroup.children.length === 0) {
             fetch3DGeometry();
+        } else if (!currentInferenceResult) {
+            show3DStatus('Run Segmentation first, then switch to 3D view to see the volumetric mesh.');
         }
     });
 
@@ -477,9 +476,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (err) {
             console.error('3D mesh generation error:', err);
+            show3DStatus('Error generating 3D mesh. Check console for details.');
         } finally {
             loading3d.style.display = 'none';
         }
+    }
+
+    // Show a status/hint message inside the 3D viewport
+    function show3DStatus(message) {
+        const container = document.getElementById('canvas-3d-container');
+        if (!container) return;
+        // Remove any existing status message
+        const existing = container.querySelector('.viewport-status');
+        if (existing) existing.remove();
+        // Create status overlay
+        const div = document.createElement('div');
+        div.className = 'viewport-status';
+        div.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);' +
+            'color:#9ca3af;font-size:0.95rem;text-align:center;max-width:320px;line-height:1.6;' +
+            'pointer-events:none;z-index:5;';
+        div.textContent = message;
+        container.style.position = 'relative';
+        container.appendChild(div);
+    }
+
+    // Clear 3D status message (called when meshes are successfully loaded)
+    function clear3DStatus() {
+        const container = document.getElementById('canvas-3d-container');
+        if (!container) return;
+        const existing = container.querySelector('.viewport-status');
+        if (existing) existing.remove();
     }
 
     // Run Segmentation Prediction
