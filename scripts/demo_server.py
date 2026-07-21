@@ -86,6 +86,10 @@ class DemoHTTPRequestHandler(BaseHTTPRequestHandler):
             self.serve_file(STATIC_DIR / "app.js", "application/javascript")
         elif path_str == "/marching_cubes.js":
             self.serve_file(STATIC_DIR / "marching_cubes.js", "application/javascript")
+        elif path_str.startswith("/vendor/") and path_str.endswith(".js"):
+            # Serve bundled vendor libraries (Three.js, OrbitControls)
+            vendor_file = path_str.lstrip("/")
+            self.serve_file(STATIC_DIR / vendor_file, "application/javascript")
         elif path_str == "/wasm_marching_cubes.wasm":
             self.serve_file(STATIC_DIR / "wasm_marching_cubes.wasm", "application/wasm")
         elif path_str == "/api/cases":
