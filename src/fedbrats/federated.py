@@ -29,8 +29,8 @@ from pathlib import Path
 import torch
 
 from .config import Config
-from .data import load_index, select_cases
-from .logging_utils import MetricsWriter, get_logger
+from .data import load_index, select_cases, train_val_cases
+from .logging_utils import MetricsWriter, get_logger, guard_run_dir
 from .model import bn_keys, build_model
 from .train import evaluate_cases, make_loader, set_seed, train_epochs
 
@@ -93,16 +93,18 @@ def weighted_average(states: list[State], weights: list[float],
 # the loop
 # --------------------------------------------------------------------------------------
 
-def run(cfg: Config, method_name: str) -> Path:
+def run(cfg: Config, method_name: str, overwrite: bool = False) -> Path:
     """Run one experiment end to end. Returns the run directory."""
     if method_name not in METHODS:
         raise ValueError(f"unknown method {method_name!r}; pick from {sorted(METHODS)}")
     method = METHODS[method_name]
 
-    run_dir = Path(cfg.paths.runs) / cfg.run_id(method_name)
+    run_dir = cfg.run_dir(method_name)
+    guard_run_dir(run_dir, overwrite)                     # never append into an earlier experiment
     run_dir.mkdir(parents=True, exist_ok=True)
-    log = get_logger("fedbrats", run_dir / "run.log")
+    log = get_logger("fedbrats", run_dir / "run.log", mode="w")
     metrics = MetricsWriter(run_dir / "metrics.jsonl")
+    per_case_log = MetricsWriter(run_dir / "per_case.jsonl")
 
     device = torch.device(cfg.device if torch.cuda.is_available() else "cpu")
     set_seed(cfg.seed)
@@ -112,16 +114,23 @@ def run(cfg: Config, method_name: str) -> Path:
 
     train_cap = min(x for x in (cfg.train_per_hospital, cfg.max_train_cases) if x) \
         if (cfg.train_per_hospital or cfg.max_train_cases) else None
-    train_cases = {h: select_cases(index, h, "train", train_cap) for h in hospitals}
+    split = {h: train_val_cases(cfg, index, h, train_cap) for h in hospitals}
+    train_cases = {h: split[h][0] for h in hospitals}
+    val_cases = {h: split[h][1] for h in hospitals}
     test_cases = {h: select_cases(index, h, "test", cfg.max_test_cases) for h in hospitals}
 
     with (run_dir / "config.json").open("w") as f:
-        json.dump({k: str(v) for k, v in vars(cfg).items()}, f, indent=2, sort_keys=True)
+        json.dump(cfg.to_dict(), f, indent=2, sort_keys=True, default=str)
 
     log.info(f"run_id={cfg.run_id(method_name)} method={method_name} dim={cfg.dim} device={device}")
+    if cfg.tag:
+        log.info(f"tag={cfg.tag} -> {run_dir}")
     log.info(f"R={cfg.rounds} E={cfg.local_epochs} -> {cfg.total_epochs} total local epochs/hospital")
+    log.info(f"lr={cfg.lr} schedule={cfg.lr_schedule} augment={cfg.augment} tta={cfg.tta} "
+             f"postproc_min_voxels={cfg.postproc_min_voxels} select_by={cfg.select_by}")
     for h in hospitals:
-        log.info(f"  {h}: {len(train_cases[h])} train / {len(test_cases[h])} test cases")
+        log.info(f"  {h}: {len(train_cases[h])} train / {len(val_cases[h])} val / "
+                 f"{len(test_cases[h])} test cases")
 
     # --- clients: 'pooled' collapses the four hospitals into one client -------------------
     if method.pooled:
@@ -156,15 +165,41 @@ def run(cfg: Config, method_name: str) -> Path:
             return own_w["global" if method.pooled else model_hospital]
         return {**global_w, **bn_state.get(model_hospital, init_bn)}
 
+    def snapshot() -> dict:
+        """Everything needed to reconstruct this round's models later, for best-val selection."""
+        return {"global": copy.deepcopy(global_w), "bn": copy.deepcopy(bn_state),
+                "own": copy.deepcopy(own_w)}
+
+    def restore(snap: dict) -> None:
+        nonlocal global_w, bn_state, own_w
+        global_w, bn_state, own_w = snap["global"], snap["bn"], snap["own"]
+
+    def score(hospital: str, cases: list[str], split_name: str, rnd: int,
+              stage: str, tta: bool) -> dict[str, float]:
+        """Evaluate one hospital's serving model and log both the mean and every case."""
+        mh = "global" if method.pooled or method.name == "fedavg" else hospital
+        model.load_state_dict(eval_state(hospital))
+        dice, per_case = evaluate_cases(model, cfg, cases, device, tta=tta)
+        common = dict(run_id=cfg.run_id(method_name), method=method_name, dim=cfg.dim, round=rnd,
+                      stage=stage, model_hospital=mh, test_hospital=hospital, split=split_name)
+        metrics.write(**common, tta=tta,
+                      dice_wt=dice["wt"], dice_tc=dice["tc"], dice_et=dice["et"])
+        per_case_log.write_many([{**common, "case_id": c["case_id"], "dice_wt": c["wt"],
+                                  "dice_tc": c["tc"], "dice_et": c["et"]} for c in per_case])
+        return dice
+
     # --- rounds ---------------------------------------------------------------------------
+    best = {"round": 0, "val_wt": float("-inf"), "snap": None}
+
     for rnd in range(1, cfg.rounds + 1):
+        lr = cfg.round_lr(rnd)
         updates: dict[str, State] = {}
         for ci, (client, loader) in enumerate(loaders.items()):
             set_seed(cfg.seed + rnd * 1000 + ci)          # reproducible, distinct per client/round
             model.load_state_dict(start_state(client))
-            loss = train_epochs(model, loader, cfg.local_epochs, cfg, device)
+            loss = train_epochs(model, loader, cfg.local_epochs, cfg, device, lr=lr)
             updates[client] = cpu_state(model)
-            log.info(f"round {rnd:>3}  {client:>7}  train_loss={loss:.4f}")
+            log.info(f"round {rnd:>3}  {client:>7}  train_loss={loss:.4f}  lr={lr:.2e}")
 
         if method.aggregate:
             names = list(updates)
@@ -177,15 +212,43 @@ def run(cfg: Config, method_name: str) -> Path:
             own_w = updates                               # each client keeps its own full model
 
         # --- evaluate the federated model, before any further local training --------------
+        # No TTA here: the learning curve costs 4x with it, and the curve is used for shape,
+        # not for the headline number. The reported model is re-scored with TTA below.
         for h in hospitals:
-            mh = "global" if method.pooled or method.name == "fedavg" else h
-            model.load_state_dict(eval_state(h))
-            dice, _ = evaluate_cases(model, cfg, test_cases[h], device)
-            metrics.write(run_id=cfg.run_id(method_name), method=method_name, dim=cfg.dim,
-                          round=rnd, model_hospital=mh, test_hospital=h, split="test",
-                          dice_wt=dice["wt"], dice_tc=dice["tc"], dice_et=dice["et"])
-            log.info(f"round {rnd:>3}  eval {mh:>7} -> {h}  "
+            dice = score(h, test_cases[h], "test", rnd, stage="round", tta=False)
+            log.info(f"round {rnd:>3}  eval {h:>3}  "
                      f"WT={dice['wt']:.4f} TC={dice['tc']:.4f} ET={dice['et']:.4f}")
+
+        # --- validation: the only signal model selection is allowed to read ----------------
+        if cfg.val_per_hospital > 0:
+            vals = [score(h, val_cases[h], "val", rnd, stage="round", tta=False)["wt"]
+                    for h in hospitals]
+            val_wt = sum(vals) / len(vals)
+            log.info(f"round {rnd:>3}  VAL mean WT={val_wt:.4f}"
+                     f"{'  <- best so far' if val_wt > best['val_wt'] else ''}")
+            if val_wt > best["val_wt"]:
+                best = {"round": rnd, "val_wt": val_wt, "snap": snapshot()}
+
+    # --- select the model to report -------------------------------------------------------
+    # "last" keeps the baseline's behaviour. "best_val" rewinds to the round that scored best on
+    # validation -- never on test, so the reported figure stays a measurement of a held-out set
+    # rather than the maximum of 25 draws from it.
+    reported_round = cfg.rounds
+    if cfg.select_by == "best_val" and best["snap"] is not None:
+        restore(best["snap"])
+        reported_round = best["round"]
+        log.info(f"selected round {reported_round} by validation WT={best['val_wt']:.4f} "
+                 f"(of {cfg.rounds} rounds)")
+
+    # --- final: re-score the selected model, this time with TTA ---------------------------
+    # `stage="final"` marks these rows; the analysis reads them in preference to the round rows,
+    # so the headline number and the learning curve can differ in inference cost without either
+    # being ambiguous about which one it is.
+    final_tta = cfg.tta
+    log.info(f"final evaluation at round {reported_round} (tta={final_tta})")
+    for h in hospitals:
+        dice = score(h, test_cases[h], "test", reported_round, stage="final", tta=final_tta)
+        log.info(f"  final {h}  WT={dice['wt']:.4f} TC={dice['tc']:.4f} ET={dice['et']:.4f}")
 
     # --- final: 4x4 cross-hospital matrix for local-only ----------------------------------
     # Off-diagonal cells show H4's model collapsing on H1-H3 -- direct evidence the synthetic
@@ -197,18 +260,26 @@ def run(cfg: Config, method_name: str) -> Path:
             for th in hospitals:
                 if mh == th:
                     continue                              # diagonal already logged this round
-                dice, _ = evaluate_cases(model, cfg, test_cases[th], device)
+                dice, _ = evaluate_cases(model, cfg, test_cases[th], device, tta=final_tta)
                 metrics.write(run_id=cfg.run_id(method_name), method=method_name, dim=cfg.dim,
-                              round=cfg.rounds, model_hospital=mh, test_hospital=th, split="test",
+                              round=reported_round, stage="cross", model_hospital=mh,
+                              test_hospital=th, split="test", tta=final_tta,
                               dice_wt=dice["wt"], dice_tc=dice["tc"], dice_et=dice["et"])
                 log.info(f"  cross {mh} -> {th}  WT={dice['wt']:.4f}")
 
     # --- checkpoints ----------------------------------------------------------------------
     ckpt = run_dir / "checkpoints"
     ckpt.mkdir(exist_ok=True)
-    if method.aggregate:
-        torch.save({"global": global_w, "bn": bn_state}, ckpt / "final.pt")
-    else:
-        torch.save(own_w, ckpt / "final.pt")
+    payload = {"global": global_w, "bn": bn_state} if method.aggregate else own_w
+    torch.save({"state": payload, "round": reported_round, "select_by": cfg.select_by,
+                "config": cfg.to_dict()}, ckpt / "final.pt")
+
+    summary = {"run_id": cfg.run_id(method_name), "method": method_name, "dim": cfg.dim,
+               "tag": cfg.tag, "rounds": cfg.rounds, "reported_round": reported_round,
+               "select_by": cfg.select_by, "best_val_wt": best["val_wt"] if best["snap"] else None,
+               "tta": final_tta}
+    with (run_dir / "summary.json").open("w") as f:
+        json.dump(summary, f, indent=2, sort_keys=True)
+
     log.info(f"done -> {run_dir}")
     return run_dir

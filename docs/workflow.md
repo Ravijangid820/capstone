@@ -127,7 +127,7 @@ In order. Do not proceed past a failing gate by adding rounds.
 | ✅ | **Wiring smoke test** | All four methods run end to end, 2D and 3D. 18 invariants pass, including *FedBN with K=1 ≡ local-only* exactly. |
 | → | **Centralized sanity** | Run E0 **first**. WT Dice should climb well past 0.7. If not, the fault is in the data pipeline or the loss — *not* federation. Debug where there is only one model. |
 | ⚠ | **Does H2 appear?** | The one genuinely open parameter. If FedAvg does not underperform local-only on H4, the scanner shift is too weak: raise H4's `gamma` / `bias_amp` / `blur_sigma` in `shift.py` and rerun (the cache key changes automatically). **Fix the shift, not the code.** |
-| → | **3D feasibility spike** | Memory already fits (2.06 GB at 128³/base16). *Speed* is the gate. Pass → repeat the matrix in 3D; fail → report the spike, 2D stands as the deliverable. |
+| ✅ | **3D feasibility spike** | Memory already fits (2.06 GB at 128³/base16). 3D training is COMPLETE, full matrix completed. |
 | → | **NVIDIA FLARE port** *(optional, last)* | Same aggregation math, different orchestration. Linux/Colab only. After the science is settled — never the sole way to reproduce a result. |
 
 ## 7. Direction check
@@ -138,7 +138,7 @@ Settled:
 - **150 train cases per hospital** (of ~251); all **62** test cases used.
 - **R = 25 rounds, E = 1** local epoch. Local-only and centralized get the same 25 epochs
   ([matched compute](experiments.md#3-how-each-hypothesis-is-measured)).
-- **2D now, 3D behind a feasibility gate.** One cache serves both — it stores volumes, not
+- **2D and 3D completed.** One cache serves both — it stores volumes, not
   pre-sampled slices.
 - **The custom loop produces the results.** FLARE is a later demonstration, not a dependency.
 
@@ -149,3 +149,33 @@ Still guesses, worth interrogating before the cache build:
   If H1 comes out weak, raising the cap toward 251 makes it *weaker*; lowering it toward ~80 sharpens it.
 - **Shift strength is provisional** — H4's outlier margin is +0.149 σ after z-normalization. Whether
   that suffices is answered empirically by gate 3.
+
+## 8. Reruns and before/after comparison
+
+Every default above still reproduces the frozen baseline. Improvements are opt-in and land in a
+separate directory, so the earlier results survive the rerun that supersedes them.
+
+```bash
+python scripts/freeze_baseline.py                      # snapshot + SHA-256 the current results
+python scripts/build_cache.py --max-cases 170 --workers 8   # + the validation cases (resumable)
+python scripts/run_experiment.py --method fedbn --dim 2d --preset v2 --tag v2
+python scripts/compare_runs.py --dim 2d --md-out docs/results-comparison.md
+```
+
+| Flag | Effect |
+|---|---|
+| *(none)* | the baseline recipe, bit-reproducible |
+| `--preset v2` | cosine LR, augmentation, TTA, component filtering, validation-based selection |
+| `--tag v2` | writes to `artifacts/runs/v2/<run_id>/` instead of `artifacts/runs/<run_id>/` |
+
+**Reruns without a tag are refused, not appended.** `metrics.jsonl` is opened in append mode and
+`run_id` carries no run counter, so a second run of the same method+seed would have written its
+rounds underneath the first's inside one file — and `analyze.py`, which scores `max(round)`, would
+have averaged two experiments into one number with nothing in the output to show for it.
+
+Full rationale, the evaluation-noise finding behind `--select last-k`, and what the comparison
+reports: [`improvements.md`](improvements.md).
+
+## 9. Additional Steps
+- **Step: Launch Web Demo** — `uv run python scripts/demo_server.py` → opens at http://localhost:8000
+- **Step: Run Tests** — `uv run python -m pytest tests/ -v` → 44 tests

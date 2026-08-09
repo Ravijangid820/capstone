@@ -63,6 +63,35 @@ a diagonal evaluation.
 | **H2** | the global model fails the outlier | `dice(FedAvg, H4) < dice(Local-only, H4)` |
 | **H3** | personalization recovers the outlier | `mean_dice(FedBN) ≥ mean_dice(FedAvg)` **and** `dice(FedBN, H4) ≥ dice(FedAvg, H4)` (closing the H2 gap) |
 
+### At which round — and why the answer is not "the last one"
+
+Each test above is an inequality between two numbers, so **which round supplies them is part of
+the test**, not a detail. The curves plateau by roughly round 15 and then oscillate by more than
+the gaps being tested: on 2D seed 42 FedAvg's mean WT is 0.8611 at round 24 and 0.8354 at round 25,
+against local-only's 0.8491 and 0.8526. H1 is decided in opposite directions by adjacent rounds.
+
+Scoring the last round alone therefore reports one draw from that oscillation. Averaging the final
+five reduces the variance without touching a model, and on the frozen baseline it moves H1 from
+supported in 1/3 seeds to 3/3 — same logs, same models, better estimator. Full evidence in
+[improvements.md](improvements.md) §1.
+
+```bash
+python scripts/analyze.py --dim 2d --select last-k --last-k 5
+```
+
+Two consequences worth carrying into the write-up:
+
+- **H3 should be reported as its two halves.** "FedBN recovers the outlier" holds in every seed
+  under either estimator. "FedBN ≥ FedAvg on the mean" is inside the noise. Bundling them into one
+  verdict lets a coin flip decide the fate of a real finding.
+- **The estimator must be fixed before the verdicts are read**, and applied identically to
+  anything it is compared against — the same latitude used afterwards would let either answer be
+  justified. `scripts/compare_runs.py` enforces this across two runs; `analyze.py` does not.
+
+The 3D runs were re-checked the same way and all three verdicts are estimator-independent, so the
+3D reversal in [methodology.md](methodology.md#21-the-3d-reversal-finding) does not rest on this
+choice. The 2D H1 verdict does.
+
 Centralized (E0) frames all of the above as "how close to the pooled ceiling did we get."
 
 > **Matched compute — what makes H1 a real test.** FedAvg gives each hospital `R × E` local epochs.

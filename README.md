@@ -54,6 +54,14 @@ Full 2D matrix, R=25, seed 42, 150 train/hospital. Final-round WT Dice on each h
   hospitals but the outlier's collapse drags the average down. Not "federation is useless" — it is the
   motivation for FedBN, which then delivers.
 
+> **⚠ The H1 verdict above is not stable, and the fix needs no retraining.** These are
+> *final-round* numbers, and the curves plateau by ~round 15 and then oscillate by more than the
+> gap H1 tests: FedAvg's mean WT is 0.861 at round 24 and 0.835 at round 25, against local-only's
+> 0.849 and 0.853. Averaging the last five rounds instead — same logs, same models — gives FedAvg
+> 0.850 vs local 0.844 and **H1 holds in all 3 seeds** rather than 1. H2 and H3's outlier-recovery
+> claim are unaffected; H3's "beats FedAvg on the mean" half is also inside the noise.
+> `python scripts/analyze.py --dim 2d --select last-k --last-k 5` · [improvements.md](docs/improvements.md)
+
 Details and figures: [experiments.md](docs/experiments.md#4-results--2d-backbone-r25-e1-seed-42-150-trainhospital) · `artifacts/figures/`. Regenerate: `python scripts/analyze.py --dim 2d`.
 
 ## Results (3D)
@@ -76,6 +84,10 @@ making FedAvg robust to scanner shift even on the outlier hospital. FedBN actual
 suffers in 3D because 150 local cases per hospital are insufficient to estimate stable
 3D batch-normalization running statistics — the higher-dimensional feature maps amplify
 the variance, so keeping BN layers local becomes a liability rather than an advantage.
+
+Unlike the 2D H1 verdict, **all three 3D verdicts survive the last-5-round estimator unchanged** —
+the 3D curves are visibly steadier (H4 spans 0.008 over rounds 21–25, against swings up to 0.12 in
+2D). The reversal is a property of the backbone, not of which round the loop stopped on.
 
 Details and figures: `artifacts/figures/`. Regenerate: `python scripts/analyze.py --dim 3d`.
 

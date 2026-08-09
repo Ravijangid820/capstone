@@ -1,0 +1,568 @@
+{
+  "frozen_at": "2026-08-09T17:56:26+00:00",
+  "git_commit": "c2cd9deb5719086996690fa8200cdf5ae0774a53",
+  "n_runs": 14,
+  "runs": {
+    "centralized_2d_42": {
+      "files": {
+        "config.json": {
+          "bytes": 683,
+          "sha256": "f6caf82e91d1bb153b250138b252b76e88dfcdbc4a2799b1b349611ea764481c"
+        },
+        "metrics.jsonl": {
+          "bytes": 24405,
+          "sha256": "db8eae044e8f3d49960551c63af29d04dd031bd05bf2f669d65aea2459575c82"
+        },
+        "run.log": {
+          "bytes": 11774,
+          "sha256": "d7c0c4b833ed3c4bc6482f7253270bf4aaea0a9ec2764009ad05e17fba91ba82"
+        }
+      },
+      "summary": {
+        "H4_final_round": {
+          "et": 0.738069,
+          "tc": 0.801946,
+          "wt": 0.828229
+        },
+        "H4_last5_mean": {
+          "et": 0.750037,
+          "tc": 0.800161,
+          "wt": 0.829923
+        },
+        "final_round": {
+          "et": 0.793776,
+          "tc": 0.834617,
+          "wt": 0.851717
+        },
+        "last5_mean": {
+          "et": 0.795939,
+          "tc": 0.834133,
+          "wt": 0.858228
+        },
+        "rounds": 25,
+        "rows": 100
+      }
+    },
+    "centralized_3d_42": {
+      "files": {
+        "config.json": {
+          "bytes": 683,
+          "sha256": "6dd59976044a425796334d4438432d8ce256a1f71a9cd268da10fce01a6dfade"
+        },
+        "metrics.jsonl": {
+          "bytes": 24427,
+          "sha256": "1a9589cade282124fadb45b8d7b75f90ddebac7d58c58fa01ff0d3e05370ad72"
+        },
+        "run.log": {
+          "bytes": 11774,
+          "sha256": "540baca7af4c2b60c0c5d84e7197226276d7e4bc4077cee96ea2e903f7950dd0"
+        }
+      },
+      "summary": {
+        "H4_final_round": {
+          "et": 0.731655,
+          "tc": 0.794506,
+          "wt": 0.847895
+        },
+        "H4_last5_mean": {
+          "et": 0.737639,
+          "tc": 0.793902,
+          "wt": 0.85612
+        },
+        "final_round": {
+          "et": 0.792559,
+          "tc": 0.835836,
+          "wt": 0.880052
+        },
+        "last5_mean": {
+          "et": 0.791061,
+          "tc": 0.832645,
+          "wt": 0.876811
+        },
+        "rounds": 25,
+        "rows": 100
+      }
+    },
+    "fedavg_2d_123": {
+      "files": {
+        "config.json": {
+          "bytes": 684,
+          "sha256": "8a6b5de18bfa6d6c7069277436ebc828e640ac3ea50bee8a783c7a0ebc68f927"
+        },
+        "metrics.jsonl": {
+          "bytes": 23529,
+          "sha256": "978e29c9ee77e82638c5eff65226aa76e9b94f1159ad5fde86565fe1d4ce80a2"
+        },
+        "run.log": {
+          "bytes": 17005,
+          "sha256": "b0af9ddf7ccdd6e4e95ede417eb4a31ed566f0fb4e4f546b7f606f63b06b3707"
+        }
+      },
+      "summary": {
+        "H4_final_round": {
+          "et": 0.689867,
+          "tc": 0.754979,
+          "wt": 0.77342
+        },
+        "H4_last5_mean": {
+          "et": 0.688255,
+          "tc": 0.745543,
+          "wt": 0.75611
+        },
+        "final_round": {
+          "et": 0.770507,
+          "tc": 0.820112,
+          "wt": 0.854626
+        },
+        "last5_mean": {
+          "et": 0.769312,
+          "tc": 0.815622,
+          "wt": 0.848812
+        },
+        "rounds": 25,
+        "rows": 100
+      }
+    },
+    "fedavg_2d_42": {
+      "files": {
+        "config.json": {
+          "bytes": 683,
+          "sha256": "f6caf82e91d1bb153b250138b252b76e88dfcdbc4a2799b1b349611ea764481c"
+        },
+        "metrics.jsonl": {
+          "bytes": 23436,
+          "sha256": "ef931337bffca613e7e099a3ce405e151f372b74be6f28314022f6df2a543ff6"
+        },
+        "run.log": {
+          "bytes": 17003,
+          "sha256": "e9811e8fe5d844fc676b6d8b3b24c251482e088214f51337c96c8498f308d9f8"
+        }
+      },
+      "summary": {
+        "H4_final_round": {
+          "et": 0.667498,
+          "tc": 0.737884,
+          "wt": 0.737331
+        },
+        "H4_last5_mean": {
+          "et": 0.695929,
+          "tc": 0.764531,
+          "wt": 0.775373
+        },
+        "final_round": {
+          "et": 0.763629,
+          "tc": 0.816705,
+          "wt": 0.835391
+        },
+        "last5_mean": {
+          "et": 0.776167,
+          "tc": 0.827383,
+          "wt": 0.850175
+        },
+        "rounds": 25,
+        "rows": 100
+      }
+    },
+    "fedavg_2d_7": {
+      "files": {
+        "config.json": {
+          "bytes": 682,
+          "sha256": "941a88c80b24bf9d4114557d9875a61c21b58b1cb2c734bc81bf6d214090217a"
+        },
+        "metrics.jsonl": {
+          "bytes": 23331,
+          "sha256": "5fc1bb1b9f006f06e8b05d672a2dca395b655b7f1e9d4750d25c8c319d89b4d8"
+        },
+        "run.log": {
+          "bytes": 17001,
+          "sha256": "cf74db7b0e6f37978d632d10dcd59a611aac73ebc20817efbf09d6de27f6990e"
+        }
+      },
+      "summary": {
+        "H4_final_round": {
+          "et": 0.713642,
+          "tc": 0.771614,
+          "wt": 0.757994
+        },
+        "H4_last5_mean": {
+          "et": 0.704205,
+          "tc": 0.761528,
+          "wt": 0.776905
+        },
+        "final_round": {
+          "et": 0.778646,
+          "tc": 0.826272,
+          "wt": 0.840408
+        },
+        "last5_mean": {
+          "et": 0.776728,
+          "tc": 0.823198,
+          "wt": 0.850364
+        },
+        "rounds": 25,
+        "rows": 100
+      }
+    },
+    "fedavg_3d_42": {
+      "files": {
+        "config.json": {
+          "bytes": 683,
+          "sha256": "6dd59976044a425796334d4438432d8ce256a1f71a9cd268da10fce01a6dfade"
+        },
+        "metrics.jsonl": {
+          "bytes": 23438,
+          "sha256": "d336347f10723327028d9f2aff71393fde80f554fa215a871a92ea34860a94fa"
+        },
+        "run.log": {
+          "bytes": 17003,
+          "sha256": "deff81dc8312bb356e630b13da00fdfd16662c7e5b002712716e30f0debf60a6"
+        }
+      },
+      "summary": {
+        "H4_final_round": {
+          "et": 0.718814,
+          "tc": 0.772322,
+          "wt": 0.848315
+        },
+        "H4_last5_mean": {
+          "et": 0.723639,
+          "tc": 0.765856,
+          "wt": 0.839177
+        },
+        "final_round": {
+          "et": 0.76986,
+          "tc": 0.80102,
+          "wt": 0.858862
+        },
+        "last5_mean": {
+          "et": 0.762712,
+          "tc": 0.792214,
+          "wt": 0.852455
+        },
+        "rounds": 25,
+        "rows": 100
+      }
+    },
+    "fedbn_2d_123": {
+      "files": {
+        "config.json": {
+          "bytes": 684,
+          "sha256": "8a6b5de18bfa6d6c7069277436ebc828e640ac3ea50bee8a783c7a0ebc68f927"
+        },
+        "metrics.jsonl": {
+          "bytes": 22951,
+          "sha256": "ebe82eaadeef0aa8926d42831d7c5669a6e7a0951c5cef9c3be474e50edb01d4"
+        },
+        "run.log": {
+          "bytes": 17076,
+          "sha256": "1c6485c3ef40c9f8ad812d5baa452d2917d7f921e2775bafac3b50f31563d3bd"
+        }
+      },
+      "summary": {
+        "H4_final_round": {
+          "et": 0.64856,
+          "tc": 0.714064,
+          "wt": 0.675912
+        },
+        "H4_last5_mean": {
+          "et": 0.713439,
+          "tc": 0.772394,
+          "wt": 0.793673
+        },
+        "final_round": {
+          "et": 0.759878,
+          "tc": 0.809765,
+          "wt": 0.82402
+        },
+        "last5_mean": {
+          "et": 0.771325,
+          "tc": 0.814897,
+          "wt": 0.845418
+        },
+        "rounds": 25,
+        "rows": 100
+      }
+    },
+    "fedbn_2d_42": {
+      "files": {
+        "config.json": {
+          "bytes": 683,
+          "sha256": "f6caf82e91d1bb153b250138b252b76e88dfcdbc4a2799b1b349611ea764481c"
+        },
+        "metrics.jsonl": {
+          "bytes": 22832,
+          "sha256": "0b8b60d06eefb39d30466d655da93ee2510ee28442a2ebbcb8b6af10b780a6dd"
+        },
+        "run.log": {
+          "bytes": 17074,
+          "sha256": "faa4c30c891c287a4f7f0cc2596af642446f0c3592df8ac13bb0702d2f4d3538"
+        }
+      },
+      "summary": {
+        "H4_final_round": {
+          "et": 0.727955,
+          "tc": 0.794992,
+          "wt": 0.829042
+        },
+        "H4_last5_mean": {
+          "et": 0.732833,
+          "tc": 0.79798,
+          "wt": 0.83344
+        },
+        "final_round": {
+          "et": 0.779187,
+          "tc": 0.827958,
+          "wt": 0.852527
+        },
+        "last5_mean": {
+          "et": 0.783774,
+          "tc": 0.831462,
+          "wt": 0.851387
+        },
+        "rounds": 25,
+        "rows": 100
+      }
+    },
+    "fedbn_2d_7": {
+      "files": {
+        "config.json": {
+          "bytes": 682,
+          "sha256": "941a88c80b24bf9d4114557d9875a61c21b58b1cb2c734bc81bf6d214090217a"
+        },
+        "metrics.jsonl": {
+          "bytes": 22748,
+          "sha256": "495be46396a827dcb2111a8c6e77bbdc28f5ff86b055f6bd26c481451f96528b"
+        },
+        "run.log": {
+          "bytes": 17072,
+          "sha256": "feaaccaaf332f1d46e5c9cdb85cb02027233f5cae048b9802c63d76eb01b2bcf"
+        }
+      },
+      "summary": {
+        "H4_final_round": {
+          "et": 0.710941,
+          "tc": 0.767674,
+          "wt": 0.823662
+        },
+        "H4_last5_mean": {
+          "et": 0.734228,
+          "tc": 0.787729,
+          "wt": 0.818455
+        },
+        "final_round": {
+          "et": 0.77131,
+          "tc": 0.818208,
+          "wt": 0.849814
+        },
+        "last5_mean": {
+          "et": 0.770862,
+          "tc": 0.816522,
+          "wt": 0.84562
+        },
+        "rounds": 25,
+        "rows": 100
+      }
+    },
+    "fedbn_3d_42": {
+      "files": {
+        "config.json": {
+          "bytes": 683,
+          "sha256": "6dd59976044a425796334d4438432d8ce256a1f71a9cd268da10fce01a6dfade"
+        },
+        "metrics.jsonl": {
+          "bytes": 22836,
+          "sha256": "baca6efb1701da219beaaf8cdd96e2975a90c4c492d75e44ea48b19128251ec0"
+        },
+        "run.log": {
+          "bytes": 17074,
+          "sha256": "1e7b31c6927fb1bb68cfe3e846f688fd8a24d8ff6eca012beb6538b25193d8c8"
+        }
+      },
+      "summary": {
+        "H4_final_round": {
+          "et": 0.702752,
+          "tc": 0.763305,
+          "wt": 0.832721
+        },
+        "H4_last5_mean": {
+          "et": 0.717072,
+          "tc": 0.76517,
+          "wt": 0.833151
+        },
+        "final_round": {
+          "et": 0.74608,
+          "tc": 0.78111,
+          "wt": 0.834039
+        },
+        "last5_mean": {
+          "et": 0.757,
+          "tc": 0.78963,
+          "wt": 0.842193
+        },
+        "rounds": 25,
+        "rows": 100
+      }
+    },
+    "local_2d_123": {
+      "files": {
+        "config.json": {
+          "bytes": 684,
+          "sha256": "8a6b5de18bfa6d6c7069277436ebc828e640ac3ea50bee8a783c7a0ebc68f927"
+        },
+        "metrics.jsonl": {
+          "bytes": 25685,
+          "sha256": "3c04a6c04b02260680a04efdde0ef4e439568f8581ade3e4f020c7954a74d4ae"
+        },
+        "run.log": {
+          "bytes": 17808,
+          "sha256": "dd0c1b9ad523322ee75beb2dd44d83589e4cbca0c692f4d7fef44642ceae8b48"
+        }
+      },
+      "summary": {
+        "H4_final_round": {
+          "et": 0.737896,
+          "tc": 0.794793,
+          "wt": 0.814503
+        },
+        "H4_last5_mean": {
+          "et": 0.736748,
+          "tc": 0.788068,
+          "wt": 0.814885
+        },
+        "final_round": {
+          "et": 0.759943,
+          "tc": 0.797557,
+          "wt": 0.8451
+        },
+        "last5_mean": {
+          "et": 0.760383,
+          "tc": 0.79601,
+          "wt": 0.839999
+        },
+        "rounds": 25,
+        "rows": 112
+      }
+    },
+    "local_2d_42": {
+      "files": {
+        "config.json": {
+          "bytes": 683,
+          "sha256": "f6caf82e91d1bb153b250138b252b76e88dfcdbc4a2799b1b349611ea764481c"
+        },
+        "metrics.jsonl": {
+          "bytes": 25590,
+          "sha256": "1e7ada5a89bf1d8517c714f71e7f9202e538d4b2b1b4998ce5b6d61b8ae8c344"
+        },
+        "run.log": {
+          "bytes": 17806,
+          "sha256": "482d66dfb3b2fdd07fca63290d2aeb3de79fea398f4783059441a97c2335c8e9"
+        }
+      },
+      "summary": {
+        "H4_final_round": {
+          "et": 0.762683,
+          "tc": 0.825395,
+          "wt": 0.856935
+        },
+        "H4_last5_mean": {
+          "et": 0.755724,
+          "tc": 0.810457,
+          "wt": 0.837067
+        },
+        "final_round": {
+          "et": 0.786918,
+          "tc": 0.830966,
+          "wt": 0.852551
+        },
+        "last5_mean": {
+          "et": 0.780867,
+          "tc": 0.822833,
+          "wt": 0.843564
+        },
+        "rounds": 25,
+        "rows": 112
+      }
+    },
+    "local_2d_7": {
+      "files": {
+        "config.json": {
+          "bytes": 682,
+          "sha256": "941a88c80b24bf9d4114557d9875a61c21b58b1cb2c734bc81bf6d214090217a"
+        },
+        "metrics.jsonl": {
+          "bytes": 25468,
+          "sha256": "330c84c8d1666f16530639ad240ca6c0348795e2c991702a3d9c7b46e264c0c6"
+        },
+        "run.log": {
+          "bytes": 17804,
+          "sha256": "09c3d59fe3f109e920b31f8aea503ec7974038e37841649f50369e569562bd38"
+        }
+      },
+      "summary": {
+        "H4_final_round": {
+          "et": 0.757399,
+          "tc": 0.808431,
+          "wt": 0.841705
+        },
+        "H4_last5_mean": {
+          "et": 0.748939,
+          "tc": 0.800946,
+          "wt": 0.83771
+        },
+        "final_round": {
+          "et": 0.781992,
+          "tc": 0.823213,
+          "wt": 0.850459
+        },
+        "last5_mean": {
+          "et": 0.773355,
+          "tc": 0.816624,
+          "wt": 0.846196
+        },
+        "rounds": 25,
+        "rows": 112
+      }
+    },
+    "local_3d_42": {
+      "files": {
+        "config.json": {
+          "bytes": 683,
+          "sha256": "6dd59976044a425796334d4438432d8ce256a1f71a9cd268da10fce01a6dfade"
+        },
+        "metrics.jsonl": {
+          "bytes": 25566,
+          "sha256": "f36d545f6528e66df0dfe038d6dce0e0976e43867d21565596a236a3ed5f7da5"
+        },
+        "run.log": {
+          "bytes": 17806,
+          "sha256": "ac36c908c262a02343158fa95e770cb6460a1dea14c4e91bf27418ac178e0016"
+        }
+      },
+      "summary": {
+        "H4_final_round": {
+          "et": 0.710479,
+          "tc": 0.74929,
+          "wt": 0.819441
+        },
+        "H4_last5_mean": {
+          "et": 0.726349,
+          "tc": 0.757694,
+          "wt": 0.831523
+        },
+        "final_round": {
+          "et": 0.750826,
+          "tc": 0.777771,
+          "wt": 0.851462
+        },
+        "last5_mean": {
+          "et": 0.750176,
+          "tc": 0.77183,
+          "wt": 0.849046
+        },
+        "rounds": 25,
+        "rows": 112
+      }
+    }
+  },
+  "source": "D:\\capstone\\artifacts\\runs"
+}

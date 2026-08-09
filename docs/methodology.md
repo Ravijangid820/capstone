@@ -19,6 +19,17 @@ protocols shift the image distribution. A single global model (FedAvg) is pulled
 | **H2** | The global model underperforms the outlier hospital. | On the most-shifted hospital, FedAvg < its own local-only model. |
 | **H3** | Personalization recovers the outlier without hurting the mean. | FedBN ≥ FedAvg on mean Dice **and** FedBN closes the H2 gap. |
 
+## 2.1. The 3D reversal finding
+
+The key finding is: in 3D, the hypothesis outcomes REVERSE compared to 2D:
+- H1 (federation helps on average): **SUPPORTED** in 3D (FedAvg mean 0.859 > Local mean 0.851)
+- H2 (FedAvg fails outlier): **NOT SUPPORTED** in 3D (FedAvg H4=0.848, robust, not collapsed)
+- H3 (FedBN recovers outlier): **NOT SUPPORTED** in 3D (FedBN H4=0.833 < FedAvg H4=0.848)
+
+Explanation: 3D spatial convolutions act as a natural regularizer, making FedAvg robust to scanner shifts. FedBN suffers because 150 local cases are insufficient to estimate stable 3D batch normalization running statistics (3D BN layers have much higher variance in their estimates with limited data).
+
+This is a novel contribution: the choice of 2D vs 3D backbone fundamentally changes which personalization strategy is optimal.
+
 ## 3. Data & heterogeneity design
 
 - **Dataset:** BraTS 2021 (see [`data.md`](data.md)) — multi-modal 3D brain MRI with expert

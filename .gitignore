@@ -28,3 +28,8 @@ artifacts/runs/
 artifacts/**/checkpoints/
 # Default cache dir (~44 GB when full). See docs/environments.md; override FEDBRATS_CACHE_DIR.
 artifacts/cache/
+# artifacts/baseline/ is deliberately NOT ignored. It is the frozen "before" snapshot that every
+# accuracy claim is measured against (~1 MB of JSONL + a SHA-256 manifest). Ignoring it would
+# leave the comparison resting on files that exist on exactly one laptop. See docs/improvements.md.
+# Rescore outputs are regenerable from checkpoints, so only the written-up report is tracked.
+artifacts/rescore_*/
