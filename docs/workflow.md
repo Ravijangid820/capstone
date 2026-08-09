@@ -94,11 +94,27 @@ Measured on the RTX 3050 (fp32, 2D, batch 8, 192²). T4 figures extrapolate at ~
 | Full-volume evaluation | **0.41 s / volume** | 248 volumes/round → **1.7 min** |
 | Preprocess + cache one case | **2.3 s** (4 workers) | 848 cases → ≈ 33 min |
 | Cache size per case | **35 MB** | 848 cases → ≈ 30 GB |
-| One round (train + eval) | 2.2 min | ×25 rounds → ≈ 55 min/method |
-| All four methods | ≈ 3.7 h (3050) | ≈ 2.5 h (T4) *(estimate)* |
 
 **Evaluation costs 3.5× training.** Scoring all 62 test volumes per hospital every round dominates the
 run — not the gradient steps. This is not what the design would lead you to expect.
+
+### End-to-end, from the run logs (not extrapolated)
+
+The component timings above predict 2.2 min/round. The completed runs took **4.0–4.7**, so budget
+from these rather than from the microbenchmarks — the gap is per-case memmap I/O and Python
+overhead that a warm single-operation probe does not see.
+
+| 2D run (R=25, seed 42) | Wall clock | min/round |
+|---|---|---|
+| centralized | 117 min | 4.67 |
+| local-only | 114 min | 4.55 |
+| FedAvg | 104 min | 4.16 |
+| FedBN | 98 min | 3.94 |
+| **all four** | **7.2 h** on the 3050 | — |
+
+`--preset v2` adds ~30 % to evaluation (80 validation volumes/round on top of 248 test) plus one
+TTA pass at the end, so a v2 matrix is roughly **9–9.5 h** for one seed. Three seeds is an
+overnight-plus-a-day job; `scripts/run_matrix.py` is resumable so it can be taken in pieces.
 
 *Lever, if the run needs to be cheaper:* evaluate a fixed 20-case subset each round and the full test
 set only at the final round. Roughly halves wall-clock at the price of noisier learning curves. At
