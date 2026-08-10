@@ -146,6 +146,32 @@ def diagonal(rows: list[dict], select: str, last_k: int) -> tuple[dict[str, dict
     return {h: {reg: statistics.fmean(v) for reg, v in d.items()} for h, d in acc.items()}, label
 
 
+def completion(run_dir: Path) -> tuple[int, int | None]:
+    """(highest round with results, rounds the config asked for). `None` when unknowable."""
+    rows = [r for r in load_jsonl(run_dir / "metrics.jsonl") if r.get("split") == "test"]
+    seen = max((r["round"] for r in rows), default=0)
+    cfg = read_config(run_dir, ("config.json", "rescore_config.json"))
+    want = cfg.get("rounds")
+    return seen, want if isinstance(want, int) else None
+
+
+def is_incomplete(run_dir: Path) -> str | None:
+    """Why this run is not finished, or None if it is. Guards against comparing a live run.
+
+    A training run streams its rounds as it goes, so a directory being written *right now* looks
+    exactly like a finished one with fewer rounds -- and a last-k estimator over rounds 1-3 of a
+    25-round run reports a catastrophic regression that is really just an unfinished experiment.
+    `summary.json` is written last and is the reliable signal; the round count covers runs made
+    before it existed.
+    """
+    if (run_dir / "summary.json").exists():
+        return None
+    seen, want = completion(run_dir)
+    if want and seen < want:
+        return f"{seen}/{want} rounds"
+    return None
+
+
 def metrics_rows(run_dir: Path) -> list[dict]:
     """A run's mean-Dice rows, including any added later by rescore.py.
 
@@ -254,6 +280,8 @@ def main() -> int:
     ap.add_argument("--last-k", type=int, default=5)
     ap.add_argument("--json-out", type=str, default=None)
     ap.add_argument("--md-out", type=str, default=None, help="write the report as markdown")
+    ap.add_argument("--include-partial", action="store_true",
+                    help="compare runs that have not finished (they will look far worse than they are)")
     args = ap.parse_args()
 
     base_root, new_root = Path(args.baseline), Path(args.new)
@@ -268,6 +296,11 @@ def main() -> int:
                                    if r.split("_")[0] in METHOD_ORDER else 99, r))
     shared = [r for r in shared if f"_{args.dim}_" in r
               and (args.seed is None or r.endswith(f"_{args.seed}"))]
+
+    partial = {r: why for r in shared
+               if (why := is_incomplete(new_runs[r]) or is_incomplete(base_runs[r]))}
+    if partial and not args.include_partial:
+        shared = [r for r in shared if r not in partial]
     if not shared:
         print(f"no run_ids in common between {base_root} and {new_root} for dim={args.dim}",
               file=sys.stderr)
@@ -289,6 +322,10 @@ def main() -> int:
     emit(f"- **after:** `{new_root}`")
     emit(f"- **estimator (both sides):** {est}")
     emit(f"- **runs compared:** {', '.join(shared)}")
+    if partial:
+        state = "included anyway" if args.include_partial else "excluded"
+        emit(f"- **unfinished, {state}:** "
+             + ", ".join(f"`{r}` ({why})" for r, why in sorted(partial.items())))
     emit()
 
     # --- 1. what changed ------------------------------------------------------------------
