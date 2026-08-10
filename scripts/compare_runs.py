@@ -166,6 +166,11 @@ def is_incomplete(run_dir: Path) -> str | None:
     """
     if (run_dir / "summary.json").exists():
         return None
+    # A rescore directory holds a finished evaluation of a finished checkpoint. It has no
+    # summary.json and no per-round metrics.jsonl to count, so a round-count test reads it as
+    # "0 of 25 rounds" and throws away a perfectly complete side of the comparison.
+    if any(r.get("stage") in FINAL_STAGES for r in load_jsonl(run_dir / "rescore_metrics.jsonl")):
+        return None
     seen, want = completion(run_dir)
     if want and seen < want:
         return f"{seen}/{want} rounds"
