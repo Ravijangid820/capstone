@@ -121,6 +121,86 @@ would suggest the metric, not the method, had changed.
 
 ---
 
+## 2b. Results — the full 2D rerun, three seeds
+
+Complete matrix rerun with `--preset v2`. Both sides scored with the **same pre-registered
+estimator** (mean of rounds 21–25), on the same split, same seeds, same training cases.
+
+| Method | baseline mean WT | v2 mean WT | baseline H4 | v2 H4 |
+|---|---|---|---|---|
+| local-only | 0.8433 ± 0.0025 | **0.8541 ± 0.0036** | 0.8299 ± 0.0106 | **0.8400 ± 0.0048** |
+| FedAvg | 0.8498 ± 0.0007 | 0.8449 ± 0.0025 | 0.7695 ± 0.0095 | 0.7574 ± 0.0098 |
+| FedBN | 0.8475 ± 0.0028 | **0.8590 ± 0.0021** | 0.8152 ± 0.0164 | **0.8248 ± 0.0064** |
+| centralized *(seed 42)* | 0.8582 | **0.8835** | 0.8299 | **0.8576** |
+
+### The headline: H3 goes from 1/3 seeds to 3/3
+
+| Hypothesis | baseline | v2 |
+|---|---|---|
+| **H1** mean(FedAvg) ≥ mean(local) | 3/3 ✅ | **0/3 ❌** |
+| **H2** FedAvg fails the outlier | 3/3 ✅ | **3/3 ✅** |
+| **H3** FedBN ≥ FedAvg, recovers outlier | **1/3** ⚠ | **3/3 ✅** |
+
+H3 is the project's thesis and it was previously carried by one seed out of three. The reason is
+visible in the table: in the baseline FedBN was *behind* FedAvg on the mean (0.8475 vs 0.8498), so
+the "≥ on the mean" clause failed in two seeds. Under v2 FedBN leads by **+0.0141**, and the
+clause passes everywhere.
+
+**Reproducibility improved alongside accuracy.** Across-seed spread on the outlier fell from
+±0.0164 to ±0.0064 for FedBN (2.6×) and ±0.0106 → ±0.0048 for local-only (2.2×), and
+round-to-round plateau oscillation fell 2.7–5.9× (see §2c). Both make every number above more
+quotable than its baseline counterpart.
+
+### Paired per-case evidence, end to end
+
+Δ WT Dice over 248 test volumes per run, comparing each pipeline's *reported* model:
+
+| Method | seed 42 | seed 7 | seed 123 | mean | same sign |
+|---|---|---|---|---|---|
+| FedBN | +0.0139 | +0.0147 | +0.0387 | **+0.0224** | yes |
+| local-only | +0.0106 | +0.0046 | +0.0144 | +0.0099 | yes |
+| FedAvg | +0.0120 | +0.0113 | −0.0080 | +0.0051 | **no** |
+
+Per-seed reports: [`results-comparison-seed42.md`](results-comparison-seed42.md),
+[`seed7`](results-comparison-seed7.md), [`seed123`](results-comparison-seed123.md).
+
+### H1 flipped off, and that is a finding rather than a failure
+
+H1 went 3/3 → 0/3. FedAvg's mean is dragged down by its outlier, which got *worse* under the new
+recipe in every seed, while local-only improved in every seed. Nothing about federation changed —
+the gap H1 measures simply moved.
+
+Read together with §1, **H1 has now flipped in both directions during this work**: the estimator
+fix moved it 1/3 → 3/3 on the baseline, and the training recipe moved it 3/3 → 0/3. Both movements
+are real and both are smaller than the round-to-round noise the original protocol reported it
+through. The honest conclusion is that H1 as stated is a knife-edge comparison between two nearly
+equal numbers, and the useful claim is the decomposition underneath it: FedAvg beats local-only on
+the three typical hospitals and loses badly on the outlier. That is H2, which is 3/3 everywhere.
+
+### A retraction
+
+An earlier reading of seed 42 alone suggested H4 degradation ordered monotonically by how much
+weight averaging a method does (centralized > local > FedBN > FedAvg). **That did not replicate.**
+At seed 7 FedBN's H4 rose +0.0146 while local-only's fell −0.0041, reversing the order. What holds
+across all three seeds is narrower: FedAvg's outlier degrades under the new recipe, and FedBN's
+mean improves. The tidy mechanism was over-fitted to one seed — which is precisely what the extra
+two seeds were run to catch.
+
+## 2c. Plateau stability — the original problem, measured
+
+Round-to-round swing in mean WT over rounds 21–25, seed 42:
+
+| Method | baseline | v2 | reduction |
+|---|---|---|---|
+| centralized | 0.0234 | 0.0052 | **4.5×** |
+| local-only | 0.0182 | 0.0066 | **2.7×** |
+| FedAvg | 0.0257 | 0.0044 | **5.9×** |
+
+Cosine decay across rounds is what did this, and it is the fix for the failure in §1: verdicts are
+no longer hostage to which round the loop happened to stop on.
+
+---
+
 ## 3. The protocol
 
 ```mermaid

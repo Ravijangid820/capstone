@@ -54,15 +54,45 @@ Full 2D matrix, R=25, seed 42, 150 train/hospital. Final-round WT Dice on each h
   hospitals but the outlier's collapse drags the average down. Not "federation is useless" — it is the
   motivation for FedBN, which then delivers.
 
-> **⚠ The H1 verdict above is not stable, and the fix needs no retraining.** These are
-> *final-round* numbers, and the curves plateau by ~round 15 and then oscillate by more than the
-> gap H1 tests: FedAvg's mean WT is 0.861 at round 24 and 0.835 at round 25, against local-only's
-> 0.849 and 0.853. Averaging the last five rounds instead — same logs, same models — gives FedAvg
-> 0.850 vs local 0.844 and **H1 holds in all 3 seeds** rather than 1. H2 and H3's outlier-recovery
-> claim are unaffected; H3's "beats FedAvg on the mean" half is also inside the noise.
-> `python scripts/analyze.py --dim 2d --select last-k --last-k 5` · [improvements.md](docs/improvements.md)
+> **⚠ These are single-final-round numbers and the verdicts above are not stable.** The curves
+> plateau by ~round 15 then oscillate by more than the gaps being tested — FedAvg's mean WT is
+> 0.861 at round 24 and 0.835 at round 25. Scoring the last five rounds instead, on the same logs,
+> flips H1 to supported in 3/3 seeds. See **Results (2D, improved)** below for the superseding run.
 
 Details and figures: [experiments.md](docs/experiments.md#4-results--2d-backbone-r25-e1-seed-42-150-trainhospital) · `artifacts/figures/`. Regenerate: `python scripts/analyze.py --dim 2d`.
+
+## Results (2D, improved recipe — supersedes the table above)
+
+Full rerun with `--preset v2` (cosine LR across rounds, augmentation, flip-TTA, component
+filtering, validation-based checkpoint selection). Three seeds, same split and same training cases
+as the baseline, both sides scored with the same pre-registered estimator (mean of rounds 21–25):
+
+| Method | baseline mean WT | **v2 mean WT** | baseline H4 | **v2 H4** |
+|---|---|---|---|---|
+| Local-only (floor) | 0.8433 ± 0.0025 | **0.8541 ± 0.0036** | 0.8299 ± 0.0106 | **0.8400 ± 0.0048** |
+| FedAvg | 0.8498 ± 0.0007 | 0.8449 ± 0.0025 | 0.7695 ± 0.0095 | 0.7574 ± 0.0098 |
+| **FedBN** | 0.8475 ± 0.0028 | **0.8590 ± 0.0021** | 0.8152 ± 0.0164 | **0.8248 ± 0.0064** |
+| Centralized *(seed 42)* | 0.8582 | **0.8835** | 0.8299 | **0.8576** |
+
+| Hypothesis | baseline | v2 |
+|---|---|---|
+| H1 — collaboration helps on average | 3/3 ✅ | **0/3 ❌** |
+| H2 — the global model fails the outlier | 3/3 ✅ | **3/3 ✅** |
+| **H3 — personalization recovers the outlier** | **1/3** ⚠ | **3/3 ✅** |
+
+- **H3 — the project's thesis — goes from 1/3 seeds to 3/3.** In the baseline FedBN trailed FedAvg
+  on the mean (0.8475 vs 0.8498), so the "≥ on the mean" clause failed in two seeds. It now leads
+  by +0.0141 and passes in all three.
+- **Paired over 248 test volumes per run**, FedBN improves in every seed (+0.0139, +0.0147,
+  +0.0387; all CIs exclude zero).
+- **H1 flips off** because FedAvg's outlier degrades further while local-only improves. H1 has now
+  flipped in *both* directions during this work, which is itself the finding: it is a knife-edge
+  between two nearly equal numbers, and the durable claim underneath it is H2.
+- **Reproducibility improved too** — across-seed spread on H4 fell 2.6× for FedBN, and
+  round-to-round plateau oscillation fell 2.7–5.9×.
+
+Full write-up, protocol, and the frozen "before" snapshot: **[improvements.md](docs/improvements.md)**.
+Regenerate: `python scripts/compare_runs.py --dim 2d --seed 42 --select last-k --last-k 5`.
 
 ## Results (3D)
 
