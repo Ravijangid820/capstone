@@ -175,6 +175,12 @@ class Config:
             self.base_channels = 32 if self.is_2d else 16
         if self.batch_size is None:
             self.batch_size = 8 if self.is_2d else 1
+        if not self.is_2d:
+            # 3D never rotates: the three axes are anatomically distinct (axial / sagittal /
+            # coronal), so a 90-degree turn between them produces an orientation no scanner in
+            # the study emits. Zeroed here rather than just ignored downstream, so the run's
+            # config.json describes what actually ran instead of implying rotations happened.
+            self.aug_rot90_p = 0.0
 
     @property
     def is_2d(self) -> bool:

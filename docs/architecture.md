@@ -87,6 +87,9 @@ scripts/
   build_partition.py run the partition, print + save the manifest
   build_cache.py     materialize the preprocessing cache (resumable, parallel)
   run_experiment.py  --method {centralized,local,fedavg,fedbn} --dim {2d,3d}
+  rescore.py         re-evaluate a finished checkpoint → per-case Dice (no training)
+  compute_significance.py  paired FedBN-vs-FedAvg test over per-case Dice (Table V)
+  export_predictions.py    FedAvg/FedBN prediction PNGs for one case (paper figure)
   demo_server.py     Interactive web demo server (HTTP API + static file serving)
 tests/               Smoke test suite (pytest) covering metrics, partition, model, and data pipeline
 colab_setup.ipynb    data acquisition (download → stream-unzip → Drive)  [repo root]

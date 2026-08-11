@@ -221,6 +221,13 @@ def test_baseline_preset_matches_bare_defaults():
     assert apply_preset("baseline").to_dict() == Config().to_dict()
 
 
+def test_3d_records_no_rotation_even_when_the_preset_asks_for_it():
+    """PatchDataset never rotates, so a non-zero aug_rot90_p in a 3D config.json would describe
+    a run that did not happen. 2D must keep the preset's value."""
+    assert apply_preset("v2", {"dim": "3d"}).aug_rot90_p == 0.0
+    assert apply_preset("v2", {"dim": "2d"}).aug_rot90_p > 0.0
+
+
 def test_v2_preset_sets_every_documented_lever():
     cfg = apply_preset("v2")
     assert (cfg.lr_schedule, cfg.augment, cfg.tta) == ("cosine", True, True)
