@@ -221,6 +221,31 @@ def test_baseline_preset_matches_bare_defaults():
     assert apply_preset("baseline").to_dict() == Config().to_dict()
 
 
+def test_v3_drops_augmentation_along_the_scanner_shift_axis():
+    """v3's core correction. Intensity jitter and noise perturb gamma/bias/blur -- the same
+    channels the synthetic hospital shift uses -- so they augment along the experimental
+    variable. Geometric augmentation must survive; intensity augmentation must not."""
+    cfg = apply_preset("v3")
+    assert cfg.augment is True
+    assert cfg.aug_flip_p > 0, "flips are label-preserving and should stay on"
+    assert cfg.aug_intensity_p == 0.0
+    assert cfg.aug_noise_std == 0.0
+
+
+def test_v3_uses_the_training_data_that_exists():
+    """150 of ~250 cases per hospital were unused. 230 + 20 val = 250 fits every hospital."""
+    cfg = apply_preset("v3")
+    assert cfg.train_per_hospital == 230
+    assert cfg.train_per_hospital + cfg.val_per_hospital <= 250, "H4's pool is only 250"
+
+
+def test_v3_keeps_every_lever_that_measurably_worked():
+    cfg = apply_preset("v3")
+    assert cfg.lr_schedule == "cosine"
+    assert cfg.tta is True and cfg.postproc_min_voxels > 0
+    assert cfg.select_by == "best_val" and cfg.val_per_hospital > 0
+
+
 def test_3d_records_no_rotation_even_when_the_preset_asks_for_it():
     """PatchDataset never rotates, so a non-zero aug_rot90_p in a 3D config.json would describe
     a run that did not happen. 2D must keep the preset's value."""

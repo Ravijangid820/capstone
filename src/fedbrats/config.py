@@ -240,6 +240,40 @@ class Config:
 
 PRESETS: dict[str, dict] = {
     "baseline": {},
+    # v3 supersedes v2. Three changes, each traceable to a measurement rather than a hunch:
+    #
+    # 1. **Geometric augmentation only.** v2's intensity jitter and Gaussian noise perturb gamma,
+    #    bias and blur -- the exact channels the synthetic scanner shift uses. Augmenting along
+    #    the experimental variable dilutes the signal FedBN's BatchNorm layers exist to capture
+    #    and forces FedAvg's one global model into a worse compromise. It shows in the numbers:
+    #    FedAvg was the only 2D method to lose (-0.0025 on H1-H3, -0.0120 on the shifted H4),
+    #    and in 3D -- where 2 patches/case makes an epoch tiny enough for noise to dominate --
+    #    three of four methods lost. Flips and rotations are label-preserving and leave intensity
+    #    statistics untouched, so they regularize without competing with the thing under test.
+    #
+    # 2. **Use the data that was there all along.** 150 of ~250 available training cases per
+    #    hospital were being used. 230 train + 20 val = 250 fits every hospital (H4 has 250) and
+    #    costs almost nothing in wall clock: training is ~10% of a round, evaluation dominates.
+    #
+    # 3. **Keep everything that measurably worked.** Cosine LR cut plateau oscillation 2.7-5.9x.
+    #    TTA and component filtering, measured on frozen checkpoints with no retraining, gained
+    #    +0.003..+0.008 WT and up to +0.014 ET on every 2D method with every CI excluding zero.
+    #    Validation-based selection repeatedly picked a better round than the last one.
+    "v3": {
+        "lr_schedule": "cosine",
+        "lr_min_factor": 0.05,
+        "augment": True,
+        "aug_flip_p": 0.5,
+        "aug_rot90_p": 0.5,           # 2D only; zeroed for 3D in __post_init__
+        "aug_intensity_p": 0.0,       # <- the regression: augmenting along the scanner-shift axis
+        "aug_noise_std": 0.0,         # <-
+        "tta": True,
+        "postproc_min_voxels": 50,
+        "train_per_hospital": 230,    # was 150; 40% of the training pool had never been used
+        "val_per_hospital": 20,
+        "select_by": "best_val",
+        "report_last_k": 5,
+    },
     "v2": {
         # stop the plateau from thrashing: decay the per-round LR instead of taking
         # full-size Adam steps forever
