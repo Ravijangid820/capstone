@@ -37,7 +37,8 @@ ORDER = ["centralized", "local", "fedavg", "fedbn"]     # sanity gate first -- s
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--dim", default="2d", choices=("2d", "3d"))
+    ap.add_argument("--dim", default=["2d"], nargs="+", choices=("2d", "3d"),
+                    help="one or both backbones, run in order")
     ap.add_argument("--seed", type=int, nargs="+", default=[42],
                     help="one or more seeds, run in order (each is a separate cache -- the "
                          "scanner shift's bias field is seeded, so seeds do not share tensors)")
@@ -49,7 +50,8 @@ def main() -> int:
                     help="everything after this is forwarded to run_experiment.py verbatim")
     args = ap.parse_args()
 
-    root = Config(dim=args.dim, tag=args.tag).run_dir("x").parent
+    dims = list(args.dim)
+    root = Config(dim=dims[0], tag=args.tag).run_dir("x").parent
     root.mkdir(parents=True, exist_ok=True)
     log_path = root / "matrix.log"
 
@@ -62,36 +64,39 @@ def main() -> int:
 
     methods = [m for m in ORDER if m in args.methods]
     seeds = list(args.seed)
-    log(f"matrix start  dim={args.dim} seeds={seeds} preset={args.preset} tag={args.tag}")
+    log(f"matrix start  dims={dims} seeds={seeds} preset={args.preset} tag={args.tag}")
     log(f"  methods: {', '.join(methods)}")
 
     t_all = time.time()
-    for seed in seeds:
-        cfg = Config(dim=args.dim, seed=seed, tag=args.tag)
-        for method in methods:
-            run_dir = cfg.run_dir(method)
-            if (run_dir / "summary.json").exists() and not args.overwrite:
-                log(f"SKIP  {method:<12} seed {seed:<4} already complete ({run_dir.name})")
-                continue
+    for dim in dims:
+        for seed in seeds:
+            cfg = Config(dim=dim, seed=seed, tag=args.tag)
+            for method in methods:
+                run_dir = cfg.run_dir(method)
+                if (run_dir / "summary.json").exists() and not args.overwrite:
+                    log(f"SKIP  {method:<12} {dim} seed {seed:<4} already complete")
+                    continue
 
-            cmd = [sys.executable, str(REPO / "scripts" / "run_experiment.py"),
-                   "--method", method, "--dim", args.dim, "--seed", str(seed),
-                   "--preset", args.preset, "--tag", args.tag, *args.extra]
-            if args.overwrite:
-                cmd.append("--overwrite")
+                cmd = [sys.executable, str(REPO / "scripts" / "run_experiment.py"),
+                       "--method", method, "--dim", dim, "--seed", str(seed),
+                       "--preset", args.preset, "--tag", args.tag, *args.extra]
+                if args.overwrite:
+                    cmd.append("--overwrite")
 
-            log(f"START {method:<12} seed {seed:<4} {' '.join(cmd[1:])}")
-            t0 = time.time()
-            rc = subprocess.run(cmd, cwd=REPO).returncode
-            mins = (time.time() - t0) / 60
-            if rc != 0:
-                log(f"FAIL  {method:<12} seed {seed:<4} exit {rc} after {mins:.1f} min -- stopping")
-                return rc
-            log(f"DONE  {method:<12} seed {seed:<4} {mins:.1f} min")
+                log(f"START {method:<12} {dim} seed {seed:<4} {' '.join(cmd[1:])}")
+                t0 = time.time()
+                rc = subprocess.run(cmd, cwd=REPO).returncode
+                mins = (time.time() - t0) / 60
+                if rc != 0:
+                    log(f"FAIL  {method:<12} {dim} seed {seed:<4} exit {rc} after {mins:.1f} min "
+                        f"-- stopping")
+                    return rc
+                log(f"DONE  {method:<12} {dim} seed {seed:<4} {mins:.1f} min")
 
     log(f"matrix complete in {(time.time() - t_all) / 60:.1f} min -> {root}")
-    for seed in seeds:
-        log(f"next:  python scripts/compare_runs.py --dim {args.dim} --seed {seed} --new {root}")
+    for dim in dims:
+        for seed in seeds:
+            log(f"next:  python scripts/compare_runs.py --dim {dim} --seed {seed} --new {root}")
     return 0
 
 
