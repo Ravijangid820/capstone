@@ -186,6 +186,55 @@ across all three seeds is narrower: FedAvg's outlier degrades under the new reci
 mean improves. The tidy mechanism was over-fitted to one seed — which is precisely what the extra
 two seeds were run to catch.
 
+## 2b-3d. The 3D rerun — where the recipe does *not* help
+
+Same preset, same estimator, seed 42 (the only seed the 3D baseline has).
+
+| Method | baseline mean WT | v2 mean WT | Δ | paired Δ (248 vols) |
+|---|---|---|---|---|
+| centralized | 0.8768 | 0.8770 | +0.0002 | −0.0022 *(ns)* |
+| local-only | 0.8490 | 0.8475 | −0.0016 | −0.0016 *(ns)* |
+| FedAvg | 0.8525 | 0.8399 | **−0.0125** | **−0.0155** (p=1.9e-08) |
+| FedBN | 0.8422 | 0.8333 | −0.0089 | −0.0014 *(ns)* |
+
+**The v2 recipe should not be adopted for 3D.** Three of four methods are flat or negative, and
+FedAvg is significantly worse. Compare the same recipe in 2D, where centralized gained +0.0253 and
+FedBN +0.0115.
+
+This is consistent with the explanation already in [methodology.md](methodology.md#21-the-3d-reversal-finding):
+if 3D convolutions act as a natural regularizer, augmentation has little headroom left to exploit,
+and the extra input noise costs more than the regularization buys. The baseline numbers say the
+same thing from the other side — baseline 3D was already at 0.8768 mean where baseline 2D was
+0.8582. **The improvement is a 2D result, not a universal one**, and reporting it as universal
+would be the same over-generalization this document keeps warning about.
+
+### The "3D reversal" partly survives, and the surviving half is the interesting one
+
+| | H1 | H2 | H3 |
+|---|---|---|---|
+| 2D baseline | ✅ | ✅ | ✅ |
+| 2D v2 | ❌ | ✅ | ✅ |
+| 3D baseline | ✅ | ❌ | ❌ |
+| **3D v2** | ❌ | **✅** | ❌ |
+
+The original 3D claim was that *all three* verdicts reverse. Under the improved recipe they do not:
+
+* **H2 flips to supported in 3D.** "FedAvg is robust to the outlier in 3D" does **not** hold once
+  the training recipe changes — under v2 the global model fails the outlier in both backbones
+  (3D: 0.8171 vs local's 0.8285). That half of the reversal was an artefact of the original
+  training setup, not a property of the backbone.
+* **H3 stays unsupported in 3D.** FedBN still loses to FedAvg (0.8333 vs 0.8399 mean; 0.8120 vs
+  0.8171 on H4). This half survives both recipes.
+
+So the defensible claim is narrower and sharper than the original: **the backbone does not change
+whether a single global model fails an outlier hospital — it changes whether keeping BatchNorm
+local is the right way to fix it.** H2 is universal; H3 is backbone-dependent. That is a cleaner
+contribution than "everything reverses," and it is what two independent training recipes agree on.
+
+> **Caveat, stated plainly.** 3D is **seed 42 only** on both sides. In 2D, a mechanism that looked
+> clean at seed 42 failed to replicate at seed 7 (§2b). Nothing above should be treated as settled
+> until the 3D matrix has three seeds; the H2 flip in particular rests on a 0.011 gap in one run.
+
 ## 2c. Plateau stability — the original problem, measured
 
 Round-to-round swing in mean WT over rounds 21–25, seed 42:

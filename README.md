@@ -115,9 +115,19 @@ suffers in 3D because 150 local cases per hospital are insufficient to estimate 
 3D batch-normalization running statistics — the higher-dimensional feature maps amplify
 the variance, so keeping BN layers local becomes a liability rather than an advantage.
 
-Unlike the 2D H1 verdict, **all three 3D verdicts survive the last-5-round estimator unchanged** —
-the 3D curves are visibly steadier (H4 spans 0.008 over rounds 21–25, against swings up to 0.12 in
-2D). The reversal is a property of the backbone, not of which round the loop stopped on.
+All three 3D verdicts survive the last-5-round **estimator** unchanged (the 3D curves are steadier —
+H4 spans 0.008 over rounds 21–25 against swings up to 0.12 in 2D). They do **not** all survive a
+change of training **recipe**:
+
+> **⚠ Half the reversal is an artefact of the training setup.** Rerunning 3D with `--preset v2`
+> flips **H2 to supported** — the global model *does* fail the outlier in 3D (0.8171 vs local's
+> 0.8285), contrary to the claim above. **H3 stays unsupported**, so FedBN really does underperform
+> in 3D under both recipes. The defensible claim is therefore narrower: the backbone does not change
+> *whether* a global model fails an outlier, it changes *whether keeping BatchNorm local fixes it*.
+> Seed 42 only — see [improvements.md](docs/improvements.md).
+
+The v2 recipe also **should not be adopted for 3D**: three of four methods are flat or worse, and
+FedAvg drops significantly (−0.0155 paired, p=1.9e-08). The accuracy gains are a 2D result.
 
 Details and figures: `artifacts/figures/`. Regenerate: `python scripts/analyze.py --dim 3d`.
 
