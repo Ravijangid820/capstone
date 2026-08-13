@@ -61,7 +61,40 @@ Full 2D matrix, R=25, seed 42, 150 train/hospital. Final-round WT Dice on each h
 
 Details and figures: [experiments.md](docs/experiments.md#4-results--2d-backbone-r25-e1-seed-42-150-trainhospital) · `artifacts/figures/`. Regenerate: `python scripts/analyze.py --dim 2d`.
 
-## Results (2D, improved recipe — supersedes the table above)
+## Results (best recipe, `--preset v3`) — supersedes everything below
+
+Every method improves in **both** backbones, all significant. Paired per-case Δ WT Dice against
+the frozen baseline, 248 test volumes per run, seed 42:
+
+| Method | 2D Δ | 2D p | 3D Δ | 3D p |
+|---|---|---|---|---|
+| Centralized (ceiling) | **+0.0438** | 1.8e-31 | **+0.0066** | 0.0003 |
+| Local-only (floor) | **+0.0204** | 3.5e-15 | **+0.0028** | 0.0054 |
+| FedAvg | **+0.0230** | 8.7e-23 | **+0.0024** | 0.0046 |
+| **FedBN** | **+0.0216** | 9.8e-25 | **+0.0255** | 1.6e-10 |
+
+Mean WT Dice across hospitals (rounds 21–25, training recipe alone, no TTA):
+
+| Method | 2D baseline → v3 | 3D baseline → v3 |
+|---|---|---|
+| Centralized | 0.8582 → **0.8931** | 0.8768 → **0.8836** |
+| Local-only | 0.8436 → **0.8661** | 0.8490 → 0.8489 |
+| FedAvg | 0.8502 → **0.8533** | 0.8525 → **0.8555** |
+| FedBN | 0.8514 → **0.8653** | 0.8422 → **0.8550** |
+
+**What v3 is:** cosine LR across rounds, **geometric augmentation only** (flips/rotations — the
+intensity and noise terms perturbed the same channels as the scanner shift and cost FedAvg its
+outlier), flip-TTA and small-component filtering at inference, validation-based checkpoint
+selection, and **230 training cases/hospital instead of 150** (40% of the pool was unused).
+
+Two cells reported rather than averaged away: 3D local-only is flat on the round estimator
+(−0.0002), and FedAvg's outlier stays below baseline in both backbones even as its mean improves —
+which is what H2 predicts of a better-trained single global model. Full analysis, including why,
+in **[improvements.md](docs/improvements.md)**.
+
+Reproduce: `python scripts/run_matrix.py --dim 2d 3d --seed 42 --preset v3 --tag v3 --extra --rounds 25`
+
+## Results (2D, `--preset v2` — an earlier, partly-regressive recipe)
 
 Full rerun with `--preset v2` (cosine LR across rounds, augmentation, flip-TTA, component
 filtering, validation-based checkpoint selection). Three seeds, same split and same training cases

@@ -235,6 +235,69 @@ contribution than "everything reverses," and it is what two independent training
 > clean at seed 42 failed to replicate at seed 7 (§2b). Nothing above should be treated as settled
 > until the 3D matrix has three seeds; the H2 flip in particular rests on a 0.011 gap in one run.
 
+## 2d. v3 — the recipe that improves every method in both backbones
+
+v2 regressed FedAvg in 2D and three of four methods in 3D. Decomposing *where* it lost identified
+a single cause (§2, "geometric augmentation only"), and v3 corrects it while adding the training
+data that had never been used. **All eight runs improve, every one significant.**
+
+Paired per-case Δ WT Dice against the frozen baseline, 248 test volumes per run, seed 42:
+
+| Method | 2D Δ | 2D p | 3D Δ | 3D p |
+|---|---|---|---|---|
+| centralized | **+0.0438** | 1.8e-31 | **+0.0066** | 0.0003 |
+| local-only | **+0.0204** | 3.5e-15 | **+0.0028** | 0.0054 |
+| FedAvg | **+0.0230** | 8.7e-23 | **+0.0024** | 0.0046 |
+| FedBN | **+0.0216** | 9.8e-25 | **+0.0255** | 1.6e-10 |
+
+On the round-based estimator (mean of rounds 21–25, no TTA, so the training recipe alone):
+
+| Method | 2D base → v3 | Δ | 3D base → v3 | Δ |
+|---|---|---|---|---|
+| centralized | 0.8582 → **0.8931** | +0.0349 | 0.8768 → **0.8836** | +0.0068 |
+| local-only | 0.8436 → **0.8661** | +0.0225 | 0.8490 → 0.8489 | −0.0002 |
+| FedAvg | 0.8502 → **0.8533** | +0.0031 | 0.8525 → **0.8555** | +0.0030 |
+| FedBN | 0.8514 → **0.8653** | +0.0139 | 0.8422 → **0.8550** | +0.0128 |
+
+**v3 beats v2 on all eight runs**, by +0.0044 to +0.0217. The 2D ceiling moved 0.8582 → 0.8931.
+
+### Two cells to report honestly rather than average away
+
+* **3D local-only is flat on the round estimator** (−0.0002) though positive paired (+0.0028,
+  p=0.0054). It is the one place +53% training data bought nothing. Centralized and FedAvg gained
+  from the same data, so the data is not useless — this is specific to training a 3D model alone
+  on one hospital. Likely sampling/capacity-limited rather than data-limited: at
+  `patches_per_case=2`, 230 cases yield only 460 patches/epoch at batch 1, on a `base_channels=16`
+  network. The lever is `patches_per_case` or `base_channels`, not more cases.
+* **FedAvg's outlier stays below baseline** (2D −0.0070, 3D −0.0110 on the round estimator) even
+  though its overall mean improves in both backbones. This looks intrinsic rather than tunable:
+  FedAvg collapses to one global model, so training every hospital better makes each local optimum
+  fit its own distribution more tightly and the averaged compromise serve the majority better and
+  the outlier worse. No other method faces it — centralized and local never average, FedBN keeps
+  BatchNorm local. **This is what H2 asserts**, so a better-trained FedAvg with a sharper outlier
+  gap is the phenomenon getting clearer. Moving that cell needs a different aggregation
+  (outlier-weighted FedAvg, FedProx), not a tuning change.
+
+### Hypotheses under v3
+
+| | H1 | H2 | H3 |
+|---|---|---|---|
+| 2D baseline | ✅ | ✅ | ✅ |
+| 2D v3 | ❌ | ✅ | ✅ |
+| 3D baseline | ✅ | ❌ | ❌ |
+| 3D v3 | ✅ | ✅ | ❌ |
+
+Under the best recipe both backbones now agree on **H2 (✅)** — the global model fails the
+outlier — which the 3D baseline had contradicted. They continue to disagree on **H3**, exactly as
+[§2b-3d](#2b-3d-the-3d-rerun--where-the-recipe-does-not-help) argued: the backbone does not change
+*whether* a single global model fails an outlier, it changes *whether keeping BatchNorm local is
+the right fix*. Three recipes now agree on that reading.
+
+> v3 changes **two** things at once versus baseline — the augmentation fix and +53% training data —
+> so these deltas are the combined effect, not the recipe alone. That was the right trade for a
+> request to maximize accuracy, but it is not a clean ablation and should not be written up as one.
+> Seed 42 only; 2D multi-seed coverage exists for baseline and v2 but not yet v3.
+
 ## 2c. Plateau stability — the original problem, measured
 
 Round-to-round swing in mean WT over rounds 21–25, seed 42:
