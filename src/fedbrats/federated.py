@@ -214,10 +214,13 @@ def run(cfg: Config, method_name: str, overwrite: bool = False) -> Path:
         # --- evaluate the federated model, before any further local training --------------
         # No TTA here: the learning curve costs 4x with it, and the curve is used for shape,
         # not for the headline number. The reported model is re-scored with TTA below.
-        for h in hospitals:
-            dice = score(h, test_cases[h], "test", rnd, stage="round", tta=False)
-            log.info(f"round {rnd:>3}  eval {h:>3}  "
-                     f"WT={dice['wt']:.4f} TC={dice['tc']:.4f} ET={dice['et']:.4f}")
+        if cfg.scores_test(rnd):
+            for h in hospitals:
+                dice = score(h, test_cases[h], "test", rnd, stage="round", tta=False)
+                log.info(f"round {rnd:>3}  eval {h:>3}  "
+                         f"WT={dice['wt']:.4f} TC={dice['tc']:.4f} ET={dice['et']:.4f}")
+        else:
+            log.info(f"round {rnd:>3}  test eval skipped (eval_test_every={cfg.eval_test_every})")
 
         # --- validation: the only signal model selection is allowed to read ----------------
         if cfg.val_per_hospital > 0:

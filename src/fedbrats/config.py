@@ -149,6 +149,14 @@ class Config:
     select_by: str = "last"               # "last" | "best_val" (needs val_per_hospital > 0)
     report_last_k: int = 1                # rounds averaged for the headline figure; 1 = final only
 
+    # Test-evaluation cadence. Scoring all 248 test volumes every round is ~70% of a round's wall
+    # clock, and most of those rounds are mid-curve points nobody reads a number off. Raising this
+    # buys rounds -- which is what the models actually need -- at the cost of a sparser learning
+    # curve. The rounds the analysis DOES read are always scored: the final `report_last_k` rounds
+    # (the estimator) and the selected model's own final evaluation. Validation is unaffected and
+    # runs every round, since checkpoint selection needs it.
+    eval_test_every: int = 1              # 1 = every round (the original behaviour)
+
     # smoke / scoping knobs
     max_train_cases: int | None = None    # cap train cases per hospital (smoke runs)
     max_test_cases: int | None = None     # cap test cases per hospital (smoke runs)
@@ -171,6 +179,8 @@ class Config:
         if not 1 <= self.report_last_k <= self.rounds:
             raise ValueError(f"report_last_k must be in [1, rounds={self.rounds}], "
                              f"got {self.report_last_k}")
+        if self.eval_test_every < 1:
+            raise ValueError(f"eval_test_every must be >= 1, got {self.eval_test_every}")
         if self.base_channels is None:
             self.base_channels = 32 if self.is_2d else 16
         if self.batch_size is None:
@@ -201,6 +211,17 @@ class Config:
         """Where this run writes. `tag` namespaces it so reruns cannot collide with the baseline."""
         base = Path(self.paths.runs)
         return base / self.tag / self.run_id(method) if self.tag else base / self.run_id(method)
+
+    def scores_test(self, rnd: int) -> bool:
+        """Whether round `rnd` gets a full test evaluation.
+
+        The final `report_last_k` rounds are always scored, because they are exactly the rounds the
+        reported estimator averages -- thinning those would change the headline number rather than
+        just the curve's resolution.
+        """
+        if rnd > self.rounds - self.report_last_k:
+            return True
+        return rnd % self.eval_test_every == 0 or rnd == 1
 
     def round_lr(self, rnd: int) -> float:
         """LR for communication round `rnd` (1-based). Cosine decays lr -> lr*lr_min_factor."""
@@ -273,6 +294,34 @@ PRESETS: dict[str, dict] = {
         "val_per_hospital": 20,
         "select_by": "best_val",
         "report_last_k": 5,
+    },
+    # v4 = v3 trained longer, because the v3 runs proved they were not finished. Late-curve slope
+    # (mean WT over rounds 21-25 minus rounds 16-20) was positive in all eight v3 runs -- +0.0051
+    # to +0.0110 -- and validation was still rising in every one of them too, so this is
+    # undertraining rather than test-set noise. Capacity and augmentation were not the binding
+    # constraint; the round budget was.
+    #
+    # 40 rounds costs 1.6x the wall clock at v3's evaluation cadence, so the cadence pays for it:
+    # scoring all 248 test volumes is ~70% of a round, and most rounds are mid-curve points no
+    # number is read from. eval_test_every=3 thins those while still scoring round 1, every third
+    # round, and every round the reported estimator averages -- about +15% wall clock for +60% more
+    # training instead of +60%.
+    "v4": {
+        "lr_schedule": "cosine",
+        "lr_min_factor": 0.05,
+        "augment": True,
+        "aug_flip_p": 0.5,
+        "aug_rot90_p": 0.5,
+        "aug_intensity_p": 0.0,
+        "aug_noise_std": 0.0,
+        "tta": True,
+        "postproc_min_voxels": 50,
+        "train_per_hospital": 230,
+        "val_per_hospital": 20,
+        "select_by": "best_val",
+        "report_last_k": 5,
+        "rounds": 40,
+        "eval_test_every": 3,
     },
     "v2": {
         # stop the plateau from thrashing: decay the per-round LR instead of taking

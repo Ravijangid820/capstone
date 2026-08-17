@@ -221,6 +221,27 @@ def test_baseline_preset_matches_bare_defaults():
     assert apply_preset("baseline").to_dict() == Config().to_dict()
 
 
+def test_eval_cadence_always_scores_the_rounds_the_estimator_reads():
+    """Thinning test evaluation buys rounds, but must never thin the rounds the reported figure
+    averages -- that would change the headline number, not just the curve's resolution."""
+    cfg = Config(rounds=40, report_last_k=5, eval_test_every=3)
+    for rnd in range(36, 41):
+        assert cfg.scores_test(rnd), f"round {rnd} is inside report_last_k and must be scored"
+    assert cfg.scores_test(1), "round 1 anchors the curve"
+    assert not cfg.scores_test(35), "mid-curve non-multiples should be skipped"
+    assert cfg.scores_test(33) and cfg.scores_test(9)
+
+
+def test_eval_cadence_of_one_scores_every_round():
+    cfg = Config(rounds=25, report_last_k=5, eval_test_every=1)
+    assert all(cfg.scores_test(r) for r in range(1, 26))
+
+
+def test_eval_cadence_rejects_zero():
+    with pytest.raises(ValueError):
+        Config(eval_test_every=0)
+
+
 def test_v3_drops_augmentation_along_the_scanner_shift_axis():
     """v3's core correction. Intensity jitter and noise perturb gamma/bias/blur -- the same
     channels the synthetic hospital shift uses -- so they augment along the experimental
