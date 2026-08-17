@@ -152,6 +152,18 @@ class Config:
     tta: bool = False                     # flip test-time augmentation (final round only: 4x cost)
     postproc_min_voxels: int = 0          # drop connected components smaller than this; 0 = off
     sw_overlap: float = 0.25              # 3d: sliding-window overlap
+    # Inference batch sizes. Evaluation is ~half of every round's wall clock and ran at batch 8
+    # (2d) / 1 (3d) while using 0.28 GB of a 4 GB card -- the GPU was idling through the single
+    # most expensive phase. Raising these is ~2.7x faster on the forward pass.
+    #
+    # These do NOT change what is computed: the model is in eval() mode, so BatchNorm reads its
+    # running statistics and every slice's output is independent of what it shares a batch with.
+    # cuDNN does pick different kernels per batch size, which moves probabilities by ~3e-4 and
+    # per-case Dice by <=1.5e-4 -- the fourth decimal, far below any effect under study. Defaults
+    # stay at the original values so previously published runs remain bit-reproducible; raise them
+    # explicitly for new work.
+    eval_batch_size: int = 8              # 2d: slices per forward pass
+    sw_batch_size: int = 1                # 3d: windows per forward pass
 
     # model selection
     select_by: str = "last"               # "last" | "best_val" (needs val_per_hospital > 0)

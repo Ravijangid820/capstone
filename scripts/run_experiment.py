@@ -75,6 +75,10 @@ def build_parser() -> argparse.ArgumentParser:
     g.add_argument("--postproc-min-voxels", type=int, default=None,
                    help="drop connected components below this size; 0 = off")
     g.add_argument("--sw-overlap", type=float, default=None, help="3d sliding-window overlap")
+    g.add_argument("--eval-batch-size", type=int, default=None,
+                   help="2d: slices per inference forward pass (default 8; 64 is ~2.7x faster)")
+    g.add_argument("--sw-batch-size", type=int, default=None,
+                   help="3d: windows per inference forward pass (default 1; 4 is ~6.9x faster)")
 
     g = ap.add_argument_group("selection / data")
     g.add_argument("--val-per-hospital", type=int, default=None,

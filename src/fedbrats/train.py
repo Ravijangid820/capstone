@@ -99,7 +99,7 @@ def _tta_flips(n_spatial: int) -> list[tuple[int, ...]]:
 
 @torch.no_grad()
 def _probs_2d(model: nn.Module, padded: np.ndarray, device: torch.device,
-              tta: bool) -> np.ndarray:
+              tta: bool, batch: int = 8) -> np.ndarray:
     """Sigmoid probabilities for a (Z, 4, Hp, Wp) stack, optionally averaged over flip views."""
     views = _tta_flips(2) if tta else [()]
     acc = None
@@ -107,9 +107,9 @@ def _probs_2d(model: nn.Module, padded: np.ndarray, device: torch.device,
         axes = tuple(2 + a for a in flip)                          # skip (Z, C)
         src = np.ascontiguousarray(np.flip(padded, axis=axes)) if axes else padded
         out = []
-        for i in range(0, src.shape[0], 8):
-            batch = torch.from_numpy(src[i:i + 8]).to(device)
-            out.append(torch.sigmoid(model(batch)).cpu().numpy())
+        for i in range(0, src.shape[0], batch):
+            chunk = torch.from_numpy(src[i:i + batch]).to(device)
+            out.append(torch.sigmoid(model(chunk)).cpu().numpy())
         probs = np.concatenate(out, axis=0)
         if axes:
             probs = np.flip(probs, axis=axes)                      # undo: back to input frame
@@ -126,7 +126,7 @@ def _probs_3d(model: nn.Module, xt: torch.Tensor, cfg: Config, tta: bool) -> tor
         dims = tuple(2 + a for a in flip)                          # skip (N, C)
         src = torch.flip(xt, dims=dims) if dims else xt
         logits = sliding_window_inference(
-            src, roi_size=(cfg.patch_size,) * 3, sw_batch_size=1,
+            src, roi_size=(cfg.patch_size,) * 3, sw_batch_size=cfg.sw_batch_size,
             predictor=model, overlap=cfg.sw_overlap,
         )
         probs = torch.sigmoid(logits)
@@ -190,7 +190,7 @@ def predict_volume(model: nn.Module, x: np.ndarray, cfg: Config,
         # trailing axes pads (H, W) -- the in-plane dims the U-Net downsamples -- and not (W, Z).
         slices = np.ascontiguousarray(np.moveaxis(np.asarray(x, dtype=np.float32), 3, 0))
         padded, crop = pad_to_multiple(slices, 16, n_spatial=2)    # (Z, 4, Hp, Wp)
-        probs = _probs_2d(model, padded, device, tta)              # (Z, 3, Hp, Wp)
+        probs = _probs_2d(model, padded, device, tta, cfg.eval_batch_size)   # (Z,3,Hp,Wp)
         pred = (probs > 0.5)[(slice(None), slice(None)) + crop]    # (Z, 3, H, W)
         pred = np.moveaxis(pred, 0, 3)                             # (3, H, W, Z)
         return postprocess(pred, cfg)

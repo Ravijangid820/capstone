@@ -175,6 +175,25 @@ def test_postprocess_restores_region_nesting():
 # test-time augmentation
 # --------------------------------------------------------------------------------------
 
+def test_inference_batch_defaults_preserve_published_runs():
+    """Raising these is a speed change, but it perturbs cuDNN kernel choice. Defaults must stay
+    at the values the frozen baseline and v2/v3 ran with, or those numbers stop reproducing."""
+    cfg = Config()
+    assert cfg.eval_batch_size == 8
+    assert cfg.sw_batch_size == 1
+
+
+def test_eval_batch_size_does_not_change_what_is_computed():
+    """model.eval() means BatchNorm reads running statistics, so a slice's output cannot depend
+    on which slices share its batch. Only kernel selection changes."""
+    x = np.random.default_rng(3).normal(size=(20, 4, 16, 16)).astype(np.float32)
+    dev = torch.device("cpu")
+    a = _probs_2d(PassThrough(), x, dev, tta=False, batch=8)
+    b = _probs_2d(PassThrough(), x, dev, tta=False, batch=64)
+    assert a.shape == b.shape
+    assert np.allclose(a, b, atol=1e-6)
+
+
 def test_tta_2d_undoes_its_own_flips():
     """Averaging flip views of a flip-equivariant model must equal the un-augmented output.
 
