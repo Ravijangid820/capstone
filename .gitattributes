@@ -7,3 +7,4 @@
 # clone on the other platform would fail every hash while the data was in fact untouched. Stored
 # verbatim instead: these files are a record, not source. See docs/improvements.md §3.
 artifacts/baseline/** -text
+artifacts/snapshots/** -text

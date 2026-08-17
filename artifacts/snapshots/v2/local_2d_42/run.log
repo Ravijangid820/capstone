@@ -1,0 +1,253 @@
+2026-08-10 13:39:17,025 INFO    run_id=local_2d_42 method=local dim=2d device=cuda
+2026-08-10 13:39:17,025 INFO    tag=v2 -> D:\capstone\artifacts\runs\v2\local_2d_42
+2026-08-10 13:39:17,026 INFO    R=25 E=1 -> 25 total local epochs/hospital
+2026-08-10 13:39:17,026 INFO    lr=0.001 schedule=cosine augment=True tta=True postproc_min_voxels=50 select_by=best_val
+2026-08-10 13:39:17,027 INFO      H1: 150 train / 20 val / 62 test cases
+2026-08-10 13:39:17,028 INFO      H2: 150 train / 20 val / 62 test cases
+2026-08-10 13:39:17,029 INFO      H3: 150 train / 20 val / 62 test cases
+2026-08-10 13:39:17,030 INFO      H4: 150 train / 20 val / 62 test cases
+2026-08-10 13:39:41,750 INFO    round   1       H1  train_loss=1.5900  lr=1.00e-03
+2026-08-10 13:40:06,774 INFO    round   1       H2  train_loss=1.5922  lr=1.00e-03
+2026-08-10 13:40:36,170 INFO    round   1       H3  train_loss=1.5932  lr=1.00e-03
+2026-08-10 13:41:09,447 INFO    round   1       H4  train_loss=1.5895  lr=1.00e-03
+2026-08-10 13:41:53,908 INFO    round   1  eval  H1  WT=0.7104 TC=0.5409 ET=0.5042
+2026-08-10 13:42:35,000 INFO    round   1  eval  H2  WT=0.6843 TC=0.5332 ET=0.6148
+2026-08-10 13:43:16,485 INFO    round   1  eval  H3  WT=0.6475 TC=0.4664 ET=0.4269
+2026-08-10 13:43:56,247 INFO    round   1  eval  H4  WT=0.5696 TC=0.4272 ET=0.3687
+2026-08-10 13:44:47,431 INFO    round   1  VAL mean WT=0.5933  <- best so far
+2026-08-10 13:45:19,717 INFO    round   2       H1  train_loss=1.2630  lr=9.96e-04
+2026-08-10 13:45:52,642 INFO    round   2       H2  train_loss=1.2644  lr=9.96e-04
+2026-08-10 13:46:25,591 INFO    round   2       H3  train_loss=1.2817  lr=9.96e-04
+2026-08-10 13:46:59,134 INFO    round   2       H4  train_loss=1.2655  lr=9.96e-04
+2026-08-10 13:47:42,334 INFO    round   2  eval  H1  WT=0.7979 TC=0.6410 ET=0.5980
+2026-08-10 13:48:22,682 INFO    round   2  eval  H2  WT=0.7742 TC=0.6049 ET=0.5362
+2026-08-10 13:49:04,058 INFO    round   2  eval  H3  WT=0.7434 TC=0.5702 ET=0.5223
+2026-08-10 13:49:44,332 INFO    round   2  eval  H4  WT=0.7362 TC=0.6181 ET=0.6236
+2026-08-10 13:50:34,364 INFO    round   2  VAL mean WT=0.7375  <- best so far
+2026-08-10 13:51:06,181 INFO    round   3       H1  train_loss=0.8671  lr=9.84e-04
+2026-08-10 13:51:39,372 INFO    round   3       H2  train_loss=0.8677  lr=9.84e-04
+2026-08-10 13:52:11,539 INFO    round   3       H3  train_loss=0.8790  lr=9.84e-04
+2026-08-10 13:52:43,944 INFO    round   3       H4  train_loss=0.8782  lr=9.84e-04
+2026-08-10 13:53:26,741 INFO    round   3  eval  H1  WT=0.8153 TC=0.6723 ET=0.6401
+2026-08-10 13:54:07,698 INFO    round   3  eval  H2  WT=0.7870 TC=0.6370 ET=0.6877
+2026-08-10 13:54:49,195 INFO    round   3  eval  H3  WT=0.7625 TC=0.6788 ET=0.6585
+2026-08-10 13:55:28,778 INFO    round   3  eval  H4  WT=0.7266 TC=0.6483 ET=0.6432
+2026-08-10 13:56:19,030 INFO    round   3  VAL mean WT=0.7314
+2026-08-10 13:56:50,001 INFO    round   4       H1  train_loss=0.6414  lr=9.64e-04
+2026-08-10 13:57:19,143 INFO    round   4       H2  train_loss=0.6511  lr=9.64e-04
+2026-08-10 13:57:52,496 INFO    round   4       H3  train_loss=0.6493  lr=9.64e-04
+2026-08-10 13:58:25,341 INFO    round   4       H4  train_loss=0.6783  lr=9.64e-04
+2026-08-10 13:59:10,399 INFO    round   4  eval  H1  WT=0.8076 TC=0.6670 ET=0.6672
+2026-08-10 13:59:50,330 INFO    round   4  eval  H2  WT=0.7959 TC=0.7071 ET=0.7255
+2026-08-10 14:00:31,218 INFO    round   4  eval  H3  WT=0.7972 TC=0.6729 ET=0.6412
+2026-08-10 14:01:10,864 INFO    round   4  eval  H4  WT=0.7101 TC=0.6808 ET=0.6999
+2026-08-10 14:02:00,902 INFO    round   4  VAL mean WT=0.7640  <- best so far
+2026-08-10 14:02:33,159 INFO    round   5       H1  train_loss=0.5482  lr=9.36e-04
+2026-08-10 14:03:06,344 INFO    round   5       H2  train_loss=0.5847  lr=9.36e-04
+2026-08-10 14:03:39,127 INFO    round   5       H3  train_loss=0.5942  lr=9.36e-04
+2026-08-10 14:04:12,480 INFO    round   5       H4  train_loss=0.5894  lr=9.36e-04
+2026-08-10 14:04:55,067 INFO    round   5  eval  H1  WT=0.8255 TC=0.7100 ET=0.7109
+2026-08-10 14:05:36,510 INFO    round   5  eval  H2  WT=0.8062 TC=0.6893 ET=0.7137
+2026-08-10 14:06:18,448 INFO    round   5  eval  H3  WT=0.7063 TC=0.6134 ET=0.5936
+2026-08-10 14:06:57,396 INFO    round   5  eval  H4  WT=0.7799 TC=0.7261 ET=0.7250
+2026-08-10 14:07:46,936 INFO    round   5  VAL mean WT=0.7432
+2026-08-10 14:08:18,145 INFO    round   6       H1  train_loss=0.5511  lr=9.02e-04
+2026-08-10 14:08:50,123 INFO    round   6       H2  train_loss=0.5580  lr=9.02e-04
+2026-08-10 14:09:23,658 INFO    round   6       H3  train_loss=0.5777  lr=9.02e-04
+2026-08-10 14:09:56,345 INFO    round   6       H4  train_loss=0.5771  lr=9.02e-04
+2026-08-10 14:10:39,982 INFO    round   6  eval  H1  WT=0.7986 TC=0.6767 ET=0.7014
+2026-08-10 14:11:19,895 INFO    round   6  eval  H2  WT=0.8175 TC=0.7420 ET=0.7557
+2026-08-10 14:12:01,093 INFO    round   6  eval  H3  WT=0.8095 TC=0.7403 ET=0.7352
+2026-08-10 14:12:40,364 INFO    round   6  eval  H4  WT=0.7809 TC=0.7218 ET=0.7395
+2026-08-10 14:13:30,944 INFO    round   6  VAL mean WT=0.7859  <- best so far
+2026-08-10 14:14:02,122 INFO    round   7       H1  train_loss=0.5069  lr=8.61e-04
+2026-08-10 14:14:35,809 INFO    round   7       H2  train_loss=0.5221  lr=8.61e-04
+2026-08-10 14:15:08,747 INFO    round   7       H3  train_loss=0.5626  lr=8.61e-04
+2026-08-10 14:15:41,358 INFO    round   7       H4  train_loss=0.5514  lr=8.61e-04
+2026-08-10 14:16:24,860 INFO    round   7  eval  H1  WT=0.8074 TC=0.7044 ET=0.7183
+2026-08-10 14:17:05,767 INFO    round   7  eval  H2  WT=0.8038 TC=0.7425 ET=0.7616
+2026-08-10 14:17:47,365 INFO    round   7  eval  H3  WT=0.8012 TC=0.7843 ET=0.7564
+2026-08-10 14:18:27,008 INFO    round   7  eval  H4  WT=0.7872 TC=0.7213 ET=0.7425
+2026-08-10 14:19:16,824 INFO    round   7  VAL mean WT=0.7887  <- best so far
+2026-08-10 14:19:48,759 INFO    round   8       H1  train_loss=0.5168  lr=8.14e-04
+2026-08-10 14:20:20,526 INFO    round   8       H2  train_loss=0.5314  lr=8.14e-04
+2026-08-10 14:20:45,455 INFO    round   8       H3  train_loss=0.5213  lr=8.14e-04
+2026-08-10 14:21:18,643 INFO    round   8       H4  train_loss=0.5461  lr=8.14e-04
+2026-08-10 14:22:01,059 INFO    round   8  eval  H1  WT=0.8381 TC=0.7503 ET=0.7386
+2026-08-10 14:22:41,386 INFO    round   8  eval  H2  WT=0.8271 TC=0.7830 ET=0.7705
+2026-08-10 14:23:22,672 INFO    round   8  eval  H3  WT=0.8108 TC=0.7998 ET=0.7629
+2026-08-10 14:24:02,337 INFO    round   8  eval  H4  WT=0.7700 TC=0.7130 ET=0.6997
+2026-08-10 14:24:52,444 INFO    round   8  VAL mean WT=0.7741
+2026-08-10 14:25:22,138 INFO    round   9       H1  train_loss=0.4973  lr=7.63e-04
+2026-08-10 14:25:56,208 INFO    round   9       H2  train_loss=0.5234  lr=7.63e-04
+2026-08-10 14:26:28,569 INFO    round   9       H3  train_loss=0.5225  lr=7.63e-04
+2026-08-10 14:26:52,976 INFO    round   9       H4  train_loss=0.5471  lr=7.63e-04
+2026-08-10 14:27:37,770 INFO    round   9  eval  H1  WT=0.8421 TC=0.7834 ET=0.7449
+2026-08-10 14:28:18,982 INFO    round   9  eval  H2  WT=0.7957 TC=0.7698 ET=0.7682
+2026-08-10 14:29:00,666 INFO    round   9  eval  H3  WT=0.7969 TC=0.7707 ET=0.7567
+2026-08-10 14:29:39,870 INFO    round   9  eval  H4  WT=0.8005 TC=0.7422 ET=0.7396
+2026-08-10 14:30:29,952 INFO    round   9  VAL mean WT=0.7803
+2026-08-10 14:31:00,595 INFO    round  10       H1  train_loss=0.4764  lr=7.07e-04
+2026-08-10 14:31:21,964 INFO    round  10       H2  train_loss=0.5020  lr=7.07e-04
+2026-08-10 14:31:38,539 INFO    round  10       H3  train_loss=0.5084  lr=7.07e-04
+2026-08-10 14:32:12,177 INFO    round  10       H4  train_loss=0.5250  lr=7.07e-04
+2026-08-10 14:32:55,397 INFO    round  10  eval  H1  WT=0.8509 TC=0.7817 ET=0.7342
+2026-08-10 14:33:35,997 INFO    round  10  eval  H2  WT=0.8392 TC=0.7523 ET=0.7421
+2026-08-10 14:34:17,810 INFO    round  10  eval  H3  WT=0.7736 TC=0.7505 ET=0.7401
+2026-08-10 14:34:57,834 INFO    round  10  eval  H4  WT=0.7887 TC=0.7349 ET=0.7079
+2026-08-10 14:35:47,780 INFO    round  10  VAL mean WT=0.7853
+2026-08-10 14:36:14,550 INFO    round  11       H1  train_loss=0.5167  lr=6.48e-04
+2026-08-10 14:36:48,284 INFO    round  11       H2  train_loss=0.5039  lr=6.48e-04
+2026-08-10 14:37:21,933 INFO    round  11       H3  train_loss=0.5195  lr=6.48e-04
+2026-08-10 14:37:37,569 INFO    round  11       H4  train_loss=0.5276  lr=6.48e-04
+2026-08-10 14:38:20,136 INFO    round  11  eval  H1  WT=0.8572 TC=0.7971 ET=0.7673
+2026-08-10 14:39:01,836 INFO    round  11  eval  H2  WT=0.8208 TC=0.7676 ET=0.7476
+2026-08-10 14:39:43,602 INFO    round  11  eval  H3  WT=0.8371 TC=0.8073 ET=0.7634
+2026-08-10 14:40:23,928 INFO    round  11  eval  H4  WT=0.8130 TC=0.7839 ET=0.7476
+2026-08-10 14:41:14,152 INFO    round  11  VAL mean WT=0.8106  <- best so far
+2026-08-10 14:41:46,544 INFO    round  12       H1  train_loss=0.5081  lr=5.87e-04
+2026-08-10 14:42:19,184 INFO    round  12       H2  train_loss=0.4887  lr=5.87e-04
+2026-08-10 14:42:48,361 INFO    round  12       H3  train_loss=0.5253  lr=5.87e-04
+2026-08-10 14:43:21,306 INFO    round  12       H4  train_loss=0.5254  lr=5.87e-04
+2026-08-10 14:44:04,565 INFO    round  12  eval  H1  WT=0.8594 TC=0.7904 ET=0.7578
+2026-08-10 14:44:45,223 INFO    round  12  eval  H2  WT=0.8515 TC=0.8329 ET=0.7828
+2026-08-10 14:45:26,370 INFO    round  12  eval  H3  WT=0.8351 TC=0.8306 ET=0.7852
+2026-08-10 14:46:06,582 INFO    round  12  eval  H4  WT=0.8226 TC=0.7558 ET=0.7467
+2026-08-10 14:46:57,628 INFO    round  12  VAL mean WT=0.8171  <- best so far
+2026-08-10 14:47:22,735 INFO    round  13       H1  train_loss=0.4837  lr=5.25e-04
+2026-08-10 14:47:55,939 INFO    round  13       H2  train_loss=0.4863  lr=5.25e-04
+2026-08-10 14:48:26,172 INFO    round  13       H3  train_loss=0.5108  lr=5.25e-04
+2026-08-10 14:49:00,392 INFO    round  13       H4  train_loss=0.5053  lr=5.25e-04
+2026-08-10 14:49:43,799 INFO    round  13  eval  H1  WT=0.8717 TC=0.8100 ET=0.7753
+2026-08-10 14:50:24,838 INFO    round  13  eval  H2  WT=0.8371 TC=0.8082 ET=0.7827
+2026-08-10 14:51:06,579 INFO    round  13  eval  H3  WT=0.8377 TC=0.8374 ET=0.7890
+2026-08-10 14:51:46,241 INFO    round  13  eval  H4  WT=0.8336 TC=0.7976 ET=0.7557
+2026-08-10 14:52:35,996 INFO    round  13  VAL mean WT=0.8272  <- best so far
+2026-08-10 14:53:07,196 INFO    round  14       H1  train_loss=0.4733  lr=4.63e-04
+2026-08-10 14:53:38,965 INFO    round  14       H2  train_loss=0.4940  lr=4.63e-04
+2026-08-10 14:54:11,798 INFO    round  14       H3  train_loss=0.5009  lr=4.63e-04
+2026-08-10 14:54:45,072 INFO    round  14       H4  train_loss=0.4963  lr=4.63e-04
+2026-08-10 14:55:28,122 INFO    round  14  eval  H1  WT=0.8745 TC=0.8215 ET=0.7867
+2026-08-10 14:56:08,537 INFO    round  14  eval  H2  WT=0.8443 TC=0.8087 ET=0.7791
+2026-08-10 14:56:50,435 INFO    round  14  eval  H3  WT=0.7928 TC=0.7993 ET=0.7579
+2026-08-10 14:57:29,590 INFO    round  14  eval  H4  WT=0.8346 TC=0.7948 ET=0.7633
+2026-08-10 14:58:20,335 INFO    round  14  VAL mean WT=0.8190
+2026-08-10 14:58:51,615 INFO    round  15       H1  train_loss=0.4850  lr=4.02e-04
+2026-08-10 14:59:24,084 INFO    round  15       H2  train_loss=0.4777  lr=4.02e-04
+2026-08-10 14:59:57,422 INFO    round  15       H3  train_loss=0.5074  lr=4.02e-04
+2026-08-10 15:00:30,074 INFO    round  15       H4  train_loss=0.5282  lr=4.02e-04
+2026-08-10 15:01:12,528 INFO    round  15  eval  H1  WT=0.8583 TC=0.7979 ET=0.7631
+2026-08-10 15:01:53,291 INFO    round  15  eval  H2  WT=0.8376 TC=0.8268 ET=0.7949
+2026-08-10 15:02:34,321 INFO    round  15  eval  H3  WT=0.8437 TC=0.8222 ET=0.7981
+2026-08-10 15:03:14,616 INFO    round  15  eval  H4  WT=0.7850 TC=0.7803 ET=0.7323
+2026-08-10 15:04:04,728 INFO    round  15  VAL mean WT=0.8020
+2026-08-10 15:04:36,236 INFO    round  16       H1  train_loss=0.4737  lr=3.43e-04
+2026-08-10 15:05:09,969 INFO    round  16       H2  train_loss=0.4739  lr=3.43e-04
+2026-08-10 15:05:42,951 INFO    round  16       H3  train_loss=0.4984  lr=3.43e-04
+2026-08-10 15:06:16,345 INFO    round  16       H4  train_loss=0.4884  lr=3.43e-04
+2026-08-10 15:06:58,639 INFO    round  16  eval  H1  WT=0.8612 TC=0.7953 ET=0.7524
+2026-08-10 15:07:39,620 INFO    round  16  eval  H2  WT=0.8456 TC=0.8250 ET=0.8020
+2026-08-10 15:08:20,987 INFO    round  16  eval  H3  WT=0.8503 TC=0.8426 ET=0.8033
+2026-08-10 15:09:01,058 INFO    round  16  eval  H4  WT=0.8403 TC=0.7980 ET=0.7492
+2026-08-10 15:09:51,444 INFO    round  16  VAL mean WT=0.8317  <- best so far
+2026-08-10 15:10:23,785 INFO    round  17       H1  train_loss=0.4787  lr=2.88e-04
+2026-08-10 15:10:56,855 INFO    round  17       H2  train_loss=0.4653  lr=2.88e-04
+2026-08-10 15:11:29,625 INFO    round  17       H3  train_loss=0.4873  lr=2.88e-04
+2026-08-10 15:12:02,351 INFO    round  17       H4  train_loss=0.5112  lr=2.88e-04
+2026-08-10 15:12:45,035 INFO    round  17  eval  H1  WT=0.8649 TC=0.8071 ET=0.7769
+2026-08-10 15:13:26,527 INFO    round  17  eval  H2  WT=0.8539 TC=0.8510 ET=0.8252
+2026-08-10 15:14:08,285 INFO    round  17  eval  H3  WT=0.8062 TC=0.8463 ET=0.7955
+2026-08-10 15:14:48,758 INFO    round  17  eval  H4  WT=0.8345 TC=0.7996 ET=0.7527
+2026-08-10 15:15:39,831 INFO    round  17  VAL mean WT=0.8275
+2026-08-10 15:16:11,502 INFO    round  18       H1  train_loss=0.4544  lr=2.36e-04
+2026-08-10 15:16:43,730 INFO    round  18       H2  train_loss=0.4701  lr=2.36e-04
+2026-08-10 15:17:17,389 INFO    round  18       H3  train_loss=0.4832  lr=2.36e-04
+2026-08-10 15:17:50,615 INFO    round  18       H4  train_loss=0.5031  lr=2.36e-04
+2026-08-10 15:18:32,908 INFO    round  18  eval  H1  WT=0.8615 TC=0.7999 ET=0.7688
+2026-08-10 15:19:13,580 INFO    round  18  eval  H2  WT=0.8675 TC=0.8451 ET=0.8113
+2026-08-10 15:19:54,968 INFO    round  18  eval  H3  WT=0.8515 TC=0.8402 ET=0.7936
+2026-08-10 15:20:35,885 INFO    round  18  eval  H4  WT=0.8452 TC=0.8203 ET=0.7667
+2026-08-10 15:21:26,009 INFO    round  18  VAL mean WT=0.8355  <- best so far
+2026-08-10 15:21:57,938 INFO    round  19       H1  train_loss=0.4814  lr=1.89e-04
+2026-08-10 15:22:31,214 INFO    round  19       H2  train_loss=0.4638  lr=1.89e-04
+2026-08-10 15:23:04,513 INFO    round  19       H3  train_loss=0.4928  lr=1.89e-04
+2026-08-10 15:23:38,171 INFO    round  19       H4  train_loss=0.5261  lr=1.89e-04
+2026-08-10 15:24:21,278 INFO    round  19  eval  H1  WT=0.8727 TC=0.8212 ET=0.7837
+2026-08-10 15:25:01,924 INFO    round  19  eval  H2  WT=0.8675 TC=0.8427 ET=0.8133
+2026-08-10 15:25:43,040 INFO    round  19  eval  H3  WT=0.8473 TC=0.8324 ET=0.7875
+2026-08-10 15:26:23,597 INFO    round  19  eval  H4  WT=0.8459 TC=0.8184 ET=0.7679
+2026-08-10 15:27:13,767 INFO    round  19  VAL mean WT=0.8413  <- best so far
+2026-08-10 15:27:45,611 INFO    round  20       H1  train_loss=0.4572  lr=1.48e-04
+2026-08-10 15:28:19,255 INFO    round  20       H2  train_loss=0.4852  lr=1.48e-04
+2026-08-10 15:28:51,615 INFO    round  20       H3  train_loss=0.4708  lr=1.48e-04
+2026-08-10 15:29:24,590 INFO    round  20       H4  train_loss=0.5066  lr=1.48e-04
+2026-08-10 15:30:06,917 INFO    round  20  eval  H1  WT=0.8724 TC=0.8301 ET=0.7947
+2026-08-10 15:30:47,342 INFO    round  20  eval  H2  WT=0.8665 TC=0.8477 ET=0.8137
+2026-08-10 15:31:28,415 INFO    round  20  eval  H3  WT=0.8652 TC=0.8480 ET=0.8025
+2026-08-10 15:32:08,385 INFO    round  20  eval  H4  WT=0.8472 TC=0.8120 ET=0.7640
+2026-08-10 15:32:58,617 INFO    round  20  VAL mean WT=0.8345
+2026-08-10 15:33:30,138 INFO    round  21       H1  train_loss=0.4681  lr=1.14e-04
+2026-08-10 15:34:03,659 INFO    round  21       H2  train_loss=0.4865  lr=1.14e-04
+2026-08-10 15:34:36,807 INFO    round  21       H3  train_loss=0.4786  lr=1.14e-04
+2026-08-10 15:35:10,311 INFO    round  21       H4  train_loss=0.4773  lr=1.14e-04
+2026-08-10 15:35:52,867 INFO    round  21  eval  H1  WT=0.8759 TC=0.8252 ET=0.7905
+2026-08-10 15:36:34,057 INFO    round  21  eval  H2  WT=0.8629 TC=0.8466 ET=0.8162
+2026-08-10 15:37:15,567 INFO    round  21  eval  H3  WT=0.8546 TC=0.8387 ET=0.7974
+2026-08-10 15:37:55,626 INFO    round  21  eval  H4  WT=0.8410 TC=0.8174 ET=0.7657
+2026-08-10 15:38:46,120 INFO    round  21  VAL mean WT=0.8414  <- best so far
+2026-08-10 15:39:17,637 INFO    round  22       H1  train_loss=0.4695  lr=8.62e-05
+2026-08-10 15:39:50,898 INFO    round  22       H2  train_loss=0.4745  lr=8.62e-05
+2026-08-10 15:40:24,405 INFO    round  22       H3  train_loss=0.4823  lr=8.62e-05
+2026-08-10 15:40:58,241 INFO    round  22       H4  train_loss=0.5090  lr=8.62e-05
+2026-08-10 15:41:40,602 INFO    round  22  eval  H1  WT=0.8629 TC=0.8173 ET=0.7818
+2026-08-10 15:42:21,330 INFO    round  22  eval  H2  WT=0.8516 TC=0.8474 ET=0.8188
+2026-08-10 15:43:03,014 INFO    round  22  eval  H3  WT=0.8570 TC=0.8553 ET=0.8052
+2026-08-10 15:43:42,581 INFO    round  22  eval  H4  WT=0.8458 TC=0.8196 ET=0.7676
+2026-08-10 15:44:32,855 INFO    round  22  VAL mean WT=0.8310
+2026-08-10 15:45:04,155 INFO    round  23       H1  train_loss=0.4728  lr=6.62e-05
+2026-08-10 15:45:36,688 INFO    round  23       H2  train_loss=0.4730  lr=6.62e-05
+2026-08-10 15:46:09,788 INFO    round  23       H3  train_loss=0.4940  lr=6.62e-05
+2026-08-10 15:46:43,030 INFO    round  23       H4  train_loss=0.4954  lr=6.62e-05
+2026-08-10 15:47:26,214 INFO    round  23  eval  H1  WT=0.8714 TC=0.8269 ET=0.7922
+2026-08-10 15:48:06,673 INFO    round  23  eval  H2  WT=0.8707 TC=0.8518 ET=0.8237
+2026-08-10 15:48:48,309 INFO    round  23  eval  H3  WT=0.8535 TC=0.8523 ET=0.8072
+2026-08-10 15:49:28,370 INFO    round  23  eval  H4  WT=0.8483 TC=0.8158 ET=0.7649
+2026-08-10 15:50:18,937 INFO    round  23  VAL mean WT=0.8402
+2026-08-10 15:50:50,580 INFO    round  24       H1  train_loss=0.4668  lr=5.41e-05
+2026-08-10 15:51:23,647 INFO    round  24       H2  train_loss=0.4675  lr=5.41e-05
+2026-08-10 15:51:57,166 INFO    round  24       H3  train_loss=0.4835  lr=5.41e-05
+2026-08-10 15:52:30,595 INFO    round  24       H4  train_loss=0.4876  lr=5.41e-05
+2026-08-10 15:53:15,041 INFO    round  24  eval  H1  WT=0.8704 TC=0.8233 ET=0.7897
+2026-08-10 15:53:55,366 INFO    round  24  eval  H2  WT=0.8664 TC=0.8541 ET=0.8234
+2026-08-10 15:54:36,605 INFO    round  24  eval  H3  WT=0.8592 TC=0.8519 ET=0.8065
+2026-08-10 15:55:16,435 INFO    round  24  eval  H4  WT=0.8403 TC=0.8126 ET=0.7612
+2026-08-10 15:56:07,213 INFO    round  24  VAL mean WT=0.8376
+2026-08-10 15:56:38,767 INFO    round  25       H1  train_loss=0.4618  lr=5.00e-05
+2026-08-10 15:57:12,406 INFO    round  25       H2  train_loss=0.4530  lr=5.00e-05
+2026-08-10 15:57:46,859 INFO    round  25       H3  train_loss=0.4793  lr=5.00e-05
+2026-08-10 15:58:20,305 INFO    round  25       H4  train_loss=0.4986  lr=5.00e-05
+2026-08-10 15:59:03,225 INFO    round  25  eval  H1  WT=0.8729 TC=0.8252 ET=0.7922
+2026-08-10 15:59:44,173 INFO    round  25  eval  H2  WT=0.8629 TC=0.8526 ET=0.8234
+2026-08-10 16:00:26,287 INFO    round  25  eval  H3  WT=0.8492 TC=0.8430 ET=0.7994
+2026-08-10 16:01:06,593 INFO    round  25  eval  H4  WT=0.8502 TC=0.8188 ET=0.7663
+2026-08-10 16:01:57,005 INFO    round  25  VAL mean WT=0.8416  <- best so far
+2026-08-10 16:01:57,132 INFO    selected round 25 by validation WT=0.8416 (of 25 rounds)
+2026-08-10 16:01:57,133 INFO    final evaluation at round 25 (tta=True)
+2026-08-10 16:03:10,377 INFO      final H1  WT=0.8751 TC=0.8277 ET=0.7948
+2026-08-10 16:04:22,684 INFO      final H2  WT=0.8688 TC=0.8642 ET=0.8351
+2026-08-10 16:05:35,917 INFO      final H3  WT=0.8531 TC=0.8425 ET=0.7988
+2026-08-10 16:06:46,538 INFO      final H4  WT=0.8553 TC=0.8232 ET=0.7712
+2026-08-10 16:06:46,538 INFO    final cross-hospital matrix (local-only)
+2026-08-10 16:07:59,544 INFO      cross H1 -> H2  WT=0.8482
+2026-08-10 16:09:13,342 INFO      cross H1 -> H3  WT=0.7893
+2026-08-10 16:10:24,584 INFO      cross H1 -> H4  WT=0.6469
+2026-08-10 16:11:39,501 INFO      cross H2 -> H1  WT=0.8869
+2026-08-10 16:12:53,057 INFO      cross H2 -> H3  WT=0.8234
+2026-08-10 16:14:03,729 INFO      cross H2 -> H4  WT=0.6975
+2026-08-10 16:15:17,511 INFO      cross H3 -> H1  WT=0.8728
+2026-08-10 16:16:30,506 INFO      cross H3 -> H2  WT=0.8803
+2026-08-10 16:17:42,090 INFO      cross H3 -> H4  WT=0.7392
+2026-08-10 16:18:55,377 INFO      cross H4 -> H1  WT=0.7811
+2026-08-10 16:20:07,981 INFO      cross H4 -> H2  WT=0.8039
+2026-08-10 16:21:22,441 INFO      cross H4 -> H3  WT=0.8353
+2026-08-10 16:21:22,604 INFO    done -> D:\capstone\artifacts\runs\v2\local_2d_42
