@@ -54,6 +54,24 @@ def test_cosine_spans_lr_to_floor_and_never_rises():
     assert all(a >= b for a, b in zip(lrs, lrs[1:])), "cosine schedule must be monotone decreasing"
 
 
+def test_anneal_rounds_decouples_schedule_length_from_run_length():
+    """A 40-round run annealing on a 25-round timetable must match the 25-round schedule for its
+    first 25 rounds, then hold at the floor -- never rise again."""
+    short = Config(rounds=25, lr_schedule="cosine", lr_min_factor=0.05)
+    long_ = Config(rounds=40, lr_schedule="cosine", lr_min_factor=0.05,
+                   lr_anneal_rounds=25, report_last_k=5)
+    for r in range(1, 26):
+        assert long_.round_lr(r) == pytest.approx(short.round_lr(r)), f"diverged at round {r}"
+    floor = 1e-3 * 0.05
+    assert all(long_.round_lr(r) == pytest.approx(floor) for r in range(25, 41))
+
+
+def test_anneal_rounds_none_is_the_original_behaviour():
+    a = Config(rounds=25, lr_schedule="cosine")
+    b = Config(rounds=25, lr_schedule="cosine", lr_anneal_rounds=None)
+    assert [a.round_lr(r) for r in range(1, 26)] == [b.round_lr(r) for r in range(1, 26)]
+
+
 def test_single_round_schedule_does_not_divide_by_zero():
     assert Config(rounds=1, lr_schedule="cosine", report_last_k=1).round_lr(1) == 1e-3
 

@@ -123,6 +123,14 @@ class Config:
     # effects under test. "cosine" decays the per-round LR from `lr` to `lr * lr_min_factor`.
     lr_schedule: str = "constant"         # "constant" | "cosine"
     lr_min_factor: float = 0.05
+    # Rounds the cosine takes to reach its floor. None = the whole run (the usual formulation).
+    # Setting it shorter than `rounds` decouples "how long we train" from "how fast we anneal":
+    # v4 stretched a 25-round cosine over 40 rounds and lost 0.0099 to v3, because the late-curve
+    # rise that motivated the longer run was the anneal consolidating the model, not headroom
+    # from extra steps. With this set, the schedule bottoms out on v3's timetable and the extra
+    # rounds are spent at the floor -- which is the actual question "does more low-LR training
+    # help?" asked in isolation.
+    lr_anneal_rounds: int | None = None
 
     # sampling
     slices_per_case: int = 8              # 2d: slices drawn per case per epoch
@@ -224,11 +232,16 @@ class Config:
         return rnd % self.eval_test_every == 0 or rnd == 1
 
     def round_lr(self, rnd: int) -> float:
-        """LR for communication round `rnd` (1-based). Cosine decays lr -> lr*lr_min_factor."""
+        """LR for communication round `rnd` (1-based). Cosine decays lr -> lr*lr_min_factor.
+
+        The decay spans `lr_anneal_rounds` when set, otherwise the whole run; past that point the
+        LR holds at the floor rather than rising again.
+        """
         if self.lr_schedule == "constant" or self.rounds <= 1:
             return self.lr
         import math
-        progress = (rnd - 1) / (self.rounds - 1)
+        span = self.lr_anneal_rounds or self.rounds
+        progress = min(1.0, (rnd - 1) / max(1, span - 1))
         floor = self.lr * self.lr_min_factor
         return floor + (self.lr - floor) * 0.5 * (1.0 + math.cos(math.pi * progress))
 

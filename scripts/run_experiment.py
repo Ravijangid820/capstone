@@ -53,6 +53,10 @@ def build_parser() -> argparse.ArgumentParser:
     g.add_argument("--lr-schedule", default=None, choices=("constant", "cosine"),
                    help="per-round LR decay; a fresh Adam each round makes this the only schedule")
     g.add_argument("--lr-min-factor", type=float, default=None)
+    g.add_argument("--lr-anneal-rounds", type=int, default=None,
+                   help="rounds the cosine takes to reach its floor (default: the whole run)")
+    g.add_argument("--eval-test-every", type=int, default=None,
+                   help="score the full test set every Nth round; the estimator's rounds always run")
     g.add_argument("--batch-size", type=int, default=None)
     g.add_argument("--base-channels", type=int, default=None)
     g.add_argument("--seed", type=int, default=None)
