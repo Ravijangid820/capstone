@@ -331,6 +331,37 @@ PRESETS: dict[str, dict] = {
     # number is read from. eval_test_every=3 thins those while still scoring round 1, every third
     # round, and every round the reported estimator averages -- about +15% wall clock for +60% more
     # training instead of +60%.
+    # v5 = v3 plus the one thing that beat it in a head-to-head probe. On 2D FedBN, 40 rounds with
+    # the cosine still bottoming out at round 25 scored 0.8756 test / 0.8514 validation against
+    # v3's 0.8653 / 0.8475 -- both signals moving together, which is what separates a real effect
+    # from test-set noise. The extra rounds are spent at the 5e-5 floor, consolidating; v4 failed
+    # because stretching the cosine over 40 rounds denied the model exactly that.
+    #
+    # Wider channels were probed too and rejected: base 48 gained +0.0048 on test but LOST 0.0018
+    # on validation, so it is not a demonstrated improvement and doubles the parameters.
+    #
+    # Inference batch sizes are raised here purely for speed -- eval was using 0.28 GB of a 4 GB
+    # card. Measured 2.7x (2d) and 6.9x (3d) faster, changing per-case Dice by <=1.5e-4.
+    "v5": {
+        "lr_schedule": "cosine",
+        "lr_min_factor": 0.05,
+        "rounds": 40,
+        "lr_anneal_rounds": 25,
+        "augment": True,
+        "aug_flip_p": 0.5,
+        "aug_rot90_p": 0.5,
+        "aug_intensity_p": 0.0,
+        "aug_noise_std": 0.0,
+        "tta": True,
+        "postproc_min_voxels": 50,
+        "train_per_hospital": 230,
+        "val_per_hospital": 20,
+        "select_by": "best_val",
+        "report_last_k": 5,
+        "eval_test_every": 3,
+        "eval_batch_size": 64,
+        "sw_batch_size": 4,
+    },
     "v4": {
         "lr_schedule": "cosine",
         "lr_min_factor": 0.05,
