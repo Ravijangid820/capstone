@@ -298,6 +298,71 @@ the right fix*. Three recipes now agree on that reading.
 > request to maximize accuracy, but it is not a clean ablation and should not be written up as one.
 > Seed 42 only; 2D multi-seed coverage exists for baseline and v2 but not yet v3.
 
+## 2e. v5 — the final recipe, and the 3D reversal's last half falls
+
+v3 left two questions open: were the models undertrained, and was capacity the limit? Two
+single-method probes on 2D FedBN answered both for ~7 h of GPU instead of ~74 h of matrices.
+
+| probe | test (last-5) | validation | verdict |
+|---|---|---|---|
+| v3 reference — 25 rounds, base 32 | 0.8653 | 0.8475 | — |
+| **40 rounds, anneal by 25** | **0.8756** (+0.0103) | **0.8514** (+0.0039) | **adopted** |
+| 25 rounds, base 48 (3.61M params) | 0.8701 (+0.0048) | 0.8457 (−0.0018) | rejected |
+
+The capacity probe is a useful negative result: a test gain that validation *contradicts* is the
+signature of test-set noise, and it is the same standard that rejected v4. **These models were
+round-limited, not size-limited** — confirmed independently when 40 rounds fixed 3D local-only,
+the cell I had wrongly attributed to a sampling/capacity limit.
+
+v5 = v3 + 40 rounds with `lr_anneal_rounds=25`. Paired per-case against the frozen baseline:
+
+| Method | 2D Δ | 2D p | 3D Δ | 3D p |
+|---|---|---|---|---|
+| centralized | **+0.0510** | 3.1e-35 | **+0.0115** | 4.3e-07 |
+| local-only | **+0.0245** | 3.4e-20 | **+0.0054** | 2.2e-04 |
+| FedAvg | **+0.0309** | 5.8e-34 | **+0.0073** | 2.0e-04 |
+| FedBN | **+0.0272** | 6.4e-28 | **+0.0343** | 8.4e-16 |
+
+**Reproducibility check:** v5's FedBN 2D scored **0.8756**, identical to the probe's 0.8756 to four
+decimals — two runs days apart, one under `--preset v3` with manual flags, one under `--preset v5`.
+
+### H3 now holds in 3D, and the reversal is finished
+
+| | H1 | H2 | H3 |
+|---|---|---|---|
+| 2D baseline / v3 / **v5** | ✅ / ❌ / **❌** | ✅ / ✅ / **✅** | ✅ / ✅ / **✅** |
+| 3D baseline / v3 / **v5** | ✅ / ❌ / **✅** | ❌ / ✅ / **✅** | ❌ / ❌ / **✅** |
+
+[§2b-3d](#2b-3d-the-3d-rerun--where-the-recipe-does-not-help) argued the H2 half of the reversal was
+a training artefact while the H3 half survived. **The H3 half does not survive either.** Under v5,
+FedBN beats FedAvg on both clauses in 3D (mean +0.0024, outlier +0.0078), and FedBN is the largest
+single 3D gain of any method. The whole "3D reverses the conclusions" claim should be dropped: it
+was a property of the original training setup, not of the backbone.
+
+### The outlier mechanism, corrected
+
+Earlier I attributed the outlier's decline under better training to FedAvg's weight averaging. The
+3D v5 results refute that — grouping by whether training mixes sites:
+
+| method (3D) | typical sites H1–H3 | outlier H4 |
+|---|---|---|
+| centralized — pools all sites | +0.0176 | **−0.0087** |
+| FedAvg — averages all weights | +0.0156 | **−0.0092** |
+| FedBN — keeps BatchNorm local | +0.0278 | **+0.0046** |
+| local-only — never mixes | +0.0025 | **+0.0072** |
+
+Centralized has no aggregation step at all and shows the effect just as strongly as FedAvg. The
+common factor is training over a **majority-dominated distribution**: optimize harder and you fit
+the 3-of-4 majority better and the minority worse. So H2 is not an artefact of weight averaging —
+it is what happens whenever one model is optimized across heterogeneous sites, which makes it a
+broader claim than originally stated. Keeping BatchNorm local is what protects the outlier, which
+is precisely FedBN's thesis, and FedBN patterning with local-only rather than with FedAvg is direct
+evidence for it.
+
+> Still seed 42 only for v3 and v5. Baseline and v2 have three 2D seeds; nothing here has 3D
+> multi-seed coverage. The H3-in-3D result rests on one run and should be replicated before it is
+> presented as settled.
+
 ## 2c. Plateau stability — the original problem, measured
 
 Round-to-round swing in mean WT over rounds 21–25, seed 42:
