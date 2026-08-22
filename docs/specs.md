@@ -32,12 +32,30 @@ BraTS 2021 — 1251 cases, 3D, 240×240×155, 4 modalities + `{0,1,2,4}` mask. F
 | Units drawn per case per epoch | 8 slices | 2 patches |
 | `tumor_frac` (foreground bias) | 0.7 | 0.7 |
 | Local epochs per round `E` | 1–2 | 1–2 |
-| FL rounds `R` | 20–30 | 20–30 |
+| FL rounds `R` | 20 (default) / 25 (actual experiments) | 20 (default) / 25 (actual experiments) |
 | `train_per_hospital` | 120–150 (of ~250) | 120–150 |
 | Seed | 42 | 42 |
 
 **Matched compute.** `local` and `centralized` train for `R × E` epochs — the same total local epochs
 a hospital spends across a whole federated run. See [experiments](experiments.md) §3.
+
+### 3.1 `--preset v2` — the improved recipe
+
+Opt-in; every knob above keeps its baseline value unless the preset or an explicit flag changes
+it. Rationale for each in [improvements.md](improvements.md) §2.
+
+| Knob | baseline | v2 |
+|---|---|---|
+| `lr_schedule` / `lr_min_factor` | `constant` | `cosine` → 5 % of `lr` by the final round |
+| `augment` | `False` | `True` — flip p=0.5/axis, rot90 p=0.5 (2D only), intensity jitter p=0.3, noise σ=0.02 |
+| `tta` | `False` | `True` — flip-TTA, **final evaluation only** (4× inference) |
+| `postproc_min_voxels` | `0` | `50` — drop smaller 3D connected components, then re-nest WT ⊇ TC ⊇ ET |
+| `val_per_hospital` | `0` | `20`, taken **after** the train cap (needs a 170-case/hospital cache) |
+| `select_by` | `last` | `best_val` |
+| `report_last_k` | `1` | `5` — declared analysis estimator, recorded before the run |
+
+Augmentation and TTA are train-side and eval-side respectively and never overlap: no augmentation
+is applied on any evaluation path, and TTA touches no weights.
 
 ## 4. Hospitals / split
 
@@ -83,21 +101,32 @@ matrix (4 methods × 25 rounds): ≈ 3.7 h on the 3050, ≈ 2.5 h on a T4. See [
 ## 7. Directory & artifact layout
 
 ```
-artifacts/                       (git-ignored, except splits/)
+tests/                           pytest suite (44 tests)
+src/fedbrats/static/             web demo frontend
+src/fedbrats/static/vendor/      bundled Three.js + OrbitControls (offline)
+scripts/demo_server.py           web demo HTTP server (port 8000)
+artifacts/                       (git-ignored, except splits/ and baseline/)
   splits/partition.json          committed — the source-of-truth split
   cache/<key>/                   preprocessed tensors; <key> = md5(shift params + clip + seed)
     <case_id>/x.npy              (4,X,Y,Z) float16
     <case_id>/y.npy              (3,X,Y,Z) uint8
     <case_id>/meta.json          shape, tumor_z, tumor_bbox  (presence = "already built")
     index.json                   assembled from the meta files
-  runs/<run_id>/
-    config.json                  exact config used
+  runs/[<tag>/]<run_id>/
+    config.json                  exact config used (typed JSON, every knob)
     run.log                      human log (timestamped INFO)
     metrics.jsonl                machine metrics (one row per measurement)
+    per_case.jsonl               per-volume Dice — the input to CIs and paired tests
+    summary.json                 reported round, selection rule, best val score
     checkpoints/final.pt         model weights (ignored)
+  baseline/                      committed — frozen "before" snapshot
+    MANIFEST.json                SHA-256 per file + git commit + headline numbers
+    <run_id>/                    copied metrics/config/log, plus rescore_* backfills
 ```
 
-`<run_id>` = `<method>_<dim>_<seed>` (e.g. `fedbn_2d_42`).
+`<run_id>` = `<method>_<dim>_<seed>` (e.g. `fedbn_2d_42`). `<tag>` namespaces a rerun
+(`--tag v2` → `artifacts/runs/v2/fedbn_2d_42/`); without one, writing into an existing run
+directory is refused rather than appended to. See [improvements.md](improvements.md) §3.
 
 The full cache is **~44 GB** (~35 MB/case, measured) and must not land on the WSL VHDX — override
 with `FEDBRATS_CACHE_DIR`. See [environments.md](environments.md).
@@ -120,12 +149,30 @@ with `FEDBRATS_CACHE_DIR`. See [environments.md](environments.md).
 | `round` | FL round |
 | `model_hospital` | **whose model** — `"global"` for centralized/FedAvg; `H1`–`H4` for FedBN/local |
 | `test_hospital` | **whose test set** — `H1`–`H4` |
-| `split` | train · test |
+| `split` | train · **val** · test |
+| `stage` | `round` · `final` · `cross` · `rescore` — see below |
+| `tta` | whether flip test-time augmentation produced this row |
 | `dice_wt/tc/et` | per-volume Dice per region, averaged over that test set's cases |
 
 The two `*_hospital` fields are separate because the local-only run reports a full 4×4
 cross-hospital matrix. **Diagonal** = `model_hospital == test_hospital`; that is where H1/H2/H3 live.
 Off-diagonal cells exist only for `method == "local"`.
+
+`stage` distinguishes measurements that are **not interchangeable**, and reading one as the other
+silently mixes inference settings:
+
+| `stage` | What produced it |
+|---|---|
+| `round` | the per-round evaluation — the learning curve. No TTA. |
+| `final` | the **selected** model re-scored at the end, with TTA if enabled. The headline number. |
+| `cross` | local-only's off-diagonal 4×4 matrix, final round only |
+| `rescore` | `scripts/rescore.py` re-evaluating a saved checkpoint; `round` is `-1` |
+
+Rows written before this field existed have no `stage` and are treated as `round`.
+
+`per_case.jsonl` carries the same fields plus `case_id`, one row per volume rather than a mean —
+that is what supports confidence intervals and paired significance tests. Rescored rows land in
+`rescore_metrics.jsonl`, never in `metrics.jsonl`, so a frozen baseline's hashes stay valid.
 
 Plots and the H1/H2/H3 tables in [experiments](experiments.md) are generated directly from these rows.
 

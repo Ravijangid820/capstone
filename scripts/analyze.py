@@ -1,13 +1,30 @@
 """Read metrics.jsonl from every run and decide H1/H2/H3 -- across seeds when present.
 
-    python scripts/analyze.py                 # all runs found under artifacts/runs/
-    python scripts/analyze.py --dim 2d        # restrict to one backbone
-    python scripts/analyze.py --round 20      # score at a specific round (default: each run's last)
+    python scripts/analyze.py                          # all runs found under artifacts/runs/
+    python scripts/analyze.py --dim 2d                 # restrict to one backbone
+    python scripts/analyze.py --round 20               # score at a specific round
+    python scripts/analyze.py --select last-k --last-k 5    # average the final K rounds
+    python scripts/analyze.py --runs-dir artifacts/runs/v2  # a tagged rerun
 
 Each run_id is "<method>_<dim>_<seed>", so multiple seeds of the same method live in separate run
 dirs. When more than one seed is present, the verdicts are reported per seed AND aggregated
 (mean +/- std across seeds, plus "supported in N/M seeds") -- which is what turns a single-run
 point estimate into a claim you can defend against run-to-run noise.
+
+**Choosing an estimator, and why it is not cosmetic.** These curves plateau by roughly round 15
+and then oscillate. On the frozen baseline the swing between adjacent rounds reaches 0.12 WT
+Dice, which is several times the gap between the methods under test -- so `--select last`, a
+single round, reports one draw from that oscillation. It is not a wrong number, it is a noisy
+estimator of the right one, and on the baseline it flips H1 from supported in 1/3 seeds to 3/3.
+
+    last     the final round alone. What the baseline reported; kept as the default so old
+             numbers stay reproducible.
+    last-k   mean over the final K rounds. Cuts evaluation noise without touching the models.
+    final    the run's own `stage="final"` rows -- the selected model re-scored with TTA.
+             Runs made before selection existed have no such rows and fall back to `last`.
+
+Pick the estimator before looking at the verdicts, and apply the same one to both sides of any
+comparison. `compare_runs.py` enforces that; here it is on you.
 
 The hypotheses reduce to inequalities over the final-round diagonal (docs/experiments.md §3):
 
@@ -57,21 +74,39 @@ def load_rows(runs_dir: Path, dim: str | None) -> list[dict]:
     return rows
 
 
-def _diagonal(rows: list[dict], method: str, seed: str, rnd: int | None) -> dict[str, dict[str, float]]:
-    """hospital -> {wt,tc,et} for one (method, seed) at `rnd` (or that run's last round)."""
+def is_diagonal(r: dict) -> bool:
+    """The cell that matters: each hospital scored by the model that actually serves it."""
+    return r["model_hospital"] == "global" or r["model_hospital"] == r["test_hospital"]
+
+
+def _diagonal(rows: list[dict], method: str, seed: str, rnd: int | None,
+              select: str = "last", last_k: int = 5) -> dict[str, dict[str, float]]:
+    """hospital -> {wt,tc,et} for one (method, seed) under the chosen estimator."""
     sub = [r for r in rows if r["method"] == method and seed_of(r["run_id"]) == seed
-           and r["split"] == "test"]
+           and r["split"] == "test" and is_diagonal(r)]
     if not sub:
         return {}
-    use = rnd if rnd is not None else max(r["round"] for r in sub)
-    out: dict[str, dict[str, float]] = {}
-    for r in sub:
-        if r["round"] != use:
-            continue
-        mh, th = r["model_hospital"], r["test_hospital"]
-        if mh == "global" or mh == th:
-            out[th] = {k: r[f"dice_{k}"] for k in REGIONS}
-    return out
+
+    # Runs predating the stage field carry none; treat their rows as ordinary round rows.
+    rounds_only = [r for r in sub if r.get("stage", "round") == "round"]
+    finals = [r for r in sub if r.get("stage") == "final"]
+
+    if rnd is not None:
+        keep, pool = [rnd], rounds_only
+    elif select == "final" and finals:
+        keep, pool = sorted({r["round"] for r in finals}), finals
+    else:
+        pool = rounds_only or sub
+        last = max(r["round"] for r in pool)
+        k = last_k if select == "last-k" else 1
+        keep = list(range(max(1, last - k + 1), last + 1))
+
+    acc: dict[str, dict[str, list[float]]] = defaultdict(lambda: defaultdict(list))
+    for r in pool:
+        if r["round"] in keep:
+            for k_ in REGIONS:
+                acc[r["test_hospital"]][k_].append(r[f"dice_{k_}"])
+    return {h: {k_: statistics.fmean(v) for k_, v in d.items()} for h, d in acc.items()}
 
 
 def mean_h(diag: dict[str, dict[str, float]], region: str = "wt") -> float:
@@ -98,7 +133,10 @@ def _table(header: list[str], rows: list[list[str]]) -> str:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--dim", default=None, choices=("2d", "3d"))
-    ap.add_argument("--round", type=int, default=None, help="score at this round (default: last)")
+    ap.add_argument("--round", type=int, default=None, help="score at this round (overrides --select)")
+    ap.add_argument("--select", default="last", choices=("last", "last-k", "final"),
+                    help="estimator for the headline figure (see module docstring)")
+    ap.add_argument("--last-k", type=int, default=5, help="rounds averaged when --select last-k")
     ap.add_argument("--runs-dir", type=str, default=None)
     ap.add_argument("--json-out", type=str, default=None, help="also write the verdicts as JSON")
     args = ap.parse_args()
@@ -125,9 +163,13 @@ def main() -> int:
     diag: dict[tuple[str, str], dict] = {}
     for m in present:
         for s in seeds_by_method[m]:
-            diag[(m, s)] = _diagonal(rows, m, s, args.round)
+            diag[(m, s)] = _diagonal(rows, m, s, args.round, args.select, args.last_k)
 
+    est = (f"round {args.round}" if args.round is not None else
+           f"mean of last {args.last_k} rounds" if args.select == "last-k" else
+           "selected model, final evaluation" if args.select == "final" else "final round only")
     print(f"runs: {runs_dir}")
+    print(f"estimator: {est}")
     print(f"seeds present: {', '.join(all_seeds)}  "
           f"({'aggregating mean±std' if len(all_seeds) > 1 else 'single seed'})\n")
 
@@ -205,6 +247,8 @@ def main() -> int:
         out.parent.mkdir(parents=True, exist_ok=True)
         payload = {
             "seeds": all_seeds,
+            "estimator": {"select": args.select, "last_k": args.last_k, "round": args.round},
+            "runs_dir": str(runs_dir),
             "diagonal": {f"{m}_{s}": diag[(m, s)] for (m, s) in diag},
             "hypotheses": results,
         }

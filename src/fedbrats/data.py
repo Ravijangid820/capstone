@@ -241,6 +241,60 @@ def _rand_start(extent: int, size: int, centre: int | None, g: torch.Generator) 
     return int(torch.randint(lo, hi + 1, (1,), generator=g).item())
 
 
+def _augment_spatial(both: np.ndarray, cfg: Config, g: torch.Generator,
+                     axes: tuple[int, ...], rot_axes: tuple[int, int] | None = None) -> np.ndarray:
+    """Flips (and optional 90-degree rotations) applied to stacked image+mask channels.
+
+    Takes `both` = concat([x, y]) so the identical geometric transform lands on the image and its
+    mask -- augmenting them separately is the classic way to silently destroy a segmentation
+    dataset. `axes` are array axes, already offset past the leading channel axis.
+
+    Rotation is 90-degree only and in-plane only. Arbitrary angles need interpolation, which
+    would resample the fp16 cached tensors and blur the nested WT/TC/ET boundaries the metric
+    is defined on.
+    """
+    for ax in axes:
+        if float(torch.rand(1, generator=g).item()) < cfg.aug_flip_p:
+            both = np.flip(both, axis=ax)
+    if rot_axes and float(torch.rand(1, generator=g).item()) < cfg.aug_rot90_p:
+        k = int(torch.randint(1, 4, (1,), generator=g).item())
+        both = np.rot90(both, k=k, axes=rot_axes)
+    return np.ascontiguousarray(both)
+
+
+def _augment_intensity(xs: np.ndarray, cfg: Config, g: torch.Generator) -> np.ndarray:
+    """Per-channel scale/shift jitter plus optional Gaussian noise. Image only -- never the mask.
+
+    Units are z-scores, because preprocessing already normalized each modality per case. A shift
+    of 0.1 is a tenth of a standard deviation of in-brain intensity, so the numbers here mean the
+    same thing for every case and every hospital.
+
+    Applied per channel independently: the scanner shift being modelled is per modality, so
+    jittering all four together would only simulate variation the shift model does not have.
+
+    The exact-zero background is restored afterwards. Preprocessing writes background as
+    literally 0.0 in every channel, and evaluation feeds the model volumes with that property,
+    so a shift or a noise draw that lifts the background off zero trains the model on inputs it
+    will never see again -- augmentation creating a train/test gap instead of closing one.
+    """
+    if cfg.aug_intensity_p <= 0 and cfg.aug_noise_std <= 0:
+        return xs
+    fg = np.any(xs != 0, axis=0, keepdims=True)          # brain: nonzero in at least one modality
+
+    if float(torch.rand(1, generator=g).item()) < cfg.aug_intensity_p:
+        c = xs.shape[0]
+        tail = (1,) * (xs.ndim - 1)
+        scale = 1.0 + (torch.rand(c, generator=g).numpy() * 2 - 1) * cfg.aug_intensity_scale
+        shift = (torch.rand(c, generator=g).numpy() * 2 - 1) * cfg.aug_intensity_shift
+        xs = xs * scale.reshape((c,) + tail).astype(np.float32)
+        xs = xs + shift.reshape((c,) + tail).astype(np.float32)
+    if cfg.aug_noise_std > 0:
+        noise = torch.randn(xs.shape, generator=g).numpy().astype(np.float32)
+        xs = xs + noise * cfg.aug_noise_std
+
+    return np.where(fg, xs, 0.0).astype(np.float32)
+
+
 def _fit_hw(a: np.ndarray, hw: int, g: torch.Generator | None) -> np.ndarray:
     """Crop/pad the last two axes of a (C, H, W) array to (hw, hw). Random crop if `g` given."""
     c, h, w = a.shape
@@ -310,7 +364,13 @@ class SliceDataset(_CachedCases):
         hw = self.cfg.train_hw
         # crop both with the same offsets: concatenate, cut once, split back
         both = _fit_hw(np.concatenate([xs, ys], axis=0), hw, g)
-        return torch.from_numpy(both[:4].copy()), torch.from_numpy(both[4:].copy())
+        if self.cfg.augment:
+            # (C, H, W): flip either in-plane axis, rotate within the (H, W) plane
+            both = _augment_spatial(both, self.cfg, g, axes=(1, 2), rot_axes=(1, 2))
+        img, mask = both[:4].copy(), both[4:].copy()
+        if self.cfg.augment:
+            img = _augment_intensity(img, self.cfg, g)
+        return torch.from_numpy(img), torch.from_numpy(mask)
 
 
 class PatchDataset(_CachedCases):
@@ -343,6 +403,13 @@ class PatchDataset(_CachedCases):
         if any(b for _, b in pads):
             xs = np.pad(xs, pads, mode="constant")
             ys = np.pad(ys, pads, mode="constant")
+
+        if self.cfg.augment:
+            # (C, X, Y, Z): flip any of the three spatial axes. No rot90 -- the axes are
+            # anisotropic in meaning (axial vs sagittal vs coronal), so rotating between them
+            # produces orientations no scanner in the study would ever emit.
+            both = _augment_spatial(np.concatenate([xs, ys], axis=0), self.cfg, g, axes=(1, 2, 3))
+            xs, ys = _augment_intensity(both[:4].copy(), self.cfg, g), both[4:].copy()
         return torch.from_numpy(xs), torch.from_numpy(ys)
 
 
@@ -350,7 +417,38 @@ def build_dataset(cfg: Config, case_ids: list[str], index: dict) -> Dataset:
     return SliceDataset(cfg, case_ids, index) if cfg.is_2d else PatchDataset(cfg, case_ids, index)
 
 
-def select_cases(index: dict, hospital: str, split: str, limit: int | None = None) -> list[str]:
-    """Cached case IDs for one hospital+split, deterministically ordered and optionally capped."""
+def select_cases(index: dict, hospital: str, split: str, limit: int | None = None,
+                 offset: int = 0) -> list[str]:
+    """Cached case IDs for one hospital+split, deterministically ordered and optionally windowed."""
     ids = sorted(c for c, m in index.items() if m["hospital"] == hospital and m["split"] == split)
+    ids = ids[offset:]
     return ids[:limit] if limit else ids
+
+
+def train_val_cases(cfg: Config, index: dict, hospital: str,
+                    train_cap: int | None) -> tuple[list[str], list[str]]:
+    """Split one hospital's cached training pool into (train, val).
+
+    Validation is taken from the cases *after* the training cap, never carved out of it. Holding
+    out part of the existing 150 would shrink the training set, and a rerun that trains on less
+    data than the baseline cannot attribute its score difference to the recipe under test. The
+    cost is that the cache must hold `train_cap + val_per_hospital` cases per hospital.
+
+    Test cases are never touched: model selection reads validation only, so the test set stays
+    genuinely held out and the reported numbers stay honest.
+    """
+    if cfg.val_per_hospital <= 0:
+        return select_cases(index, hospital, "train", train_cap), []
+
+    pool = select_cases(index, hospital, "train")
+    train = pool[:train_cap] if train_cap else pool
+    val = pool[len(train):len(train) + cfg.val_per_hospital]
+    if len(val) < cfg.val_per_hospital:
+        raise FileNotFoundError(
+            f"{hospital}: need {(train_cap or len(pool))} train + {cfg.val_per_hospital} val cases "
+            f"but the cache holds only {len(pool)} training cases.\n"
+            f"Extend it:  python scripts/build_cache.py "
+            f"--max-cases {(train_cap or len(pool)) + cfg.val_per_hospital} --workers 8\n"
+            f"(the build is resumable -- it only preprocesses the cases that are missing)"
+        )
+    return train, val

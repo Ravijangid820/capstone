@@ -54,7 +54,140 @@ Full 2D matrix, R=25, seed 42, 150 train/hospital. Final-round WT Dice on each h
   hospitals but the outlier's collapse drags the average down. Not "federation is useless" — it is the
   motivation for FedBN, which then delivers.
 
+> **⚠ These are single-final-round numbers and the verdicts above are not stable.** The curves
+> plateau by ~round 15 then oscillate by more than the gaps being tested — FedAvg's mean WT is
+> 0.861 at round 24 and 0.835 at round 25. Scoring the last five rounds instead, on the same logs,
+> flips H1 to supported in 3/3 seeds. See **Results (2D, improved)** below for the superseding run.
+
 Details and figures: [experiments.md](docs/experiments.md#4-results--2d-backbone-r25-e1-seed-42-150-trainhospital) · `artifacts/figures/`. Regenerate: `python scripts/analyze.py --dim 2d`.
+
+## Results (best recipe, `--preset v5`) — supersedes everything below
+
+Every method improves in **both** backbones, all significant. Paired per-case Δ WT Dice against
+the frozen baseline, 248 test volumes per run, seed 42:
+
+| Method | 2D Δ | 2D p | 3D Δ | 3D p |
+|---|---|---|---|---|
+| Centralized (ceiling) | **+0.0510** | 3.1e-35 | **+0.0115** | 4.3e-07 |
+| Local-only (floor) | **+0.0245** | 3.4e-20 | **+0.0054** | 2.2e-04 |
+| FedAvg | **+0.0309** | 5.8e-34 | **+0.0073** | 2.0e-04 |
+| **FedBN** | **+0.0272** | 6.4e-28 | **+0.0343** | 8.4e-16 |
+
+Mean WT Dice across hospitals (training recipe only, no TTA):
+
+| Method | 2D baseline → v5 | 3D baseline → v5 |
+|---|---|---|
+| Centralized | 0.8582 → **0.8954** | 0.8768 → **0.8879** |
+| Local-only | 0.8436 → **0.8699** | 0.8490 → **0.8527** |
+| FedAvg | 0.8502 → **0.8629** | 0.8525 → **0.8618** |
+| FedBN | 0.8514 → **0.8756** | 0.8422 → **0.8642** |
+
+### H3 now holds in both backbones
+
+| | H1 | H2 | H3 |
+|---|---|---|---|
+| 2D baseline | ✅ | ✅ | ✅ |
+| **2D v5** | ❌ | ✅ | ✅ |
+| 3D baseline | ✅ | ❌ | ❌ |
+| **3D v5** | ✅ | ✅ | **✅** |
+
+**The 3D reversal does not survive a properly tuned recipe.** Both H2 and H3 now hold in 3D, where
+the baseline contradicted them. FedBN beats FedAvg on the mean and on the outlier in *both*
+backbones (2D +0.0128 / +0.0604; 3D +0.0024 / +0.0078), and FedBN is the largest single 3D gain of
+any method (+0.0343 paired). The earlier "3D reverses everything" claim was an artefact of the
+original training setup, not a property of the backbone.
+
+### Why the outlier moves the way it does
+
+Grouping the 3D methods by whether training mixes sites explains the outlier column:
+
+| | typical sites H1–H3 | outlier H4 |
+|---|---|---|
+| Centralized (pools all sites) | +0.0176 | **−0.0087** |
+| FedAvg (averages all weights) | +0.0156 | **−0.0092** |
+| FedBN (keeps BatchNorm local) | +0.0278 | **+0.0046** |
+| Local-only (never mixes) | +0.0025 | **+0.0072** |
+
+Better optimization over a majority-dominated distribution fits the majority harder and the
+minority worse — and it happens to centralized, which has no aggregation step at all, just as
+strongly as to FedAvg. So H2 is not an artefact of weight averaging; it is what happens whenever
+one model is optimized across heterogeneous sites. Keeping BatchNorm local is what protects the
+outlier, which is exactly FedBN's claim.
+
+**What v5 is:** cosine LR annealing to its floor by round 25 but training for **40 rounds**,
+geometric augmentation only, flip-TTA and small-component filtering at inference,
+validation-based checkpoint selection, and 230 training cases/hospital.
+
+Full analysis: **[improvements.md](docs/improvements.md)**.
+
+Reproduce: `python scripts/run_matrix.py --dim 2d 3d --seed 42 --preset v5 --tag v5`
+
+## Results (`--preset v3` — the previous best)
+
+
+Every method improves in **both** backbones, all significant. Paired per-case Δ WT Dice against
+the frozen baseline, 248 test volumes per run, seed 42:
+
+| Method | 2D Δ | 2D p | 3D Δ | 3D p |
+|---|---|---|---|---|
+| Centralized (ceiling) | **+0.0438** | 1.8e-31 | **+0.0066** | 0.0003 |
+| Local-only (floor) | **+0.0204** | 3.5e-15 | **+0.0028** | 0.0054 |
+| FedAvg | **+0.0230** | 8.7e-23 | **+0.0024** | 0.0046 |
+| **FedBN** | **+0.0216** | 9.8e-25 | **+0.0255** | 1.6e-10 |
+
+Mean WT Dice across hospitals (rounds 21–25, training recipe alone, no TTA):
+
+| Method | 2D baseline → v3 | 3D baseline → v3 |
+|---|---|---|
+| Centralized | 0.8582 → **0.8931** | 0.8768 → **0.8836** |
+| Local-only | 0.8436 → **0.8661** | 0.8490 → 0.8489 |
+| FedAvg | 0.8502 → **0.8533** | 0.8525 → **0.8555** |
+| FedBN | 0.8514 → **0.8653** | 0.8422 → **0.8550** |
+
+**What v3 is:** cosine LR across rounds, **geometric augmentation only** (flips/rotations — the
+intensity and noise terms perturbed the same channels as the scanner shift and cost FedAvg its
+outlier), flip-TTA and small-component filtering at inference, validation-based checkpoint
+selection, and **230 training cases/hospital instead of 150** (40% of the pool was unused).
+
+Two cells reported rather than averaged away: 3D local-only is flat on the round estimator
+(−0.0002), and FedAvg's outlier stays below baseline in both backbones even as its mean improves —
+which is what H2 predicts of a better-trained single global model. Full analysis, including why,
+in **[improvements.md](docs/improvements.md)**.
+
+Reproduce: `python scripts/run_matrix.py --dim 2d 3d --seed 42 --preset v3 --tag v3 --extra --rounds 25`
+
+## Results (2D, `--preset v2` — an earlier, partly-regressive recipe)
+
+Full rerun with `--preset v2` (cosine LR across rounds, augmentation, flip-TTA, component
+filtering, validation-based checkpoint selection). Three seeds, same split and same training cases
+as the baseline, both sides scored with the same pre-registered estimator (mean of rounds 21–25):
+
+| Method | baseline mean WT | **v2 mean WT** | baseline H4 | **v2 H4** |
+|---|---|---|---|---|
+| Local-only (floor) | 0.8433 ± 0.0025 | **0.8541 ± 0.0036** | 0.8299 ± 0.0106 | **0.8400 ± 0.0048** |
+| FedAvg | 0.8498 ± 0.0007 | 0.8449 ± 0.0025 | 0.7695 ± 0.0095 | 0.7574 ± 0.0098 |
+| **FedBN** | 0.8475 ± 0.0028 | **0.8590 ± 0.0021** | 0.8152 ± 0.0164 | **0.8248 ± 0.0064** |
+| Centralized *(seed 42)* | 0.8582 | **0.8835** | 0.8299 | **0.8576** |
+
+| Hypothesis | baseline | v2 |
+|---|---|---|
+| H1 — collaboration helps on average | 3/3 ✅ | **0/3 ❌** |
+| H2 — the global model fails the outlier | 3/3 ✅ | **3/3 ✅** |
+| **H3 — personalization recovers the outlier** | **1/3** ⚠ | **3/3 ✅** |
+
+- **H3 — the project's thesis — goes from 1/3 seeds to 3/3.** In the baseline FedBN trailed FedAvg
+  on the mean (0.8475 vs 0.8498), so the "≥ on the mean" clause failed in two seeds. It now leads
+  by +0.0141 and passes in all three.
+- **Paired over 248 test volumes per run**, FedBN improves in every seed (+0.0139, +0.0147,
+  +0.0387; all CIs exclude zero).
+- **H1 flips off** because FedAvg's outlier degrades further while local-only improves. H1 has now
+  flipped in *both* directions during this work, which is itself the finding: it is a knife-edge
+  between two nearly equal numbers, and the durable claim underneath it is H2.
+- **Reproducibility improved too** — across-seed spread on H4 fell 2.6× for FedBN, and
+  round-to-round plateau oscillation fell 2.7–5.9×.
+
+Full write-up, protocol, and the frozen "before" snapshot: **[improvements.md](docs/improvements.md)**.
+Regenerate: `python scripts/compare_runs.py --dim 2d --seed 42 --select last-k --last-k 5`.
 
 ## Results (3D)
 
@@ -76,6 +209,20 @@ making FedAvg robust to scanner shift even on the outlier hospital. FedBN actual
 suffers in 3D because 150 local cases per hospital are insufficient to estimate stable
 3D batch-normalization running statistics — the higher-dimensional feature maps amplify
 the variance, so keeping BN layers local becomes a liability rather than an advantage.
+
+All three 3D verdicts survive the last-5-round **estimator** unchanged (the 3D curves are steadier —
+H4 spans 0.008 over rounds 21–25 against swings up to 0.12 in 2D). They do **not** all survive a
+change of training **recipe**:
+
+> **⚠ Half the reversal is an artefact of the training setup.** Rerunning 3D with `--preset v2`
+> flips **H2 to supported** — the global model *does* fail the outlier in 3D (0.8171 vs local's
+> 0.8285), contrary to the claim above. **H3 stays unsupported**, so FedBN really does underperform
+> in 3D under both recipes. The defensible claim is therefore narrower: the backbone does not change
+> *whether* a global model fails an outlier, it changes *whether keeping BatchNorm local fixes it*.
+> Seed 42 only — see [improvements.md](docs/improvements.md).
+
+The v2 recipe also **should not be adopted for 3D**: three of four methods are flat or worse, and
+FedAvg drops significantly (−0.0155 paired, p=1.9e-08). The accuracy gains are a 2D result.
 
 Details and figures: `artifacts/figures/`. Regenerate: `python scripts/analyze.py --dim 3d`.
 

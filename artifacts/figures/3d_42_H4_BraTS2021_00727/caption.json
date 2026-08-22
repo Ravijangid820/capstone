@@ -1,0 +1,45 @@
+{
+  "case_id": "BraTS2021_00727",
+  "dice": {
+    "fedavg": {
+      "postproc_min_voxels": 0,
+      "slice": {
+        "et": 0.22287390029325513,
+        "tc": 0.7355912061794415,
+        "wt": 0.9128243419824529
+      },
+      "tta": false,
+      "volume": {
+        "et": 0.5889695684098882,
+        "tc": 0.7741886122630105,
+        "wt": 0.9117696415703385
+      }
+    },
+    "fedbn": {
+      "postproc_min_voxels": 0,
+      "slice": {
+        "et": 0.43037974683544306,
+        "tc": 0.889118102114492,
+        "wt": 0.9367774566473989
+      },
+      "tta": false,
+      "volume": {
+        "et": 0.6759096189155769,
+        "tc": 0.8901038819026791,
+        "wt": 0.9281448346442317
+      }
+    }
+  },
+  "dim": "3d",
+  "hospital": "H4",
+  "methods": [
+    "fedavg",
+    "fedbn"
+  ],
+  "modality": "flair",
+  "note": "Dice under each panel is over the whole volume, not the shown slice; the per-slice value is in dice.<method>.slice.",
+  "runs_root": "D:\\capstone\\artifacts\\runs",
+  "seed": 42,
+  "selection": "specified by hand",
+  "slice": 64
+}

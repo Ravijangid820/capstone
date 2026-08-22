@@ -82,10 +82,16 @@ src/fedbrats/
   metrics.py         per-volume Dice WT/TC/ET (BraTS empty-GT convention)
   train.py           one local training loop + full-volume evaluation
   federated.py       one round loop expressing all four methods + aggregation
+  static/            Frontend web application (HTML/CSS/JS, Three.js 3D viewer, marching cubes)
 scripts/
   build_partition.py run the partition, print + save the manifest
   build_cache.py     materialize the preprocessing cache (resumable, parallel)
   run_experiment.py  --method {centralized,local,fedavg,fedbn} --dim {2d,3d}
+  rescore.py         re-evaluate a finished checkpoint → per-case Dice (no training)
+  compute_significance.py  paired FedBN-vs-FedAvg test over per-case Dice (Table V)
+  export_predictions.py    FedAvg/FedBN prediction PNGs for one case (paper figure)
+  demo_server.py     Interactive web demo server (HTTP API + static file serving)
+tests/               Smoke test suite (pytest) covering metrics, partition, model, and data pipeline
 colab_setup.ipynb    data acquisition (download → stream-unzip → Drive)  [repo root]
 artifacts/           git-ignored run outputs + cache (see specs.md)
 ```
@@ -131,3 +137,11 @@ Full matrix, the Windows compatibility contract, and per-environment recipes:
 
 A single global **seed** drives the partition, shuffling, and weight init. Same seed + same committed
 manifest ⇒ identical splits and comparable runs across methods and across the 2D/3D backbones.
+
+## 8. Web Demo Architecture
+
+- The demo server is a Python `ThreadingHTTPServer` with model caching
+- 4 API endpoints: `/api/cases`, `/api/view`, `/api/predict`, `/api/mesh`
+- Frontend: vanilla HTML/CSS/JS with Three.js for 3D rendering
+- 3D pipeline: server sends base64-encoded binary volumes → client decodes → pure JS marching cubes extracts isosurfaces → Three.js renders WebGL meshes
+- Model cache keyed by (dim, method, hospital) avoids redundant checkpoint loading

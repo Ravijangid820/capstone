@@ -158,3 +158,51 @@ A dated lab notebook: what was done, what was decided, and *why*. Newest entries
   matrix in 3D and add the "does the story hold in 3D?" comparison.
 - *(optional)* NVIDIA FLARE port as a framework demonstration — the science is now settled on the
   custom loop.
+
+### 2026-07-21 — 3D training and Web demo
+- **3D training completed** — full 3D matrix (centralized, local, fedavg, fedbn), seed 42, R=25. 3D reversal observed: FedAvg robust on outlier, FedBN underperforms.
+- **Web demo server built** — interactive dashboard with 2D slice viewer, 3D mesh viewer, live inference, scanner shift simulation. Python ThreadingHTTPServer with model caching.
+- **WASM marching cubes replaced with pure JS** — fixed 5 critical bugs (axis indexing, BigInt, buffer overflow, API misuse, flat array handling). Pure JS implementation is cross-browser compatible and has no Rust toolchain dependency.
+- **Model caching added** — `_get_model()` cache keyed by (dim, method, hospital). 10-20× speedup on repeated requests.
+- **Smoke test suite created** — 17 pytest tests covering dice_binary, labels_to_regions, build_partition, build_model, bn_keys.
+- **Three.js bundled locally** — vendor/three.min.js + vendor/OrbitControls.js for offline demos.
+- **README updated** — added 3D results table, web demo section, updated phase 9 status.
+
+### 2026-08-10 — Accuracy round 2: evaluation noise, then the levers
+
+Prompted by "can we increase the accuracy?", the first move was to re-read the existing logs
+rather than start training. That turned out to matter more than any hyperparameter.
+
+- **Evaluation noise exceeds the effects under test.** The curves plateau by ~round 15 and then
+  oscillate; on 2D seed 42, FedAvg's mean WT is 0.8611 at r24 and 0.8354 at r25 while local-only
+  sits at 0.8491/0.8526 — H1 is decided in opposite directions by adjacent rounds. `analyze.py`
+  scored `max(round)`, so **H1's "NOT SUPPORTED" was a coin flip, not a result.** Re-scoring the
+  same frozen logs over the last five rounds moves H1 from 1/3 seeds to **3/3**. Nothing retrained.
+- **H3 is two claims wearing one verdict.** "FedBN recovers H4" is solid (≈0.82 vs FedAvg's ≈0.76,
+  all seeds, either estimator). "FedBN ≥ FedAvg on the mean" is inside the noise. Bundled, a coin
+  flip decides the fate of the real finding — now reported split.
+- **3D checked the same way: all three verdicts are estimator-independent.** The 3D reversal does
+  not rest on this choice; the 2D H1 verdict did. Worth stating, since it is the difference
+  between a robust finding and a fragile one.
+- **Found before it bit: a rerun would have silently corrupted the baseline.** `MetricsWriter`
+  appends and `run_id` has no run counter, so re-running a method+seed writes fresh rounds
+  *underneath* the old ones in one file — and `analyze.py`, scoring `max(round)`, would average two
+  experiments into one number with nothing in the output to show for it. Now guarded
+  (`guard_run_dir`) and namespaced (`--tag`).
+- **Baseline frozen and hash-verified** — `artifacts/baseline/` + `MANIFEST.json` (SHA-256/file,
+  git commit, headline numbers). 42 files across 14 runs, `--verify` re-checks them.
+- **Per-case Dice backfilled from checkpoints, no retraining** (`scripts/rescore.py`). It was
+  being computed and discarded, which left no basis for a CI or a paired test. Doubles as a
+  regression test: with the new flags off, every rescored mean reproduces its logged round-25
+  value to 4 dp (fedavg H4 0.7373, fedbn H4 0.8290, local H4 0.8569) — confirming the refactored
+  eval path is bit-identical to the baseline's.
+- **`--preset v2`** — cosine LR across rounds (the only place a schedule can live when Adam is
+  rebuilt each round), augmentation (there was none at all), flip-TTA, small-component filtering
+  with WT ⊇ TC ⊇ ET re-nesting, a 20-case/hospital validation split taken *after* the train cap so
+  training data is unchanged, and best-val model selection. Defaults untouched, so the baseline
+  stays bit-reproducible.
+- **`scripts/compare_runs.py`** — config diff, Δ Dice, and paired per-case stats (bootstrap 95% CI
+  + Wilcoxon). Applies one estimator to both sides and warns loudly when it cannot.
+- **Tests: 17 → 44.** The new ones target failures that stay silent — augmentation desynchronizing
+  image from mask, TTA forgetting to un-flip (probed with a flip-equivariant model), the run guard
+  not firing, a preset naming a field that does not exist.

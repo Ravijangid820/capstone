@@ -92,3 +92,11 @@ Smoke run (seconds, any OS) — proves the wiring before you spend a Colab sessi
 python scripts/build_cache.py --max-cases 3 --workers 4
 python scripts/run_experiment.py --method fedbn --rounds 2 --max-train-cases 3 --max-test-cases 2
 ```
+
+## Demo server requirements
+
+- Python 3.12+ with packages from pyproject.toml
+- Browser with WebGL support (Chrome/Firefox/Edge recommended)
+- No internet required (Three.js is bundled locally in vendor/)
+- Port 8000 must be available
+- `pytest` is a dev dependency: `uv add --dev pytest` or `uv sync`

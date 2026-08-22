@@ -1,0 +1,360 @@
+{
+  "frozen_at": "2026-08-21T21:12:31+00:00",
+  "git_commit": "7e0ba37c251eda5d606d6c33bca3c75167b15d0e",
+  "n_runs": 8,
+  "runs": {
+    "centralized_2d_42": {
+      "files": {
+        "config.json": {
+          "bytes": 1135,
+          "sha256": "4b2447d3a1404b9fbfec13579964853ce26611f768d026180be01344978eb1ba"
+        },
+        "metrics.jsonl": {
+          "bytes": 63972,
+          "sha256": "84ab9524cc87879b036f0b388e3e31ed78fbf0e8ba25b8fedbc1b991e0b9a028"
+        },
+        "per_case.jsonl": {
+          "bytes": 2231685,
+          "sha256": "239b9392e0fa7b54e2a9b6b2018b98e5c1328bf18d707c249c1a458f39423deb"
+        },
+        "run.log": {
+          "bytes": 15032,
+          "sha256": "9a08f7ed5705dc59a906fdf1a42afa4d7d6173bc1e36adb7e79c349d694c479f"
+        }
+      },
+      "summary": {
+        "H4_final_round": {
+          "et": 0.796934,
+          "tc": 0.848772,
+          "wt": 0.875881
+        },
+        "H4_last5_mean": {
+          "et": 0.79594,
+          "tc": 0.847167,
+          "wt": 0.869169
+        },
+        "final_round": {
+          "et": 0.831804,
+          "tc": 0.875303,
+          "wt": 0.900635
+        },
+        "last5_mean": {
+          "et": 0.831431,
+          "tc": 0.874942,
+          "wt": 0.895828
+        },
+        "rounds": 40,
+        "rows": 232
+      }
+    },
+    "centralized_3d_42": {
+      "files": {
+        "config.json": {
+          "bytes": 1135,
+          "sha256": "4f358bbcd6ca5fb3f0a0d0531bf6efb7aaa3debbfb956de000a0efa8c6beb40f"
+        },
+        "metrics.jsonl": {
+          "bytes": 63960,
+          "sha256": "d96565396489950dc3d54c1a62334286752dea6409455c5bfbdbdae9e8930b74"
+        },
+        "per_case.jsonl": {
+          "bytes": 2225931,
+          "sha256": "e4cea3d7b1efdf56d64bd109ff0cbfc0f5f499037773e4be2e756386b9c7d1d0"
+        },
+        "run.log": {
+          "bytes": 15032,
+          "sha256": "50a373583aab18534dc9d1483059b8ac2580784fb17af70a91e0936bf9145586"
+        }
+      },
+      "summary": {
+        "H4_final_round": {
+          "et": 0.745928,
+          "tc": 0.815643,
+          "wt": 0.841972
+        },
+        "H4_last5_mean": {
+          "et": 0.75066,
+          "tc": 0.815715,
+          "wt": 0.847446
+        },
+        "final_round": {
+          "et": 0.813249,
+          "tc": 0.851856,
+          "wt": 0.890312
+        },
+        "last5_mean": {
+          "et": 0.810013,
+          "tc": 0.849586,
+          "wt": 0.887873
+        },
+        "rounds": 40,
+        "rows": 232
+      }
+    },
+    "fedavg_2d_42": {
+      "files": {
+        "config.json": {
+          "bytes": 1135,
+          "sha256": "4b2447d3a1404b9fbfec13579964853ce26611f768d026180be01344978eb1ba"
+        },
+        "metrics.jsonl": {
+          "bytes": 61648,
+          "sha256": "6a1bc8eb3728b56b4b41374ba3fbf34bf0e6981b2515b5b31ca9a64bad81b532"
+        },
+        "per_case.jsonl": {
+          "bytes": 2155708,
+          "sha256": "34633187e2ac3a96346a96ef0257fc57799b4d0de01f4910fe0d90c274f89851"
+        },
+        "run.log": {
+          "bytes": 25059,
+          "sha256": "21cb1cc72944888f09caa7bfaac36f9fba8763cc1ac4215d289909bc59e26914"
+        }
+      },
+      "summary": {
+        "H4_final_round": {
+          "et": 0.728416,
+          "tc": 0.78793,
+          "wt": 0.787679
+        },
+        "H4_last5_mean": {
+          "et": 0.726475,
+          "tc": 0.785118,
+          "wt": 0.784581
+        },
+        "final_round": {
+          "et": 0.796565,
+          "tc": 0.84461,
+          "wt": 0.864777
+        },
+        "last5_mean": {
+          "et": 0.796155,
+          "tc": 0.843115,
+          "wt": 0.863154
+        },
+        "rounds": 40,
+        "rows": 232
+      }
+    },
+    "fedavg_3d_42": {
+      "files": {
+        "config.json": {
+          "bytes": 1135,
+          "sha256": "4f358bbcd6ca5fb3f0a0d0531bf6efb7aaa3debbfb956de000a0efa8c6beb40f"
+        },
+        "metrics.jsonl": {
+          "bytes": 61629,
+          "sha256": "55529cd5eeddd63484fc6a562e493cd2f054baaa0e728653fe5b40ee6580cf48"
+        },
+        "per_case.jsonl": {
+          "bytes": 2147630,
+          "sha256": "fc1958da4728e436b9080823ae7c2b71abe16fe2838c8984d2692beb3b8a263f"
+        },
+        "run.log": {
+          "bytes": 25075,
+          "sha256": "28b922e7d933079cc8d80a671929436794b0badbd082b180de2f0cc39d1e175e"
+        }
+      },
+      "summary": {
+        "H4_final_round": {
+          "et": 0.73436,
+          "tc": 0.776279,
+          "wt": 0.831411
+        },
+        "H4_last5_mean": {
+          "et": 0.734368,
+          "tc": 0.775264,
+          "wt": 0.830202
+        },
+        "final_round": {
+          "et": 0.777967,
+          "tc": 0.816103,
+          "wt": 0.861345
+        },
+        "last5_mean": {
+          "et": 0.777789,
+          "tc": 0.814561,
+          "wt": 0.86213
+        },
+        "rounds": 40,
+        "rows": 232
+      }
+    },
+    "fedbn_2d_42": {
+      "files": {
+        "config.json": {
+          "bytes": 1135,
+          "sha256": "4b2447d3a1404b9fbfec13579964853ce26611f768d026180be01344978eb1ba"
+        },
+        "metrics.jsonl": {
+          "bytes": 60272,
+          "sha256": "e079b930ed5b9a2a1f4118a1aa07e4307bf8bc5e3ad8035a88d44954cf4e1b3c"
+        },
+        "per_case.jsonl": {
+          "bytes": 2109513,
+          "sha256": "a8d7e18c16c4511aab3850c83a1b27379c34883f58ca4b216b773d05589d02b0"
+        },
+        "run.log": {
+          "bytes": 25049,
+          "sha256": "ab012dab534b9270df3fb6f4255591227e7be080f8affec8ed8f6ee3a493eeaf"
+        }
+      },
+      "summary": {
+        "H4_final_round": {
+          "et": 0.765743,
+          "tc": 0.826677,
+          "wt": 0.850957
+        },
+        "H4_last5_mean": {
+          "et": 0.758985,
+          "tc": 0.816357,
+          "wt": 0.845096
+        },
+        "final_round": {
+          "et": 0.804259,
+          "tc": 0.849451,
+          "wt": 0.877614
+        },
+        "last5_mean": {
+          "et": 0.80263,
+          "tc": 0.846718,
+          "wt": 0.876048
+        },
+        "rounds": 40,
+        "rows": 232
+      }
+    },
+    "fedbn_3d_42": {
+      "files": {
+        "config.json": {
+          "bytes": 1135,
+          "sha256": "4f358bbcd6ca5fb3f0a0d0531bf6efb7aaa3debbfb956de000a0efa8c6beb40f"
+        },
+        "metrics.jsonl": {
+          "bytes": 60263,
+          "sha256": "ef5fc35c9e469a15fb77ca220d899fca64fd85a84e8593fb5d15dd915c20dee6"
+        },
+        "per_case.jsonl": {
+          "bytes": 2101467,
+          "sha256": "247141d33eab980f4f7955716a61f5713d71c13a1d697b51e1eb83ed16f12f8e"
+        },
+        "run.log": {
+          "bytes": 25113,
+          "sha256": "2bca29dc55f5c6698ce8140c26ba3d9c4f73351cbf1952b03de1e19e77f00ebc"
+        }
+      },
+      "summary": {
+        "H4_final_round": {
+          "et": 0.742242,
+          "tc": 0.778016,
+          "wt": 0.841121
+        },
+        "H4_last5_mean": {
+          "et": 0.742521,
+          "tc": 0.775019,
+          "wt": 0.837951
+        },
+        "final_round": {
+          "et": 0.782408,
+          "tc": 0.813878,
+          "wt": 0.864867
+        },
+        "last5_mean": {
+          "et": 0.780121,
+          "tc": 0.810388,
+          "wt": 0.864474
+        },
+        "rounds": 40,
+        "rows": 232
+      }
+    },
+    "local_2d_42": {
+      "files": {
+        "config.json": {
+          "bytes": 1135,
+          "sha256": "4b2447d3a1404b9fbfec13579964853ce26611f768d026180be01344978eb1ba"
+        },
+        "metrics.jsonl": {
+          "bytes": 63379,
+          "sha256": "ced65c96c176214f6f0a687e550f5e21610c9e7a37830f754879b26a04d7eda4"
+        },
+        "per_case.jsonl": {
+          "bytes": 2109372,
+          "sha256": "f86f6e16677fe2e19a09955d9855ce2c4c7d28ed86ef90418b64d4064c1cde1a"
+        },
+        "run.log": {
+          "bytes": 25813,
+          "sha256": "db853cb8d9ed0dbb9b6da48ee622715602c1be606b715eee31ded8cc6e17b3d1"
+        }
+      },
+      "summary": {
+        "H4_final_round": {
+          "et": 0.776083,
+          "tc": 0.820223,
+          "wt": 0.852545
+        },
+        "H4_last5_mean": {
+          "et": 0.779743,
+          "tc": 0.8222,
+          "wt": 0.852373
+        },
+        "final_round": {
+          "et": 0.803985,
+          "tc": 0.842223,
+          "wt": 0.868228
+        },
+        "last5_mean": {
+          "et": 0.80495,
+          "tc": 0.843227,
+          "wt": 0.869878
+        },
+        "rounds": 40,
+        "rows": 244
+      }
+    },
+    "local_3d_42": {
+      "files": {
+        "config.json": {
+          "bytes": 1135,
+          "sha256": "4f358bbcd6ca5fb3f0a0d0531bf6efb7aaa3debbfb956de000a0efa8c6beb40f"
+        },
+        "metrics.jsonl": {
+          "bytes": 63375,
+          "sha256": "c4b40cc0653c75c0aaf4700dc7501b174812c75f7cad0fbf637ee4097e811f31"
+        },
+        "per_case.jsonl": {
+          "bytes": 2102719,
+          "sha256": "548365251160b10670405179e2303772a3c45ffd8f3a290d4413f128b6c13ebb"
+        },
+        "run.log": {
+          "bytes": 25797,
+          "sha256": "9b3e38fa6962d74a4956317889ba2cc8608f8ec2695f51992bb5ff41e9a061f4"
+        }
+      },
+      "summary": {
+        "H4_final_round": {
+          "et": 0.748636,
+          "tc": 0.763402,
+          "wt": 0.843204
+        },
+        "H4_last5_mean": {
+          "et": 0.747511,
+          "tc": 0.755839,
+          "wt": 0.838984
+        },
+        "final_round": {
+          "et": 0.75643,
+          "tc": 0.784064,
+          "wt": 0.852122
+        },
+        "last5_mean": {
+          "et": 0.761171,
+          "tc": 0.783616,
+          "wt": 0.852965
+        },
+        "rounds": 40,
+        "rows": 244
+      }
+    }
+  },
+  "source": "artifacts\\runs\\v5"
+}

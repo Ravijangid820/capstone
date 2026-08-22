@@ -1,0 +1,52 @@
+{
+  "frozen_at": "2026-08-17T16:26:23+00:00",
+  "git_commit": "a078fbf905b784d6e01575313456926675933ddb",
+  "n_runs": 1,
+  "runs": {
+    "centralized_2d_42": {
+      "files": {
+        "config.json": {
+          "bytes": 1059,
+          "sha256": "ec179436fcff2f4cd9d5bda1de8886cdcc2ff6dc29d894794418dcb5c4d85897"
+        },
+        "metrics.jsonl": {
+          "bytes": 63962,
+          "sha256": "80267a79befd56d0fb32c94422d6204c1a02d0542a75e44cf773cc0ec14bba08"
+        },
+        "per_case.jsonl": {
+          "bytes": 2230102,
+          "sha256": "67c89833b1575b19b4e17091e062ebe17b6ddc3f063a0673b2f08c6d7d977aba"
+        },
+        "run.log": {
+          "bytes": 14952,
+          "sha256": "9bee5f0341a6fa2d0f7db3aefc5981b788c0560fefa6f36ec77b077853d3f1f7"
+        }
+      },
+      "summary": {
+        "H4_final_round": {
+          "et": 0.791603,
+          "tc": 0.843469,
+          "wt": 0.859531
+        },
+        "H4_last5_mean": {
+          "et": 0.789153,
+          "tc": 0.84107,
+          "wt": 0.856387
+        },
+        "final_round": {
+          "et": 0.82626,
+          "tc": 0.872958,
+          "wt": 0.885725
+        },
+        "last5_mean": {
+          "et": 0.825787,
+          "tc": 0.870461,
+          "wt": 0.883746
+        },
+        "rounds": 40,
+        "rows": 232
+      }
+    }
+  },
+  "source": "artifacts\\runs\\v4"
+}

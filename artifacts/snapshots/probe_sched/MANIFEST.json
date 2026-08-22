@@ -1,0 +1,52 @@
+{
+  "frozen_at": "2026-08-18T07:57:10+00:00",
+  "git_commit": "5e049a1c16a6489da732d000c9d96d5084ce29f8",
+  "n_runs": 1,
+  "runs": {
+    "fedbn_2d_42": {
+      "files": {
+        "config.json": {
+          "bytes": 1095,
+          "sha256": "127c42440df0db040e4e30d8d4be01f3694fc06b23b7b843d1e1192a9c10b8a7"
+        },
+        "metrics.jsonl": {
+          "bytes": 60261,
+          "sha256": "9fd715788f4f93a2825f9e7356b2f8d43c5340d64a0b13ab1b38948cdb8346f7"
+        },
+        "per_case.jsonl": {
+          "bytes": 2109319,
+          "sha256": "ca57b0040cc9508be388ba65fb29f2b95818f3f3d0e29ac5eff9aa4a63a8812d"
+        },
+        "run.log": {
+          "bytes": 25060,
+          "sha256": "d7ffc90c9b1b7d941566349249b526693cf0f6cc3862ce617f5070355fd73cea"
+        }
+      },
+      "summary": {
+        "H4_final_round": {
+          "et": 0.769753,
+          "tc": 0.826385,
+          "wt": 0.845418
+        },
+        "H4_last5_mean": {
+          "et": 0.765463,
+          "tc": 0.820176,
+          "wt": 0.841195
+        },
+        "final_round": {
+          "et": 0.805431,
+          "tc": 0.84947,
+          "wt": 0.874174
+        },
+        "last5_mean": {
+          "et": 0.805948,
+          "tc": 0.848616,
+          "wt": 0.8756
+        },
+        "rounds": 40,
+        "rows": 232
+      }
+    }
+  },
+  "source": "artifacts\\runs\\probe_sched"
+}

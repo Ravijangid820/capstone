@@ -1,3 +1,10 @@
 # Normalize line endings. Shell scripts MUST stay LF so bash works in WSL.
 * text=auto
 *.sh text eol=lf
+
+# The frozen baseline is verified byte-for-byte against the SHA-256 hashes in its MANIFEST.json.
+# Under `text=auto` git would store LF and hand back CRLF on Windows but LF on Linux/Colab, so a
+# clone on the other platform would fail every hash while the data was in fact untouched. Stored
+# verbatim instead: these files are a record, not source. See docs/improvements.md §3.
+artifacts/baseline/** -text
+artifacts/snapshots/** -text

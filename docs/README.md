@@ -14,6 +14,9 @@ Project docs, split by concern so each stays focused and maintainable. Suggested
 | 8 | [specs.md](specs.md) | Reference sheet — hyperparameters, model dims, hardware numbers, seeds, artifact/log layout. |
 | 9 | [environments.md](environments.md) | Windows / WSL2 / Colab — what runs where, the portability contract, run recipes. |
 | 10 | [progress-log.md](progress-log.md) | Dated lab notebook — decisions and milestones with rationale. |
+| 11 | [improvements.md](improvements.md) | **Accuracy round 2** — the evaluation-noise finding, what changed, and the freeze → rerun → paired-comparison protocol. |
+| 12 | [project_report.md](project_report.md) | Formal project report — background, methodology, results, and discussion |
+| 13 | [project_status_report.md](project_status_report.md) | Handoff/status report — current state, completed work, and next steps |
 
 ## One-screen orientation
 
