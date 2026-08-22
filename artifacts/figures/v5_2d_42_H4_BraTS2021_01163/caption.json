@@ -1,0 +1,45 @@
+{
+  "case_id": "BraTS2021_01163",
+  "dice": {
+    "fedavg": {
+      "postproc_min_voxels": 50,
+      "slice": {
+        "et": 0.8739420935412027,
+        "tc": 0.9230769230769231,
+        "wt": 0.9181180140369118
+      },
+      "tta": true,
+      "volume": {
+        "et": 0.7527653968998683,
+        "tc": 0.8207682642254532,
+        "wt": 0.831765447667087
+      }
+    },
+    "fedbn": {
+      "postproc_min_voxels": 50,
+      "slice": {
+        "et": 0.8810172570390554,
+        "tc": 0.9269005847953217,
+        "wt": 0.9177648919346336
+      },
+      "tta": true,
+      "volume": {
+        "et": 0.7655068640746039,
+        "tc": 0.8269679963597755,
+        "wt": 0.8676617179919989
+      }
+    }
+  },
+  "dim": "2d",
+  "hospital": "H4",
+  "methods": [
+    "fedavg",
+    "fedbn"
+  ],
+  "modality": "flair",
+  "note": "Dice under each panel is over the whole volume, not the shown slice; the per-slice value is in dice.<method>.slice.",
+  "runs_root": "artifacts\\runs\\v5",
+  "seed": 42,
+  "selection": "--pick representative over 62 H4 test cases (this case fedbn\u2212fedavg WT +0.0359; hospital median +0.0356)",
+  "slice": 81
+}

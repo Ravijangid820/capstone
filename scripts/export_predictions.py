@@ -43,7 +43,7 @@ from fedbrats.data import load_cached_case, load_index, select_cases  # noqa: E4
 from fedbrats.metrics import dice_regions              # noqa: E402
 from fedbrats.model import build_model                 # noqa: E402
 from fedbrats.train import predict_volume              # noqa: E402
-from compare_runs import load_jsonl                    # noqa: E402
+from compute_significance import per_case_rows        # noqa: E402
 from rescore import load_states                        # noqa: E402
 
 try:
@@ -141,12 +141,15 @@ def gap_by_case(per_case_root: Path, dim: str, seed: int, hospital: str,
 
     Read rather than recomputed: choosing the case from the same numbers that Table V reports is
     what makes "representative" mean representative *of the table* and not of a second, slightly
-    different scoring pass.
+    different scoring pass. Which is also why the stage filter is shared with that script rather
+    than reimplemented here: a run that logs per-case Dice every round (v5 does) holds thousands
+    of intermediate rows alongside the 248 final ones, and selecting on split alone would pick the
+    case using whichever round happened to be written last.
     """
     def scores(method: str) -> dict[str, float]:
-        rows = load_jsonl(per_case_root / f"{method}_{dim}_{seed}" / "per_case.jsonl")
+        rows, _ = per_case_rows(per_case_root / f"{method}_{dim}_{seed}")
         return {r["case_id"]: r[f"dice_{region}"] for r in rows
-                if r.get("split") == "test" and r.get("test_hospital") == hospital}
+                if r.get("test_hospital") == hospital}
 
     sa, sb = scores(a), scores(b)
     return {c: sb[c] - sa[c] for c in sorted(set(sa) & set(sb))}
@@ -245,9 +248,13 @@ def main() -> int:
     device = torch.device(cfg.device if torch.cuda.is_available() else "cpu")
     mri = to_uint8(x[MODALITIES.index(args.modality), :, :, z])
 
+    # The recipe goes in the directory name. Two recipes can pick the same case, and a figure
+    # directory that says only "2d_42_H4_<case>" would let a v2 panel be captioned as a v5 result
+    # with nothing on disk to contradict it.
+    recipe = runs.name if runs.resolve() != base.paths.runs.resolve() else "baseline"
     out_dir = Path(args.out) if args.out else (
         base.paths.artifacts / "figures" /
-        f"{args.dim}_{args.seed}_{args.hospital}_{case_id}")
+        f"{recipe}_{args.dim}_{args.seed}_{args.hospital}_{case_id}")
     out_dir.mkdir(parents=True, exist_ok=True)
 
     panels = [("MRI (" + args.modality + ")", "", np.stack([mri] * 3, axis=-1)),
