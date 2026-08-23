@@ -1,5 +1,18 @@
 # Project Status Report: Personalized Federated Learning for Brain Tumor Segmentation
 
+> ### ⚠ Superseded — v1 results only
+>
+> This document describes the **v1 (baseline)** run and predates iterations v2–v5. Its results
+> sections and hypothesis verdicts are **out of date**, and two of its claims have since been
+> refuted (the "3D reversal", and the BatchNorm-statistics explanation for FedBN's 3D result).
+>
+> **Current results: [iteration-report.md](iteration-report.md).**
+> **Naming and retracted claims: [conventions.md](conventions.md).**
+>
+> Retained unchanged as a record of the project at that stage. Do not take numbers from it.
+
+
+
 This document provides a comprehensive overview of the current status of our capstone project, detailing what has been completed, key findings, repository structure, and how to run the system. Share this with teammates, advisors, and collaborators to bring everyone up to speed.
 
 ---

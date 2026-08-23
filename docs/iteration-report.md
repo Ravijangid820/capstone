@@ -8,10 +8,9 @@ Companions: [improvements.md](improvements.md) for the methodology narrative,
 hyperparameters. Every figure below comes from run logs in `artifacts/snapshots/`, each frozen with
 a SHA-256 manifest.
 
-> **Naming collision — settle this before writing.** `H1–H4` are **hospitals**; `H1–H3` are
-> **hypotheses**. They collide throughout the code and logs. In the paper, rename the hospitals
-> (suggestion: **Site A–D**) and reserve H1–H3 for hypotheses. **Site D = H4** is the outlier
-> carrying the strongest synthetic scanner shift, and nearly every result here is about it.
+> **Naming.** This project follows [conventions.md](conventions.md). Hospitals are **Site A–D**
+> in all prose (`H1`–`H4` in code and logs; **Site D = H4** is the outlier). `H1`/`H2`/`H3`
+> unqualified always mean **hypotheses**. Every table below already uses Site names.
 
 ---
 
@@ -23,7 +22,7 @@ a SHA-256 manifest.
 | **v2** | `v2` | Cosine LR, augmentation (incl. intensity + noise), TTA, component filtering, validation split, best-val selection | **Partial regression** — broke FedAvg in 2D and 3 of 4 methods in 3D |
 | **v3** | `v3` | v2 minus intensity/noise augmentation; 150 → 230 training cases per hospital | **Success** — every method improved in both backbones |
 | **v4** | `v4` | v3 with 25 → 40 rounds, cosine stretched across all 40 | **Regression** — stopped after 1 run |
-| **v5** | `v5` | v3 with 40 rounds but cosine still annealing by round 25 | **Best** — every method improved again, and H3 finally holds in 3D |
+| **v5** | `v5` | v3 with 40 rounds but cosine still annealing by round 25 | **Best** — every method improved again; the 3D reversal disappears |
 
 Two of five iterations failed. Both are kept with their evidence, because each produced a finding:
 v2 showed that augmenting along the experimental variable is harmful, and v4 showed that a longer
@@ -131,7 +130,7 @@ never the p alone.**
 
 ## 5. Per-hospital detail, v1 → v5
 
-| | Site A (H1) | Site B (H2) | Site C (H3) | **Site D (H4, outlier)** |
+| | Site A | Site B | Site C | **Site D** *(outlier)* |
 |---|---|---|---|---|
 | **2D** Centralized | 0.8735 → 0.9048 | 0.8780 → 0.9118 | 0.8516 → 0.8963 | 0.8299 → **0.8688** |
 | **2D** Local-only | 0.8508 → 0.8837 | 0.8638 → 0.8779 | 0.8226 → 0.8655 | 0.8371 → **0.8524** |
@@ -172,16 +171,25 @@ across-seed spread on the outlier fell 2.6× (±0.0164 → ±0.0064), local-only
 | 3D v1 | ✅ | ❌ | ❌ |
 | 3D v2 | ❌ | ✅ | ❌ |
 | 3D v3 | ❌ | ✅ | ❌ |
-| **3D v5** | ✅ | ✅ | **✅** |
+| **3D v5** | ✅ | ✅ | **inequality holds, not significant** ⚠ |
 
 **H2 is the durable claim.** Supported in every configuration except the 3D baseline — and that
 single exception disappears once the recipe is properly tuned. It is the most defensible result in
 the study.
 
-**H3 strengthened enormously.** In v1 (2D, three seeds) it held in only **1 of 3 seeds**, because
-FedBN actually *trailed* FedAvg on the mean (0.8475 vs 0.8498). Under v5 FedBN leads FedAvg by
-**+0.0128 on the mean and +0.0604 on the outlier** in 2D, and by +0.0024 / +0.0078 in 3D — where it
-had never held before.
+**H3 strengthened enormously in 2D.** In v1 (2D, three seeds) it held in only **1 of 3 seeds**,
+because FedBN actually *trailed* FedAvg on the mean (0.8475 vs 0.8498). Under v5 FedBN leads FedAvg
+by **+0.0128 on the mean and +0.0604 on Site D** in 2D — decisive, and FedBN is better on 59 of 62
+volumes.
+
+**In 3D, H3's inequality holds but the margin is not significant — do not write "FedBN wins in
+3D".** FedBN leads FedAvg by +0.0024 on the mean and +0.0087 on Site D, but paired per-case testing
+gives **uncorrected p = 0.066, Holm-corrected p = 0.53, with a sign split of 39/23**. The bootstrap
+CI excludes zero while the Wilcoxon test does not reach significance, which means the mean shift
+comes from magnitude on a minority of volumes rather than a consistent per-case win. The defensible
+sentence is **"no significant difference in 3D"** — which is still a change from v1, where FedAvg
+beat FedBN in 3D significantly. See [results-v5-summary.md](results-v5-summary.md) for the full
+table.
 
 **H1 is a knife edge and should be reported as one.** It has flipped in both directions during this
 work: the estimator change moved it 1/3 → 3/3 seeds on v1's own logs, and the training recipe moved
@@ -194,8 +202,10 @@ The original finding was that *all three* verdicts reverse in 3D, presented as a
 contribution. Under a properly tuned recipe **neither the H2 nor the H3 half survives** — both now
 hold in 3D. What survives is narrower and better supported:
 
-> The backbone does not change *whether* a single global model fails an outlier site. Both
-> backbones agree on that. The apparent reversal was an artefact of the original training setup.
+> The backbone does not change *whether* a single global model fails an outlier site — both
+> backbones agree on that under v5. What was reported as a reversal was an artefact of the v1
+> training recipe. In 3D, FedBN is no longer *worse* than FedAvg; it is directionally better but
+> not significantly so.
 
 ---
 
@@ -226,7 +236,7 @@ v2's intensity jitter and Gaussian noise perturb gamma, bias field and blur — 
 the synthetic scanner shift uses.** That dilutes the signal FedBN's BatchNorm layers exist to
 capture and forces FedAvg's single global model into a worse compromise. Where it lost, in 2D:
 
-| Method | Sites A–C | Site D (outlier) |
+| Method | Sites A–C | Site D *(outlier)* |
 |---|---|---|
 | Centralized | +0.0245 | +0.0277 |
 | Local-only | +0.0112 | +0.0101 |
@@ -304,7 +314,7 @@ An earlier reading, based on 2D FedAvg alone, attributed the outlier's decline u
 training to FedAvg's weight averaging. **The 3D v5 results refute that.** Grouping by whether
 training mixes sites:
 
-| Method (3D) | Sites A–C | **Site D (outlier)** |
+| Method (3D) | Sites A–C | **Site D** |
 |---|---|---|
 | Centralized — pools all sites | +0.0176 | **−0.0087** |
 | FedAvg — averages all weights | +0.0156 | **−0.0092** |

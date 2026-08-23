@@ -1,5 +1,8 @@
 # v5 results — what changed, and what it does to the headline claim
 
+> Naming follows [conventions.md](conventions.md): hospitals are **Site A–D**
+> (`H1`–`H4` in code and logs, Site D = the outlier); `H1`–`H3` mean **hypotheses**.
+
 Seed 42, both backbones, all four methods. Runs in `artifacts/runs/v5`; every number below comes
 from a script in `scripts/` and can be regenerated with the commands in §7.
 
@@ -15,7 +18,7 @@ statement was entangled with the training recipe. It no longer is.
 
 ## 2. Headline: the 2D/3D reversal does not survive v5
 
-H3 is "FedBN recovers the shifted hospital". Paired per-case test on H4, WT Dice, FedBN − FedAvg,
+H3 is "FedBN recovers the shifted hospital". Paired per-case test on Site D (`H4` in the logs), WT Dice, FedBN − FedAvg,
 62 volumes, Wilcoxon + paired bootstrap. Holm correction is applied within each report's own
 family of per-hospital tests — 12 for the single-seed reports, 36 for the three-seed 2D ones —
 so a p-value here is not comparable across rows as a raw number, only as a verdict:
@@ -51,8 +54,10 @@ attaches to a different hypothesis, and the mechanism has to be re-argued from s
 
 ### Why H1 flips in 2D (Local − FedAvg, WT, paired)
 
-| Dim | H1 | H2 | H3 | H4 | Pooled |
-|-----|----|----|----|----|--------|
+*Hospitals are Site A–D; `H1`–`H4` in the logs. Site D is the outlier. See [conventions.md](conventions.md).*
+
+| Dim | Site A | Site B | Site C | Site D | Pooled |
+|-----|--------|--------|--------|--------|--------|
 | 2D  | −0.0076 ns | −0.0219 *** | −0.0023 ns | **+0.0749 ***** | +0.0108 ns |
 | 3D  | −0.0123 *** | −0.0162 *** | −0.0202 *** | +0.0115 ns | −0.0093 (FedAvg better) |
 

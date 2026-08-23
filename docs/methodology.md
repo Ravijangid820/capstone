@@ -19,16 +19,40 @@ protocols shift the image distribution. A single global model (FedAvg) is pulled
 | **H2** | The global model underperforms the outlier hospital. | On the most-shifted hospital, FedAvg < its own local-only model. |
 | **H3** | Personalization recovers the outlier without hurting the mean. | FedBN ≥ FedAvg on mean Dice **and** FedBN closes the H2 gap. |
 
-## 2.1. The 3D reversal finding
+## 2.1. The 2D / 3D comparison — what survives
 
-The key finding is: in 3D, the hypothesis outcomes REVERSE compared to 2D:
-- H1 (federation helps on average): **SUPPORTED** in 3D (FedAvg mean 0.859 > Local mean 0.851)
-- H2 (FedAvg fails outlier): **NOT SUPPORTED** in 3D (FedAvg H4=0.848, robust, not collapsed)
-- H3 (FedBN recovers outlier): **NOT SUPPORTED** in 3D (FedBN H4=0.833 < FedAvg H4=0.848)
+> **This section replaces an earlier claim.** It previously reported that *all three* hypothesis
+> verdicts reverse in 3D, and called that a novel contribution. Iterations v2–v5 refuted it: the
+> reversal was an artefact of the v1 training recipe, not a property of the backbone. See
+> [conventions.md](conventions.md) §6 and [iteration-report.md](iteration-report.md).
 
-Explanation: 3D spatial convolutions act as a natural regularizer, making FedAvg robust to scanner shifts. FedBN suffers because 150 local cases are insufficient to estimate stable 3D batch normalization running statistics (3D BN layers have much higher variance in their estimates with limited data).
+Under **v1**, 3D appeared to reverse every verdict — H1 supported, H2 and H3 not. Under **v5**,
+with a properly tuned recipe run identically in both backbones, that picture is gone:
 
-This is a novel contribution: the choice of 2D vs 3D backbone fundamentally changes which personalization strategy is optimal.
+| | H1 | H2 | H3 |
+|---|---|---|---|
+| 2D v5 | ❌ | ✅ | ✅ |
+| 3D v5 | ✅ | ✅ | inequality holds, **not significant** |
+
+**H2 is backbone-independent.** A single global model underperforms the outlier site in both 2D and
+3D once the recipe is sound. This is the durable claim of the study.
+
+**H3 differs by backbone in strength, not in sign.** In 2D FedBN beats FedAvg on the outlier
+decisively (+0.0604, 59 of 62 volumes, p = 4.5e-11). In 3D the inequality still holds (+0.0087) but
+the margin is **not statistically significant** — uncorrected p = 0.066, Holm-corrected p = 0.53,
+sign split 39/23. The defensible sentence is *"no significant difference in 3D"*, which is itself a
+change from v1, where FedAvg beat FedBN in 3D significantly.
+
+**The earlier explanation is also withdrawn.** FedBN's weaker 3D result was attributed to 150 local
+cases being too few for stable 3D BatchNorm statistics. That is not supported: a capacity probe
+(`base_channels` 48) was rejected on validation, and 3D local-only — flat under both v2 and v3 —
+improved as soon as the round budget rose to 40. The binding constraint was **training length**,
+not sample size or model size.
+
+What the data does support about heterogeneity is broader than FedAvg: outlier degradation under
+better optimization appears in **Centralized too**, which has no aggregation step at all. The cause
+is optimizing over a majority-dominated distribution, and keeping BatchNorm local is what protects
+the minority site — placing FedBN's mechanism in exactly the explanatory role its thesis claims.
 
 ## 3. Data & heterogeneity design
 

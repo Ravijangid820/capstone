@@ -4,6 +4,7 @@ Project docs, split by concern so each stays focused and maintainable. Suggested
 
 | # | Doc | Read it for |
 |---|---|---|
+| 0 | [conventions.md](conventions.md) | **Read first.** Naming rules (hospitals = Site A–D, hypotheses = H1–H3), reporting conventions, and the list of retracted claims. |
 | 1 | [methodology.md](methodology.md) | The research question, hypotheses (H1/H2/H3), methods compared, evaluation — the **why**. |
 | 2 | [workflow.md](workflow.md) | **Start here to run it.** The four runs, the pipeline in order, measured costs, and the decision gates. |
 | 3 | [data.md](data.md) | BraTS 2021 spec, labels/regions, and the reproducible data-acquisition pipeline. |
@@ -16,8 +17,8 @@ Project docs, split by concern so each stays focused and maintainable. Suggested
 | 10 | [progress-log.md](progress-log.md) | Dated lab notebook — decisions and milestones with rationale. |
 | 11 | [iteration-report.md](iteration-report.md) | **Full v1→v5 analytical report** — every configuration, result, failure and limitation in one place. Start here for the paper. |
 | 12 | [improvements.md](improvements.md) | **Accuracy round 2** — the evaluation-noise finding, what changed, and the freeze → rerun → paired-comparison protocol. |
-| 12 | [project_report.md](project_report.md) | Formal project report — background, methodology, results, and discussion |
-| 13 | [project_status_report.md](project_status_report.md) | Handoff/status report — current state, completed work, and next steps |
+| 13 | [project_report.md](project_report.md) | Formal project report — background, methodology, results, and discussion |
+| 14 | [project_status_report.md](project_status_report.md) | Handoff/status report — current state, completed work, and next steps |
 
 ## One-screen orientation
 

@@ -53,8 +53,9 @@ Three things follow, and they matter more than any single Dice number:
    is measured more precisely; the same change buys both.
 
 The 3D runs were checked the same way and **all three 3D verdicts are identical under both
-estimators** — the 3D reversal in [`methodology.md`](methodology.md#21-the-3d-reversal-finding)
-does not depend on the estimator, which is worth stating explicitly since the 2D H1 verdict does.
+estimators** — so the 3D picture is not estimator-sensitive the way the 2D H1 verdict is. It is,
+however, *recipe*-sensitive: what v1 reported as a 2D/3D reversal did not survive v5. See
+[`methodology.md`](methodology.md#21-the-2d--3d-comparison--what-survives).
 
 ---
 
@@ -334,10 +335,15 @@ decimals — two runs days apart, one under `--preset v3` with manual flags, one
 | 3D baseline / v3 / **v5** | ✅ / ❌ / **✅** | ❌ / ✅ / **✅** | ❌ / ❌ / **✅** |
 
 [§2b-3d](#2b-3d-the-3d-rerun--where-the-recipe-does-not-help) argued the H2 half of the reversal was
-a training artefact while the H3 half survived. **The H3 half does not survive either.** Under v5,
-FedBN beats FedAvg on both clauses in 3D (mean +0.0024, outlier +0.0078), and FedBN is the largest
-single 3D gain of any method. The whole "3D reverses the conclusions" claim should be dropped: it
-was a property of the original training setup, not of the backbone.
+a training artefact while the H3 half survived. **The H3 half does not survive either — but state
+it carefully.** Under v5 FedBN's inequality holds in 3D on both clauses (mean +0.0024, outlier
++0.0087), where under v1 FedAvg beat FedBN *significantly*. So the reversal is gone.
+
+It does **not** follow that FedBN wins in 3D. Paired per-case testing on the outlier gives
+uncorrected p = 0.066, Holm-corrected p = 0.53, sign split 39/23 — the bootstrap CI excludes zero
+while the Wilcoxon does not, so the shift comes from magnitude on a minority of volumes rather than
+a consistent per-case win. **The defensible claim is "no significant difference in 3D."** Contrast
+2D, where FedBN wins on 59 of 62 volumes at p = 4.5e-11.
 
 ### The outlier mechanism, corrected
 
