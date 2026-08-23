@@ -39,23 +39,43 @@ BraTS 2021 — 1251 cases, 3D, 240×240×155, 4 modalities + `{0,1,2,4}` mask. F
 **Matched compute.** `local` and `centralized` train for `R × E` epochs — the same total local epochs
 a hospital spends across a whole federated run. See [experiments](experiments.md) §3.
 
-### 3.1 `--preset v2` — the improved recipe
+### 3.1 Presets — `--preset v5` is the current best
 
-Opt-in; every knob above keeps its baseline value unless the preset or an explicit flag changes
-it. Rationale for each in [improvements.md](improvements.md) §2.
+Every knob in §3 keeps its baseline value unless a preset or an explicit flag changes it, so an
+un-flagged run still reproduces the frozen v1 baseline bit for bit. Full rationale for each
+iteration in [iteration-report.md](iteration-report.md); naming and retracted claims in
+[conventions.md](conventions.md).
 
-| Knob | baseline | v2 |
-|---|---|---|
-| `lr_schedule` / `lr_min_factor` | `constant` | `cosine` → 5 % of `lr` by the final round |
-| `augment` | `False` | `True` — flip p=0.5/axis, rot90 p=0.5 (2D only), intensity jitter p=0.3, noise σ=0.02 |
-| `tta` | `False` | `True` — flip-TTA, **final evaluation only** (4× inference) |
-| `postproc_min_voxels` | `0` | `50` — drop smaller 3D connected components, then re-nest WT ⊇ TC ⊇ ET |
-| `val_per_hospital` | `0` | `20`, taken **after** the train cap (needs a 170-case/hospital cache) |
-| `select_by` | `last` | `best_val` |
-| `report_last_k` | `1` | `5` — declared analysis estimator, recorded before the run |
+| Knob | v1 (default) | v2 | v3 | v4 | **v5** |
+|---|---|---|---|---|---|
+| `rounds` | 25 | 25 | 25 | 40 | **40** |
+| `lr_anneal_rounds` | — | — | — | (40) | **25** |
+| `lr_schedule` / `lr_min_factor` | `constant` | `cosine` → 5 % of `lr` | same | same | same |
+| `train_per_hospital` | 150 | 150 | **230** | 230 | **230** |
+| `val_per_hospital` | 0 | 20 | 20 | 20 | **20** |
+| `augment` | `False` | `True` | `True` | `True` | **`True`** |
+| `aug_flip_p` / `aug_rot90_p` | — | 0.5 / 0.5 | 0.5 / 0.5 | 0.5 / 0.5 | **0.5 / 0.5** |
+| `aug_intensity_p` | — | 0.3 | **0.0** | 0.0 | **0.0** |
+| `aug_noise_std` | — | 0.02 | **0.0** | 0.0 | **0.0** |
+| `tta` | `False` | `True` | `True` | `True` | **`True`** |
+| `postproc_min_voxels` | 0 | 50 | 50 | 50 | **50** |
+| `select_by` | `last` | `best_val` | `best_val` | `best_val` | **`best_val`** |
+| `report_last_k` | 1 | 5 | 5 | 5 | **5** |
+| `eval_test_every` | 1 | 1 | 1 | 3 | **3** |
+| `eval_batch_size` / `sw_batch_size` | 8 / 1 | 8 / 1 | 8 / 1 | 8 / 1 | **64 / 4** |
 
-Augmentation and TTA are train-side and eval-side respectively and never overlap: no augmentation
-is applied on any evaluation path, and TTA touches no weights.
+**v2 and v4 are kept only as evidence and should not be run.** v2's intensity and noise
+augmentation perturbs the same channels as the synthetic scanner shift and regressed FedAvg in 2D
+and three of four methods in 3D. v4 stretched the cosine across all 40 rounds and lost 0.0099 to
+v3 on 2D centralized.
+
+Cache requirement: v3–v5 need **250 cases/hospital** cached (230 train + 20 val); v2 needs 170;
+v1 needs 150. `rot90` applies in 2D only — the 3D axes are anatomically distinct, and the config
+records `aug_rot90_p=0.0` for 3D so the recorded configuration matches what ran.
+
+Augmentation and TTA never overlap: no augmentation is applied on any evaluation path, and TTA
+touches no weights. `eval_batch_size` / `sw_batch_size` change speed only — the model is in
+`eval()` mode, so per-case Dice moves by at most 1.5e-4.
 
 ## 4. Hospitals / split
 

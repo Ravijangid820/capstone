@@ -2,6 +2,10 @@
 
 The operational plan: what runs, how they're evaluated, and exactly how each hypothesis is measured.
 
+> Hospitals are **Site A–D** in prose (`H1`–`H4` in code and logs; **Site D** is the outlier);
+> `H1`–`H3` mean **hypotheses**. See [conventions.md](conventions.md). Sections 4–5 quote raw log
+> names inside their superseded v1 tables.
+
 ## 1. Experiment matrix
 
 Run for the **2D** backbone first; repeat for **3D** if the feasibility spike passes.
@@ -10,8 +14,8 @@ Run for the **2D** backbone first; repeat for **3D** if the feasibility spike pa
 |---|---|---|---|
 | E0 | **Centralized** | pooled ~1000 train | ceiling reference |
 | E1 | **Local-only** ×4 | each hospital's own train | floor (one model per hospital) |
-| E2 | **FedAvg** | federated across 4 hospitals | global model (H1, H2) |
-| E3 | **FedBN** | federated, BN kept local | personalized model (H3) |
+| E2 | **FedAvg** | federated across 4 hospitals | global model (tests H1, H2) |
+| E3 | **FedBN** | federated, BN kept local | personalized model (tests H3) |
 
 All four share the **same committed split**, the same seed, and the same test sets — only the training
 *procedure* differs, so the comparison is clean.
@@ -21,9 +25,9 @@ All four share the **same committed split**, the same seed, and the same test se
 ```mermaid
 flowchart TD
     M["a trained model"] --> T1["Hospital 1 test"]
-    M --> T2["Hospital 2 test"]
-    M --> T3["Hospital 3 test"]
-    M --> T4["Hospital 4 test (outlier)"]
+    M --> T2["Site B test"]
+    M --> T3["Site C test"]
+    M --> T4["Site D test (outlier)"]
     T1 --> D["Dice WT / TC / ET<br/>per hospital"]
     T2 --> D
     T3 --> D
@@ -52,7 +56,7 @@ The headline numbers are the **diagonal**: each hospital's model on its own test
 
 Additionally, at the **final round only**, every local-only model is scored on all four test sets — a
 4×4 matrix. Its off-diagonal cells are direct evidence the synthetic shift creates a genuine domain
-gap (H4's model should collapse on H1–H3). It is run once rather than per round, since it costs 16×
+gap (Site D's model should collapse on Sites A–C). It is run once rather than per round, since it costs 16×
 a diagonal evaluation.
 
 ## 3. How each hypothesis is measured
@@ -60,8 +64,8 @@ a diagonal evaluation.
 | Hyp. | Claim | Concrete test |
 |---|---|---|
 | **H1** | collaboration helps on average | `mean_dice(FedAvg) ≥ mean_dice(Local-only)` |
-| **H2** | the global model fails the outlier | `dice(FedAvg, H4) < dice(Local-only, H4)` |
-| **H3** | personalization recovers the outlier | `mean_dice(FedBN) ≥ mean_dice(FedAvg)` **and** `dice(FedBN, H4) ≥ dice(FedAvg, H4)` (closing the H2 gap) |
+| **H2** | the global model fails the outlier | `dice(FedAvg, Site D) < dice(Local-only, Site D)` |
+| **H3** | personalization recovers the outlier | `mean_dice(FedBN) ≥ mean_dice(FedAvg)` **and** `dice(FedBN, Site D) ≥ dice(FedAvg, Site D)` (closing the H2 gap) |
 
 ### At which round — and why the answer is not "the last one"
 
@@ -89,8 +93,9 @@ Two consequences worth carrying into the write-up:
   justified. `scripts/compare_runs.py` enforces this across two runs; `analyze.py` does not.
 
 The 3D runs were re-checked the same way and all three verdicts are estimator-independent, so the
-3D reversal in [methodology.md](methodology.md#21-the-3d-reversal-finding) does not rest on this
-choice. The 2D H1 verdict does.
+3D picture does not rest on this choice — the 2D H1 verdict does. It is, however, *recipe*-
+sensitive: what v1 reported as a 2D/3D reversal did not survive v5. See
+[methodology.md](methodology.md#21-the-2d-3d-comparison-what-survives).
 
 Centralized (E0) frames all of the above as "how close to the pooled ceiling did we get."
 
@@ -103,7 +108,12 @@ Centralized (E0) frames all of the above as "how close to the pooled ceiling did
 > **Identical init.** All four methods start from the same seeded random weights (`build_model` seeds
 > `torch` before construction), so no comparison is confounded by initialization luck.
 
-## 4. Results — 2D backbone (R=25, E=1, seed 42, 150 train/hospital)
+## 4. Results — 2D backbone, **v1 baseline only** (R=25, E=1, seed 42, 150 train/hospital)
+
+> **⚠ Superseded numbers.** Sections 4 and 5 report the **v1 baseline**. They are kept because the
+> gates and the protocol above were validated against them, but the verdicts changed under v2–v5.
+> **Current results: [iteration-report.md](iteration-report.md).** Hospital columns below use the
+> raw log names `H1`–`H4`; in prose these are Sites A–D — see [conventions.md](conventions.md).
 
 Run on the RTX 3050; `metrics.jsonl` per run under `artifacts/runs/`. Regenerate the verdicts with
 `python scripts/analyze.py --dim 2d` and the figures with `python scripts/plot_results.py`.
@@ -143,7 +153,11 @@ ties local-only and the centralized ceiling and beats FedAvg — **without pooli
 cross-hospital matrix corroborates the domain gap: the H1 model scores only 0.671 on H4, its worst cell.
 
 Figures: `artifacts/figures/{learning_curves_wt_2d,per_hospital_wt_2d,outlier_h4_wt_2d}.png`.
-## 5. Results — 3D backbone (R=25, E=1, seed 42, 150 train/hospital)
+## 5. Results — 3D backbone, **v1 baseline only** (R=25, E=1, seed 42, 150 train/hospital)
+
+> **⚠ The 3D verdicts below were later refuted.** Under `--preset v5` both H2 and H3's inequalities
+> hold in 3D. What v1 reported as a dimension-dependent reversal was an artefact of its training
+> recipe. See [conventions.md](conventions.md) §6.
 
 ### Mean Dice across hospitals (diagonal)
 

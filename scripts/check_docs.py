@@ -141,6 +141,44 @@ def check_docs(problems: list[str], checked: list[str]) -> None:
                     f"(see conventions.md)")
 
 
+LINK = re.compile(r"\[[^\]]*\]\(([^)\s]+)\)")
+
+
+def anchor_of(heading: str) -> str:
+    """GitHub's heading-to-anchor rule: lowercase, drop punctuation, spaces to hyphens."""
+    a = heading.strip().lstrip("#").strip().lower()
+    a = re.sub(r"[^\w\s-]", "", a)
+    return re.sub(r"\s+", "-", a)
+
+
+def check_links(problems: list[str], checked: list[str]) -> None:
+    """Every relative link between documents must resolve, anchors included.
+
+    Renaming a section silently breaks every link into it, and a reader following a dead anchor
+    lands at the top of a long document with no idea what they were meant to read.
+    """
+    anchors: dict[str, set[str]] = {}
+    for path in DOCS.glob("*.md"):
+        text = path.read_text(encoding="utf-8", errors="replace")
+        anchors[path.name] = {anchor_of(h) for h in re.findall(r"^#{1,6} .+$", text, re.M)}
+
+    for path in sorted(DOCS.glob("*.md")):
+        text = path.read_text(encoding="utf-8", errors="replace")
+        for target in LINK.findall(text):
+            if target.startswith(("http://", "https://", "mailto:", "#")):
+                continue
+            file_part, _, anchor = target.partition("#")
+            if not file_part:
+                continue
+            dest = (path.parent / file_part).resolve()
+            if not dest.exists():
+                problems.append(f"LINK  {path.name} -> {target} (file not found)")
+                continue
+            if anchor and dest.name in anchors and anchor not in anchors[dest.name]:
+                problems.append(f"LINK  {path.name} -> {target} (anchor not found)")
+            checked.append(f"link {path.name} -> {target}")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--list", action="store_true", help="also print what was checked")
@@ -150,6 +188,7 @@ def main() -> int:
     checked: list[str] = []
     check_numbers(problems, checked)
     check_docs(problems, checked)
+    check_links(problems, checked)
 
     if not (DOCS / "conventions.md").exists():
         problems.append("MISSING  docs/conventions.md — the canonical naming reference")

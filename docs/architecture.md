@@ -91,6 +91,13 @@ scripts/
   compute_significance.py  paired FedBN-vs-FedAvg test over per-case Dice (Table V)
   export_predictions.py    FedAvg/FedBN prediction PNGs for one case (paper figure)
   demo_server.py     Interactive web demo server (HTTP API + static file serving)
+  run_matrix.py      drive a full method x backbone x seed sweep; resumable
+  freeze_baseline.py snapshot runs with a SHA-256 manifest; --verify re-checks them
+  rescore.py         re-evaluate a saved checkpoint (per-case Dice, TTA) without retraining
+  compare_runs.py    two runs, one estimator: config diff, delta Dice, paired CI + Wilcoxon
+  compute_significance.py  FedBN vs FedAvg at one recipe, Holm-corrected
+  export_predictions.py    qualitative prediction PNGs for a chosen case
+  check_docs.py      verify the docs against conventions.md and against the run logs
 tests/               Smoke test suite (pytest) covering metrics, partition, model, and data pipeline
 colab_setup.ipynb    data acquisition (download → stream-unzip → Drive)  [repo root]
 artifacts/           git-ignored run outputs + cache (see specs.md)

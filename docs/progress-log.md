@@ -153,7 +153,7 @@ A dated lab notebook: what was done, what was decided, and *why*. Newest entries
   launched E1 early, contaminating the first worker benchmark — always confirm the process is dead.)*
 
 ### Next
-- **Analysis is done for 2D** — tables in [experiments.md](experiments.md#4-results--2d-backbone-r25-e1-seed-42-150-trainhospital), figures in `artifacts/figures/`.
+- **Analysis is done for 2D** — tables in [experiments.md](experiments.md#4-results-2d-backbone-v1-baseline-only-r25-e1-seed-42-150-trainhospital), figures in `artifacts/figures/`.
 - **3D feasibility spike** on the T4 (memory is fine; speed is the gate). If it passes, repeat the
   matrix in 3D and add the "does the story hold in 3D?" comparison.
 - *(optional)* NVIDIA FLARE port as a framework demonstration — the science is now settled on the
@@ -206,3 +206,33 @@ rather than start training. That turned out to matter more than any hyperparamet
 - **Tests: 17 → 44.** The new ones target failures that stay silent — augmentation desynchronizing
   image from mask, TTA forgetting to un-flip (probed with a flip-equivariant model), the run guard
   not firing, a preset naming a field that does not exist.
+
+### 2026-08-22 — v3, v4 and v5; v5 adopted as the best recipe
+
+- **v3** — corrected v2's regression. Decomposing where v2 lost showed its intensity jitter and
+  Gaussian noise perturb gamma, bias and blur, the same channels the synthetic scanner shift uses,
+  so it was augmenting along the experimental variable. Dropped those two terms, kept geometric
+  augmentation, and raised training data 150 → 230 cases/site (40% of the pool had never been
+  used). Every method improved in both backbones.
+- **v4 — failed, stopped after one run.** All v3 runs were still improving at round 25, so v4 tried
+  40 rounds. 2D centralized came back *worse* (0.8832 test / 0.8748 val vs v3's 0.8931 / 0.8830).
+  The inference was wrong: v3's late-curve rise was the cosine anneal consolidating the model, not
+  headroom from more steps. Stretching the cosine across 40 rounds kept LR high far longer.
+- **Two probes instead of two matrices** (~7 h rather than ~74 h), on 2D FedBN, judged on
+  validation as well as test. *40 rounds annealing on v3's 25-round timetable* won (+0.0103 test,
+  +0.0039 val). *`base_channels` 48* was rejected — it gained on test but **lost** on validation,
+  the signature of test-set noise. These models were round-limited, not size-limited.
+- **v5 = v3 + 40 rounds with `lr_anneal_rounds=25`.** All eight runs beat v1 paired per-case
+  (2D +0.0245…+0.0510, 3D +0.0054…+0.0343), every one significant. v5's FedBN 2D reproduced the
+  probe's 0.8756 to four decimals across two separate invocations days apart.
+- **The 3D reversal is finished.** H2 and H3's inequalities now hold in 3D. **But do not write
+  "FedBN wins in 3D"** — that margin is not significant (uncorrected p = 0.066, Holm-corrected
+  p = 0.53, sign split 39/23). The defensible phrasing is "no significant difference in 3D".
+- **Outlier mechanism corrected.** Earlier I blamed FedAvg's weight averaging; centralized, which
+  has no aggregation step, shows the same effect just as strongly. The cause is optimizing over a
+  majority-dominated distribution, which makes H2 broader than first stated and puts BatchNorm
+  locality in exactly the explanatory role FedBN's thesis claims.
+- **Documentation consolidated.** `conventions.md` fixes the hospital/hypothesis name collision
+  (Sites A–D vs H1–H3) and lists every retracted claim; `iteration-report.md` is the single v1→v5
+  record; three older reports carry superseded banners; `check_docs.py` re-derives 16 headline
+  figures from the frozen logs and fails if a document drifts.

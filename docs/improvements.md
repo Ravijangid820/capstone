@@ -55,7 +55,7 @@ Three things follow, and they matter more than any single Dice number:
 The 3D runs were checked the same way and **all three 3D verdicts are identical under both
 estimators** — so the 3D picture is not estimator-sensitive the way the 2D H1 verdict is. It is,
 however, *recipe*-sensitive: what v1 reported as a 2D/3D reversal did not survive v5. See
-[`methodology.md`](methodology.md#21-the-2d--3d-comparison--what-survives).
+[`methodology.md`](methodology.md#21-the-2d-3d-comparison-what-survives).
 
 ---
 
@@ -202,7 +202,7 @@ Same preset, same estimator, seed 42 (the only seed the 3D baseline has).
 FedAvg is significantly worse. Compare the same recipe in 2D, where centralized gained +0.0253 and
 FedBN +0.0115.
 
-This is consistent with the explanation already in [methodology.md](methodology.md#21-the-3d-reversal-finding):
+This is consistent with the explanation already in [methodology.md](methodology.md#21-the-2d-3d-comparison-what-survives):
 if 3D convolutions act as a natural regularizer, augmentation has little headroom left to exploit,
 and the extra input noise costs more than the regularization buys. The baseline numbers say the
 same thing from the other side — baseline 3D was already at 0.8768 mean where baseline 2D was
