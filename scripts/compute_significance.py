@@ -133,7 +133,7 @@ def compare(a_rows: list[dict], b_rows: list[dict], region: str, hospital: str |
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     cfg = Config()
-    ap.add_argument("--runs", type=str, default=str(cfg.paths.artifacts / "baseline"),
+    ap.add_argument("--runs", type=str, default=str(cfg.paths.artifacts / "snapshots" / "v1"),
                     help="directory holding the run directories with per_case.jsonl")
     ap.add_argument("--dim", default="2d", choices=("2d", "3d"))
     ap.add_argument("--seed", type=int, nargs="+", default=None,
@@ -181,7 +181,7 @@ def main() -> int:
               f"{args.a}_{args.dim}_* and {args.b}_{args.dim}_*", file=sys.stderr)
         print("  (3D per-case rows come from: "
               f"python scripts/rescore.py --all --dim {args.dim} --seed 42 "
-              "--out-dir artifacts/baseline)", file=sys.stderr)
+              "--out-dir artifacts/snapshots/v1)", file=sys.stderr)
         return 1
 
     out_lines: list[str] = []

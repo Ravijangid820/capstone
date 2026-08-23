@@ -9,7 +9,7 @@ All four methods share the split manifest, the seed, the init and the cache -- o
 artifacts/runs/[<tag>/]<run_id>/metrics.jsonl.
 
 **Presets.** Every default reproduces the frozen baseline, so an un-flagged run today still
-produces the numbers in artifacts/baseline/. `--preset v2` turns on the improved recipe (cosine
+produces the numbers in artifacts/snapshots/v1/. `--preset v2` turns on the improved recipe (cosine
 LR across rounds, augmentation, flip-TTA, component filtering, validation-based selection).
 Explicit flags beat the preset, and the resulting values -- not the preset name -- are what get
 written to the run's config.json.

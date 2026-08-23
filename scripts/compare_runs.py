@@ -1,7 +1,7 @@
 """Compare two sets of runs -- the frozen baseline against a rerun -- with paired statistics.
 
     python scripts/compare_runs.py --dim 2d
-    python scripts/compare_runs.py --baseline artifacts/baseline --new artifacts/runs/v2 --dim 2d
+    python scripts/compare_runs.py --baseline artifacts/snapshots/v1 --new artifacts/runs/v2 --dim 2d
     python scripts/compare_runs.py --dim 2d --md-out docs/results-comparison.md
 
 Answers three questions, in the order a reader will ask them:
@@ -276,7 +276,7 @@ def stars(p: float) -> str:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     cfg = Config()
-    ap.add_argument("--baseline", type=str, default=str(cfg.paths.artifacts / "baseline"))
+    ap.add_argument("--baseline", type=str, default=str(cfg.paths.artifacts / "snapshots" / "v1"))
     ap.add_argument("--new", type=str, default=str(cfg.paths.runs / "v2"))
     ap.add_argument("--dim", default="2d", choices=("2d", "3d"))
     ap.add_argument("--seed", type=int, default=None, help="restrict to one seed")

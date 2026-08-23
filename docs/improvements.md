@@ -105,10 +105,10 @@ scattered across slices, and ET is the smallest, most fragmented region.
 Full report: [`results-inference-only.md`](results-inference-only.md). Reproduce:
 
 ```bash
-python scripts/rescore.py --all --dim 2d --seed 42 --out-dir artifacts/baseline
+python scripts/rescore.py --all --dim 2d --seed 42 --out-dir artifacts/snapshots/v1
 python scripts/rescore.py --all --dim 2d --seed 42 --out-dir artifacts/rescore_tta \
     --tta --postproc-min-voxels 50
-python scripts/compare_runs.py --baseline artifacts/baseline --new artifacts/rescore_tta \
+python scripts/compare_runs.py --baseline artifacts/snapshots/v1 --new artifacts/rescore_tta \
     --dim 2d --seed 42 --select final
 ```
 
@@ -388,7 +388,7 @@ no longer hostage to which round the loop happened to stop on.
 
 ```mermaid
 flowchart LR
-    B["artifacts/runs/<br/>baseline"] -->|freeze_baseline.py| F[("artifacts/baseline/<br/>+ SHA-256 manifest")]
+    B["artifacts/runs/<br/>baseline"] -->|freeze_baseline.py| F[("artifacts/snapshots/v1/<br/>+ SHA-256 manifest")]
     B -->|rescore.py<br/><i>no retraining</i>| P["per-case Dice<br/>backfilled"]
     P --> F
     N["--preset v2 --tag v2"] --> V["artifacts/runs/v2/"]
@@ -419,7 +419,7 @@ survived, so the per-case numbers are recoverable **exactly** rather than approx
 retraining:
 
 ```bash
-python scripts/rescore.py --all --dim 2d --seed 42 --out-dir artifacts/baseline
+python scripts/rescore.py --all --dim 2d --seed 42 --out-dir artifacts/snapshots/v1
 ```
 
 This doubles as a regression test on the evaluation path: with the new flags off, every rescored

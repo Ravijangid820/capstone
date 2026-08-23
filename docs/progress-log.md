@@ -189,7 +189,7 @@ rather than start training. That turned out to matter more than any hyperparamet
   *underneath* the old ones in one file — and `analyze.py`, scoring `max(round)`, would average two
   experiments into one number with nothing in the output to show for it. Now guarded
   (`guard_run_dir`) and namespaced (`--tag`).
-- **Baseline frozen and hash-verified** — `artifacts/baseline/` + `MANIFEST.json` (SHA-256/file,
+- **Baseline frozen and hash-verified** — `artifacts/snapshots/v1/` + `MANIFEST.json` (SHA-256/file,
   git commit, headline numbers). 42 files across 14 runs, `--verify` re-checks them.
 - **Per-case Dice backfilled from checkpoints, no retraining** (`scripts/rescore.py`). It was
   being computed and discarded, which left no basis for a CI or a paired test. Doubles as a

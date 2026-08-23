@@ -60,7 +60,7 @@ def window(tag: str) -> set[int]:
 
 def mean_wt(tag: str, meth: str, dim: str, seed: int = 42) -> float | None:
     """Mean diagonal WT Dice over the estimator window, straight from the run log."""
-    root = REPO / "artifacts" / ("baseline" if tag == "baseline" else f"snapshots/{tag}")
+    root = REPO / "artifacts" / "snapshots" / tag
     p = root / f"{meth}_{dim}_{seed}" / "metrics.jsonl"
     if not p.exists():
         return None
@@ -84,10 +84,10 @@ FACTS = [
     ("v5", "fedavg", "2d", 0.8629),      ("v5", "fedbn", "2d", 0.8756),
     ("v5", "centralized", "3d", 0.8879), ("v5", "local", "3d", 0.8527),
     ("v5", "fedavg", "3d", 0.8618),      ("v5", "fedbn", "3d", 0.8642),
-    ("baseline", "centralized", "2d", 0.8582), ("baseline", "local", "2d", 0.8436),
-    ("baseline", "fedavg", "2d", 0.8502),      ("baseline", "fedbn", "2d", 0.8514),
-    ("baseline", "centralized", "3d", 0.8768), ("baseline", "local", "3d", 0.8490),
-    ("baseline", "fedavg", "3d", 0.8525),      ("baseline", "fedbn", "3d", 0.8422),
+    ("v1", "centralized", "2d", 0.8582), ("v1", "local", "2d", 0.8436),
+    ("v1", "fedavg", "2d", 0.8502),      ("v1", "fedbn", "2d", 0.8514),
+    ("v1", "centralized", "3d", 0.8768), ("v1", "local", "3d", 0.8490),
+    ("v1", "fedavg", "3d", 0.8525),      ("v1", "fedbn", "3d", 0.8422),
 ]
 
 
@@ -179,6 +179,35 @@ def check_links(problems: list[str], checked: list[str]) -> None:
             checked.append(f"link {path.name} -> {target}")
 
 
+ITERATIONS = {"v1": 14, "v2": 14, "v3": 8, "v4": 1, "v5": 8}
+
+
+def check_snapshots(problems: list[str], checked: list[str]) -> None:
+    """Every iteration must be archived under artifacts/snapshots/<vN>/ with a manifest.
+
+    The archive is the evidence base -- artifacts/runs/ is git-ignored working state that exists
+    on one laptop. An iteration referenced by the documentation but missing from snapshots is a
+    claim with nothing behind it.
+    """
+    root = REPO / "artifacts" / "snapshots"
+    if not root.exists():
+        problems.append("SNAPSHOT  artifacts/snapshots/ is missing entirely")
+        return
+    for tag, expected in ITERATIONS.items():
+        d = root / tag
+        if not d.is_dir():
+            problems.append(f"SNAPSHOT  artifacts/snapshots/{tag}/ missing")
+            continue
+        if not (d / "MANIFEST.json").exists():
+            problems.append(f"SNAPSHOT  {tag} has no MANIFEST.json — it is not hash-verified")
+            continue
+        runs = [p for p in d.iterdir() if p.is_dir()]
+        if len(runs) != expected:
+            problems.append(
+                f"SNAPSHOT  {tag} holds {len(runs)} runs, expected {expected}")
+        checked.append(f"snapshot {tag}: {len(runs)} runs")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--list", action="store_true", help="also print what was checked")
@@ -189,6 +218,7 @@ def main() -> int:
     check_numbers(problems, checked)
     check_docs(problems, checked)
     check_links(problems, checked)
+    check_snapshots(problems, checked)
 
     if not (DOCS / "conventions.md").exists():
         problems.append("MISSING  docs/conventions.md — the canonical naming reference")

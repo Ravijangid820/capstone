@@ -1,6 +1,6 @@
 """Freeze the current runs into an immutable, hashed snapshot -- the "before" of any comparison.
 
-    python scripts/freeze_baseline.py                 # snapshot artifacts/runs/ -> artifacts/baseline/
+    python scripts/freeze_baseline.py                 # snapshot artifacts/runs/ -> artifacts/snapshots/v1/
     python scripts/freeze_baseline.py --verify        # re-hash and report drift; changes nothing
     python scripts/freeze_baseline.py --force         # re-freeze over an existing snapshot
 
@@ -160,7 +160,7 @@ def verify(dest: Path) -> int:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--runs-dir", type=str, default=None, help="source runs (default artifacts/runs)")
-    ap.add_argument("--dest", type=str, default=None, help="snapshot dir (default artifacts/baseline)")
+    ap.add_argument("--dest", type=str, default=None, help="snapshot dir (default artifacts/snapshots/v1)")
     ap.add_argument("--verify", action="store_true", help="re-hash an existing snapshot; no writes")
     ap.add_argument("--force", action="store_true", help="overwrite an existing snapshot")
     args = ap.parse_args()
@@ -168,7 +168,7 @@ def main() -> int:
     cfg = Config()
     repo = Path(__file__).resolve().parents[1]
     runs_dir = Path(args.runs_dir) if args.runs_dir else cfg.paths.runs
-    dest = Path(args.dest) if args.dest else cfg.paths.artifacts / "baseline"
+    dest = Path(args.dest) if args.dest else cfg.paths.artifacts / "snapshots" / "v1"
 
     return verify(dest) if args.verify else freeze(runs_dir, dest, repo, args.force)
 

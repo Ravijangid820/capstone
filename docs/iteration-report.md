@@ -389,7 +389,7 @@ Two speed findings worth recording:
 python scripts/run_matrix.py --dim 2d 3d --seed 42 --preset v5 --tag v5
 
 # compare any iteration against the frozen baseline, same estimator on both sides
-python scripts/compare_runs.py --baseline artifacts/baseline --new artifacts/runs/v5 \
+python scripts/compare_runs.py --baseline artifacts/snapshots/v1 --new artifacts/runs/v5 \
        --dim 2d --seed 42 --select last-k --last-k 5
 
 # hypothesis verdicts
@@ -401,7 +401,7 @@ python scripts/freeze_baseline.py --verify
 
 | Location | Contents |
 |---|---|
-| `artifacts/baseline/` | v1, frozen, SHA-256 manifest, 42/42 verified |
+| `artifacts/snapshots/v1/` | v1, frozen, SHA-256 manifest, 42/42 verified |
 | `artifacts/snapshots/{v2,v3,v4,v5,probe_*}/` | every later run, same treatment |
 | `metrics.jsonl` | one row per round × model × test set |
 | `per_case.jsonl` | one row per **volume** — the input to every CI and p-value |

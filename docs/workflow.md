@@ -192,7 +192,7 @@ separate directory, so earlier results survive the rerun that supersedes them.
 python scripts/freeze_baseline.py                             # snapshot + SHA-256 what exists
 python scripts/build_cache.py --max-cases 250 --workers 8     # 230 train + 20 val (resumable)
 python scripts/run_matrix.py --dim 2d 3d --seed 42 --preset v5 --tag v5
-python scripts/compare_runs.py --baseline artifacts/baseline --new artifacts/runs/v5        --dim 2d --seed 42 --select last-k --last-k 5
+python scripts/compare_runs.py --baseline artifacts/snapshots/v1 --new artifacts/runs/v5        --dim 2d --seed 42 --select last-k --last-k 5
 python scripts/check_docs.py                                  # docs still match the logs
 ```
 

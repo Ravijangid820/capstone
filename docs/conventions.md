@@ -52,7 +52,7 @@ The four methods are always written: **Centralized** (ceiling), **Local-only** (
 
 | Name | Directory | Status |
 |---|---|---|
-| **v1** (also "baseline") | `artifacts/baseline/` | reference |
+| **v1** (also "baseline") | `artifacts/snapshots/v1/` | reference |
 | **v2** | `artifacts/snapshots/v2/` | partial regression |
 | **v3** | `artifacts/snapshots/v3/` | success |
 | **v4** | `artifacts/snapshots/v4/` | regression, stopped after 1 run |

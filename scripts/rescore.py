@@ -1,6 +1,6 @@
 """Re-evaluate a finished run's checkpoint and write per-case Dice. No training.
 
-    python scripts/rescore.py --run artifacts/runs/fedavg_2d_42 --out artifacts/baseline/fedavg_2d_42
+    python scripts/rescore.py --run artifacts/runs/fedavg_2d_42 --out artifacts/snapshots/v1/fedavg_2d_42
     python scripts/rescore.py --all --dim 2d --seed 42        # every method for one backbone
     python scripts/rescore.py --all --dim 2d --tta --postproc-min-voxels 50 --stage tta
 
@@ -148,7 +148,7 @@ def main() -> int:
     if args.all:
         targets = [(runs_dir / f"{m}_{args.dim}_{args.seed}") for m in sorted(METHODS)]
         targets = [t for t in targets if (t / "checkpoints" / "final.pt").exists()]
-        out_parent = Path(args.out_dir) if args.out_dir else base.paths.artifacts / "baseline"
+        out_parent = Path(args.out_dir) if args.out_dir else base.paths.artifacts / "snapshots" / "v1"
         pairs = [(t, out_parent / t.name) for t in targets]
     elif args.run:
         run = Path(args.run)
