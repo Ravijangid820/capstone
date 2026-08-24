@@ -319,6 +319,94 @@ svg.chart .endlabel { opacity: 0; animation: fadeIn .4s ease forwards; animation
 .pulse { animation: pulse 2.4s ease-in-out infinite; }
 @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .45; } }
 
+/* --- wipe comparison ------------------------------------------------------
+   Two images, one divider, drag to reveal. Used wherever the point of a slide is
+   a *difference* between two pictures -- side-by-side asks the eye to hold one
+   image in memory while it looks at the other, which is exactly the comparison
+   people are worst at. Overlaying them makes the difference literal. */
+.wipe {
+  position: relative; overflow: hidden; border: 1px solid var(--line);
+  background: var(--panel); cursor: ew-resize; touch-action: none;
+  -webkit-user-select: none; user-select: none;
+}
+.wipe > img { display: block; width: 100%; height: auto; }
+.wipe .over { position: absolute; inset: 0; clip-path: inset(0 calc(100% - var(--x)) 0 0); }
+.wipe .over img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.wipe .bar {
+  position: absolute; top: 0; bottom: 0; left: var(--x); width: 1px;
+  background: var(--phos); box-shadow: 0 0 14px rgba(74, 222, 155, .7);
+}
+.wipe .grip {
+  position: absolute; top: 50%; left: var(--x); width: 32px; height: 32px;
+  margin: -16px 0 0 -16px; border: 1px solid var(--phos); background: rgba(3, 7, 18, .82);
+  display: grid; place-items: center; color: var(--phos);
+  font-family: var(--mono); font-size: 11px; letter-spacing: -.05em;
+}
+.wipe:focus-visible { outline: 2px solid var(--phos); outline-offset: 2px; }
+.wipe .tag {
+  position: absolute; bottom: 12px; font-family: var(--mono); font-size: 10.5px;
+  letter-spacing: .12em; text-transform: uppercase; padding: 4px 9px;
+  background: rgba(3, 7, 18, .78); border: 1px solid var(--line-hi); color: var(--ink-dim);
+}
+.wipe .tag.l { left: 12px; } .wipe .tag.r { right: 12px; }
+.wipe .tag b { color: var(--ink); font-weight: 500; }
+
+/* Small selectable thumbnails that drive a wipe. */
+.thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
+.thumbs button {
+  padding: 0; border: 1px solid var(--line-hi); background: var(--panel); cursor: pointer;
+  display: block; transition: border-color .18s;
+}
+.thumbs button img { display: block; width: 100%; height: auto; opacity: .55; transition: opacity .18s; }
+.thumbs button:hover img { opacity: .85; }
+.thumbs button[aria-pressed="true"] { border-color: var(--phos); }
+.thumbs button[aria-pressed="true"] img { opacity: 1; }
+.thumbs .cap {
+  font-family: var(--mono); font-size: 9.5px; letter-spacing: .08em; color: var(--muted);
+  padding: 5px 6px; border-top: 1px solid var(--line);
+}
+.thumbs button[aria-pressed="true"] .cap { color: var(--phos); }
+
+/* --- range chart: the spread between a method's best and worst site --------- */
+.range { display: grid; gap: 10px; }
+.range-row { display: grid; grid-template-columns: 108px 1fr 84px; gap: 14px; align-items: center; }
+.range-row .nm { font-family: var(--sans); font-size: 13px; color: var(--ink); }
+.range-track { position: relative; height: 34px; background: var(--panel-2); border: 1px solid var(--line); }
+.range-span { position: absolute; top: 50%; height: 2px; margin-top: -1px; opacity: .55; }
+.range-dot { position: absolute; top: 50%; width: 10px; height: 10px; margin: -5px 0 0 -5px; }
+.range-dot.out { width: 12px; height: 12px; margin: -6px 0 0 -6px; }
+.range-row .amt { font-family: var(--mono); font-size: 12.5px; text-align: right; font-variant-numeric: tabular-nums; }
+.range-axis { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 9.5px; color: var(--muted); }
+
+/* --- inline movement bar inside a results table ---------------------------- */
+td.move { width: 150px; padding-right: 18px; }
+td.move svg { display: block; width: 100%; height: 16px; overflow: visible; }
+
+/* --- overview grid --------------------------------------------------------- */
+.overview {
+  position: fixed; inset: 0; z-index: 80; background: rgba(3, 7, 18, .975);
+  overflow-y: auto; padding: 56px var(--pad) 80px; display: none;
+}
+.overview.on { display: block; }
+.overview h3 {
+  font-family: var(--mono); font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--phos); margin: 0 auto 18px; max-width: 1240px;
+}
+.ov-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(186px, 1fr));
+  gap: 8px; max-width: 1240px; margin: 0 auto;
+}
+.ov-card {
+  background: var(--panel); border: 1px solid var(--line); border-top: 2px solid var(--line-hi);
+  padding: 12px 13px; cursor: pointer; text-align: left; font-family: inherit;
+  color: var(--ink-dim); transition: border-color .16s, background .16s;
+}
+.ov-card:hover { background: var(--panel-2); border-top-color: var(--muted); }
+.ov-card[aria-current="true"] { border-top-color: var(--phos); background: var(--panel-2); }
+.ov-card .n { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: .1em; }
+.ov-card .t { font-family: var(--sans); font-size: 12.5px; color: var(--ink); margin-top: 6px; line-height: 1.35; }
+.ov-card .a { font-family: var(--mono); font-size: 9.5px; color: var(--phos); margin-top: 7px; letter-spacing: .1em; }
+
 /* --- footer nav ----------------------------------------------------------- */
 .hud {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
@@ -600,7 +688,24 @@ svg.chart .endlabel { opacity: 0; animation: fadeIn .4s ease forwards; animation
       <p class="lede">Real hospitals differ because their machines differ. We simulate that with a
       fixed per-site transform — contrast gamma, a smooth spatial bias field, and mild blur. Sites A
       through C are mild and cluster together. <strong>Site D is the outlier.</strong></p>
-      <div class="body-cols four stagger" style="margin-top:24px" id="shift-grid"></div>
+      <div class="body-cols side stagger" style="margin-top:24px">
+        <div>
+          <div class="wipe" id="shift-wipe" tabindex="0" role="slider" aria-label="Drag to compare Site A with the selected site" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"></div>
+          <div class="thumbs" id="shift-thumbs"></div>
+          <div class="footnote">Drag the divider — or focus it and use ← →. Same patient, same
+          slice; only the simulated scanner changes.</div>
+        </div>
+        <div>
+          <div class="card"><h4>What you are looking at</h4><p>The left of the divider is
+          <strong>Site A</strong>, the mildest scanner. The right is whichever site is selected
+          below. Sites A–C differ so little that the divider is hard to spot; drag across
+          <strong>Site D</strong> and the contrast, brightness falloff and blur are unmistakable —
+          on identical anatomy.</p></div>
+          <div class="note" style="margin-top:16px"><b>That visible difference is the whole
+          problem.</b> A single global model has to fit both of these at once, and three of the
+          four sites outvote the fourth.</div>
+        </div>
+      </div>
       <div class="body-cols side stagger" style="margin-top:22px">
         <div class="tw"><table id="shift-table"></table></div>
         <div>
@@ -861,7 +966,11 @@ svg.chart .endlabel { opacity: 0; animation: fadeIn .4s ease forwards; animation
       <h2>Where personalization actually <em>pays.</em></h2>
       <p class="lede">FedBN minus FedAvg at the final recipe, per site. At the three typical sites the
       difference is nil. At Site D it is the whole result.</p>
-      <div class="tw" style="margin-top:22px"><table id="pers-table"></table></div>
+      <div class="card" style="margin-top:22px">
+        <h4>Every site's score, best to worst — 2D at v5</h4>
+        <div class="range" id="fairness" style="margin-top:16px"></div>
+      </div>
+      <div class="tw" style="margin-top:18px"><table id="pers-table"></table></div>
       <div class="body-cols two stagger" style="margin-top:22px">
         <div class="card"><h4>The fairness gap</h4><p>Best site minus worst site, 2D at v5:
         FedAvg spans <strong id="gap-fa">—</strong>, FedBN spans <strong id="gap-fb">—</strong>.
@@ -880,12 +989,23 @@ svg.chart .endlabel { opacity: 0; animation: fadeIn .4s ease forwards; animation
       <h2>The same patient, segmented by <em>both</em> models.</h2>
       <p class="lede">A Site D test case, chosen as the <strong>median</strong> FedBN-minus-FedAvg gap
       for that site — an illustration of the typical effect, not the best frame we could find.</p>
-      <div class="body-cols four stagger" style="margin-top:24px" id="pred-grid"></div>
-      <div class="toolbar" style="margin-top:16px">
+      <div class="toolbar" style="margin-top:20px">
         <span class="lbl">Backbone</span>
         <button class="tog" data-pred="pred2d" aria-pressed="true">2D</button>
         <button class="tog" data-pred="pred3d">3D</button>
+        <span class="lbl" style="margin-left:14px">Compare</span>
+        <button class="tog" data-cmp="fedavg|fedbn" aria-pressed="true">FedAvg vs FedBN</button>
+        <button class="tog" data-cmp="ground_truth|fedbn">Truth vs FedBN</button>
+        <button class="tog" data-cmp="ground_truth|fedavg">Truth vs FedAvg</button>
       </div>
+      <div class="body-cols side stagger" style="margin-top:0">
+        <div>
+          <div class="wipe" id="pred-wipe" tabindex="0" role="slider" aria-label="Drag to compare two segmentations of the same slice" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"></div>
+          <div class="footnote">Drag the divider, or focus it and use ← →.</div>
+        </div>
+        <div id="pred-side"></div>
+      </div>
+      <div class="body-cols four stagger" style="margin-top:20px" id="pred-grid"></div>
       <div class="note" id="pred-note"></div>
     </section>
 
@@ -936,12 +1056,18 @@ svg.chart .endlabel { opacity: 0; animation: fadeIn .4s ease forwards; animation
 
   <div class="hud">
     <div class="dots" id="dots"></div>
-    <span class="hint">← → to move · Home to restart</span>
+    <span class="hint">← → move · <b>O</b> overview · <b>F</b> fullscreen</span>
     <div class="nav">
+      <button id="grid-btn" aria-label="Slide overview">▦</button>
       <button id="prev" aria-label="Previous slide">◀</button>
       <button id="next" aria-label="Next slide">▶</button>
     </div>
   </div>
+</div>
+
+<div class="overview" id="overview">
+  <h3>All slides — click to jump · Esc to close</h3>
+  <div class="ov-grid" id="ov-grid"></div>
 </div>
 
 <script>
@@ -1088,6 +1214,81 @@ svg.chart .endlabel { opacity: 0; animation: fadeIn .4s ease forwards; animation
           <td${out ? ' class="up"' : ""}>${p.blur_sigma != null ? p.blur_sigma.toFixed(1) : "—"}</td></tr>`;
       }).join("")}</tbody>
       <tfoot><tr><td colspan="4">Fixed per site and per seed — a hospital's scanner does not change.</td></tr></tfoot>`;
+  }
+
+  /* =========================================================================
+     Wipe comparison. Two images stacked, the top one clipped by a draggable
+     divider. Pointer, touch and keyboard all drive the same setter.
+     ========================================================================= */
+  function makeWipe(node) {
+    node.innerHTML = `<img alt=""><div class="over"><img alt=""></div>`
+      + `<div class="bar"></div><div class="grip">◀▶</div>`
+      + `<span class="tag l"></span><span class="tag r"></span>`;
+    const base = node.querySelector("img");
+    const over = node.querySelector(".over");
+    const overImg = over.querySelector("img");
+    const tagL = node.querySelector(".tag.l"), tagR = node.querySelector(".tag.r");
+    let x = 50;
+
+    function set(pct) {
+      x = Math.max(0, Math.min(100, pct));
+      node.style.setProperty("--x", x + "%");
+      node.setAttribute("aria-valuenow", Math.round(x));
+    }
+    function fromEvent(e) {
+      const r = node.getBoundingClientRect();
+      if (!r.width) return;
+      set(((e.clientX - r.left) / r.width) * 100);
+    }
+    let dragging = false;
+    node.addEventListener("pointerdown", e => {
+      dragging = true; node.setPointerCapture(e.pointerId); fromEvent(e); e.preventDefault();
+    });
+    node.addEventListener("pointermove", e => { if (dragging) fromEvent(e); });
+    node.addEventListener("pointerup", e => {
+      dragging = false;
+      try { node.releasePointerCapture(e.pointerId); } catch (_) {}
+    });
+    node.addEventListener("pointercancel", () => { dragging = false; });
+    node.addEventListener("keydown", e => {
+      const step = e.shiftKey ? 10 : 3;
+      if (e.key === "ArrowLeft") { set(x - step); e.preventDefault(); e.stopPropagation(); }
+      else if (e.key === "ArrowRight") { set(x + step); e.preventDefault(); e.stopPropagation(); }
+      else if (e.key === "Home") { set(0); e.preventDefault(); e.stopPropagation(); }
+      else if (e.key === "End") { set(100); e.preventDefault(); e.stopPropagation(); }
+    });
+    set(50);
+
+    return {
+      show(leftSrc, rightSrc, leftLabel, rightLabel) {
+        // The clipped overlay is the LEFT image; the base underneath is the right one.
+        base.src = rightSrc; overImg.src = leftSrc;
+        tagL.innerHTML = leftLabel; tagR.innerHTML = rightLabel;
+      },
+      set
+    };
+  }
+
+  /* --------------------------------------------------------------- slide 10 */
+  {
+    const wipe = makeWipe($("#shift-wipe"));
+    const thumbs = $("#shift-thumbs");
+    let right = "H4";
+    const draw = () => {
+      wipe.show(img("shift_H1"), img("shift_" + right),
+                "<b>Site A</b> · mildest", "<b>" + SITE[right] + "</b>"
+                + (right === "H4" ? " · outlier" : ""));
+      $$("#shift-thumbs button").forEach(b =>
+        b.setAttribute("aria-pressed", String(b.dataset.site === right)));
+    };
+    H.forEach(h => {
+      const b = el("button", { "data-site": h, "aria-pressed": "false",
+                               "aria-label": "Compare Site A against " + SITE[h] },
+        `<img src="${img("shift_" + h)}" alt=""><div class="cap">${SITE[h]}</div>`);
+      b.addEventListener("click", () => { right = h; draw(); });
+      thumbs.appendChild(b);
+    });
+    draw();
   }
 
   /* --------------------------------------------------------------- slide 16 */
@@ -1285,9 +1486,30 @@ svg.chart .endlabel { opacity: 0; animation: fadeIn .4s ease forwards; animation
 
   /* --------------------------------------------------------------- slide 19 */
   {
+    // One shared scale across every row, so the movement bars are comparable between backbones
+    // as well as between methods -- a per-row scale would make every gain look the same size.
+    const all = [];
+    ["2d", "3d"].forEach(d => METHODS.forEach(m => {
+      const a = DATA.runs.v1[m + "_" + d], b = DATA.runs.v5[m + "_" + d];
+      if (a && b) all.push(a.est.mean, b.est.mean);
+    }));
+    const lo = Math.min(...all) - 0.006, hi = Math.max(...all) + 0.006;
+    const at = v => ((v - lo) / (hi - lo)) * 100;
+
+    const bar = (from, to, col) => `<svg viewBox="0 0 100 16" preserveAspectRatio="none"
+        role="img" aria-label="moved from ${f4(from)} to ${f4(to)}">
+        <line x1="0" y1="8" x2="100" y2="8" stroke="var(--line)" stroke-width="1"
+              vector-effect="non-scaling-stroke"/>
+        <line x1="${at(from)}" y1="8" x2="${at(to)}" y2="8" stroke="${col}" stroke-width="3"
+              vector-effect="non-scaling-stroke"/>
+        <circle cx="${at(from)}" cy="8" r="2.6" fill="var(--muted)"
+                vector-effect="non-scaling-stroke"/>
+        <circle cx="${at(to)}" cy="8" r="3.6" fill="${col}" vector-effect="non-scaling-stroke"/>
+      </svg>`;
+
     const rows = [];
     ["2d", "3d"].forEach(dim => {
-      rows.push(`<tr><td colspan="4" style="background:var(--panel-2);color:var(--muted);
+      rows.push(`<tr><td colspan="5" style="background:var(--panel-2);color:var(--muted);
         font-size:10.5px;letter-spacing:.14em">${dim.toUpperCase()} BACKBONE</td></tr>`);
       METHODS.forEach(m => {
         const a = DATA.runs.v1[m + "_" + dim], b = DATA.runs.v5[m + "_" + dim];
@@ -1295,13 +1517,14 @@ svg.chart .endlabel { opacity: 0; animation: fadeIn .4s ease forwards; animation
         const d = b.est.mean - a.est.mean;
         rows.push(`<tr><td class="name"><span class="swatch" style="background:${MCOL[m]}"></span>${LABEL[m]}</td>
           <td>${f4(a.est.mean)}</td><td><b>${f4(b.est.mean)}</b></td>
-          <td class="${cls(d)}">${sgn(d)}</td></tr>`);
+          <td class="${cls(d)}">${sgn(d)}</td>
+          <td class="move">${bar(a.est.mean, b.est.mean, MCOL[m])}</td></tr>`);
       });
     });
     $("#final-table").innerHTML = `
-      <thead><tr><th>Method</th><th>v1</th><th>v5</th><th>Δ</th></tr></thead>
+      <thead><tr><th>Method</th><th>v1</th><th>v5</th><th>Δ</th><th>v1 → v5</th></tr></thead>
       <tbody>${rows.join("")}</tbody>
-      <tfoot><tr><td colspan="4">Mean whole-tumour Dice across the four sites · mean of the final five rounds · seed 42</td></tr></tfoot>`;
+      <tfoot><tr><td colspan="5">Mean whole-tumour Dice across the four sites · mean of the final five rounds · seed 42 · bars share one scale from ${lo.toFixed(2)} to ${hi.toFixed(2)}</td></tr></tfoot>`;
   }
 
   /* --------------------------------------------------------------- slide 20 */
@@ -1354,16 +1577,87 @@ svg.chart .endlabel { opacity: 0; animation: fadeIn .4s ease forwards; animation
     $("#gap-fa").textContent = fa.toFixed(4);
     $("#gap-fb").textContent = fb.toFixed(4);
     $("#gap-cut").textContent = Math.round((1 - fb / fa) * 100) + "%";
+
+    // The spread itself, drawn. A table of four numbers per method makes the reader compute the
+    // range in their head; a range bar shows it, and shows which site is stranded at the bottom.
+    {
+      const keys = METHODS.map(m => m + "_2d");
+      const all = keys.flatMap(k => H.map(h => e(k)[h]));
+      const lo = Math.min(...all) - 0.008, hi = Math.max(...all) + 0.008;
+      const at = v => ((v - lo) / (hi - lo)) * 100;
+      $("#fairness").innerHTML =
+        keys.map(k => {
+          const m = k.replace("_2d", ""), vals = H.map(h => e(k)[h]);
+          const mn = Math.min(...vals), mx = Math.max(...vals);
+          return `<div class="range-row">
+            <div class="nm"><span class="swatch" style="background:${MCOL[m]}"></span>${LABEL[m]}</div>
+            <div class="range-track">
+              <div class="range-span" style="left:${at(mn)}%;width:${at(mx) - at(mn)}%;background:${MCOL[m]}"></div>
+              ${H.map((h, i) => `<div class="range-dot${i === 3 ? " out" : ""}"
+                  style="left:${at(e(k)[h])}%;background:${i === 3 ? "var(--amber)" : MCOL[m]}"
+                  title="${SITE[h]} ${f4(e(k)[h])}"></div>`).join("")}
+            </div>
+            <div class="amt${mx - mn > 0.08 ? " down" : ""}">${(mx - mn).toFixed(4)}</div>
+          </div>`;
+        }).join("")
+        + `<div class="range-row" style="margin-top:2px">
+             <div></div>
+             <div class="range-axis"><span>${lo.toFixed(2)}</span><span>WT Dice</span><span>${hi.toFixed(2)}</span></div>
+             <div class="amt" style="color:var(--muted);font-size:10px;letter-spacing:.1em">SPREAD</div>
+           </div>
+           <div class="footnote">Amber marks <b>${SITE.H4}</b>. A short bar is a method that serves
+           every hospital about equally; a long one has left somebody behind.</div>`;
+    }
   }
 
   /* --------------------------------------------------------------- slide 22 */
   {
     const panels = [["mri", "MRI", "FLAIR, input"], ["ground_truth", "Ground truth", "expert label"],
                     ["fedavg", "FedAvg", "the global model"], ["fedbn", "FedBN", "personalized"]];
-    const show = key => {
-      $$("[data-pred]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.pred === key)));
+    const NAME = { mri: "MRI", ground_truth: "Ground truth", fedavg: "FedAvg", fedbn: "FedBN" };
+    const wipe = makeWipe($("#pred-wipe"));
+    let key = "pred2d", cmp = "fedavg|fedbn";
+
+    function paintWipe() {
+      const [a, b] = cmp.split("|");
       let cap = {};
       try { cap = JSON.parse(DATA.images[key + "_caption"] || "{}"); } catch (e) { cap = {}; }
+      const dv = cap.dice || {};
+      const lab = p => {
+        const d = dv[p] && dv[p].volume ? dv[p].volume.wt : null;
+        return `<b>${NAME[p]}</b>${d != null ? " · " + d.toFixed(4) : ""}`;
+      };
+      wipe.show(img(key + "_" + a), img(key + "_" + b), lab(a), lab(b));
+
+      const av = dv.fedavg && dv.fedavg.volume ? dv.fedavg.volume.wt : null;
+      const bn = dv.fedbn && dv.fedbn.volume ? dv.fedbn.volume.wt : null;
+      $("#pred-side").innerHTML = `
+        <div class="card"><h4>What to look for</h4>
+          <p>Both models see the identical slice. The difference is at the tumour
+          <strong>boundary</strong> — where the global model, fitted to three other scanners,
+          under- or over-segments this site's contrast.</p></div>
+        <div class="readout" style="border-top:1px solid var(--line); margin-top:14px">
+          ${[["FedAvg WT", av != null ? av.toFixed(4) : "—", false],
+             ["FedBN WT", bn != null ? bn.toFixed(4) : "—", true],
+             ["Difference", av != null && bn != null ? sgn(bn - av) : "—", false]]
+            .map(([k, v, acc]) =>
+              `<div><div class="k">${k}</div><div class="v${acc ? " accent" : ""}">${v}</div></div>`)
+            .join("")}
+        </div>
+        <div class="footnote">Dice is over the <b>whole volume</b>, not the single slice shown.</div>`;
+    }
+
+    $$("[data-cmp]").forEach(b => b.addEventListener("click", () => {
+      $$("[data-cmp]").forEach(o => o.setAttribute("aria-pressed", String(o === b)));
+      cmp = b.dataset.cmp; paintWipe();
+    }));
+
+    const show = k => {
+      key = k;
+      $$("[data-pred]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.pred === k)));
+      paintWipe();
+      let cap = {};
+      try { cap = JSON.parse(DATA.images[k + "_caption"] || "{}"); } catch (e) { cap = {}; }
       const dv = (cap.dice || {});
       $("#pred-grid").innerHTML = panels.map(([p, name, sub]) => {
         const d = dv[p] && dv[p].volume ? dv[p].volume.wt : null;
@@ -2028,14 +2322,47 @@ svg.chart .endlabel { opacity: 0; animation: fadeIn .4s ease forwards; animation
 
   $("#prev").addEventListener("click", () => go(cur - 1));
   $("#next").addEventListener("click", () => go(cur + 1));
+
+  /* --- overview grid: a presenter jumping to a slide should not scrub the dot rail --- */
+  const ov = $("#overview"), ovGrid = $("#ov-grid");
+  slides.forEach((s, i) => {
+    const h2 = s.querySelector("h2");
+    const title = h2 ? h2.textContent.replace(/\s+/g, " ").trim() : "Slide " + (i + 1);
+    const card = el("button", { class: "ov-card", "aria-current": "false" },
+      `<div class="n">${String(i + 1).padStart(2, "0")}</div>
+       <div class="t">${title}</div>
+       <div class="a">${s.dataset.act}</div>`);
+    card.addEventListener("click", () => { toggleOverview(false); go(i); });
+    ovGrid.appendChild(card);
+  });
+  function toggleOverview(on) {
+    const want = on === undefined ? !ov.classList.contains("on") : on;
+    ov.classList.toggle("on", want);
+    if (want) Array.from(ovGrid.children).forEach((c, i) =>
+      c.setAttribute("aria-current", String(i === cur)));
+  }
+  $("#grid-btn").addEventListener("click", () => toggleOverview());
+
   document.addEventListener("keydown", e => {
-    if (e.target.closest("button, a, input")) {
+    // The wipe handles its own arrow keys, and a pressed button should not also advance.
+    if (e.target.closest(".wipe")) return;
+    if (e.target.closest("button, a, input, select")) {
       if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
     }
-    if (e.key === "ArrowRight" || e.key === "PageDown") { go(cur + 1); e.preventDefault(); }
-    else if (e.key === "ArrowLeft" || e.key === "PageUp") { go(cur - 1); e.preventDefault(); }
-    else if (e.key === "Home") { go(0); e.preventDefault(); }
-    else if (e.key === "End") { go(slides.length - 1); e.preventDefault(); }
+    const k = e.key;
+    if (k === "Escape") { toggleOverview(false); e.preventDefault(); }
+    else if (k === "o" || k === "O") { toggleOverview(); e.preventDefault(); }
+    else if (k === "f" || k === "F") {
+      const d = document;
+      if (d.fullscreenElement) { if (d.exitFullscreen) d.exitFullscreen(); }
+      else if (d.documentElement.requestFullscreen) d.documentElement.requestFullscreen();
+      e.preventDefault();
+    }
+    else if (ov.classList.contains("on")) return;
+    else if (k === "ArrowRight" || k === "PageDown" || k === " ") { go(cur + 1); e.preventDefault(); }
+    else if (k === "ArrowLeft" || k === "PageUp") { go(cur - 1); e.preventDefault(); }
+    else if (k === "Home") { go(0); e.preventDefault(); }
+    else if (k === "End") { go(slides.length - 1); e.preventDefault(); }
   });
 
   go(0);
