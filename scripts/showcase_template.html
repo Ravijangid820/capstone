@@ -246,6 +246,69 @@ svg.chart .dot { stroke: var(--panel); stroke-width: 1.5; }
 svg.chart .band { fill: var(--phos); opacity: .07; }
 svg.chart .bandlabel { fill: var(--phos); opacity: .8; font-size: 9px; letter-spacing: .1em; }
 
+/* --- the federated-learning simulator ------------------------------------- */
+.sim { border: 1px solid var(--line); background: var(--panel); position: relative; }
+.sim canvas { display: block; width: 100%; aspect-ratio: 16 / 8.4; }
+@media (max-width: 760px) { .sim canvas { aspect-ratio: 4 / 4.6; } }
+
+.sim .badge {
+  position: absolute; top: 12px; left: 14px;
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--muted); pointer-events: none;
+}
+.sim .badge b { color: var(--phos); font-weight: 600; }
+.sim .warn {
+  position: absolute; top: 12px; right: 14px;
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em;
+  color: var(--red); pointer-events: none; opacity: 0; transition: opacity .4s;
+}
+.sim .warn.on { opacity: 1; }
+
+/* The phase readout under the simulator: four steps, the live one lit. */
+.phases { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line);
+  border: 1px solid var(--line); border-top: 0; }
+.phases > div { background: var(--panel); padding: 13px 15px; transition: background .3s; position: relative; }
+.phases > div.on { background: var(--panel-2); }
+.phases > div.on::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--phos);
+}
+.phases .n { font-family: var(--mono); font-size: 10px; letter-spacing: .16em; color: var(--muted); }
+.phases > div.on .n { color: var(--phos); }
+.phases .t { font-family: var(--sans); font-weight: 600; font-size: 13px; margin: 6px 0 4px; color: var(--ink-dim); }
+.phases > div.on .t { color: var(--ink); }
+.phases .d { font-size: 11.5px; color: var(--muted); line-height: 1.45; }
+@media (max-width: 760px) { .phases { grid-template-columns: repeat(2, 1fr); } }
+
+.readout { display: flex; flex-wrap: wrap; gap: 0; border: 1px solid var(--line); border-top: 0; background: var(--panel); }
+.readout > div { padding: 12px 18px; border-right: 1px solid var(--line); flex: 1 1 auto; }
+.readout > div:last-child { border-right: 0; }
+.readout .k { font-family: var(--mono); font-size: 9.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.readout .v { font-family: var(--mono); font-size: 19px; font-weight: 600; color: var(--ink); margin-top: 4px; font-variant-numeric: tabular-nums; }
+.readout .v.accent { color: var(--phos); }
+
+/* --- motion utilities ----------------------------------------------------- */
+/* Slide content arrives in sequence rather than all at once, so the eye is led
+   through the argument in the order it is meant to be read. */
+.slide.on .stagger > * { animation: fadeUp .44s cubic-bezier(.2,.7,.3,1) both; }
+.slide.on .stagger > *:nth-child(1) { animation-delay: .04s; }
+.slide.on .stagger > *:nth-child(2) { animation-delay: .11s; }
+.slide.on .stagger > *:nth-child(3) { animation-delay: .18s; }
+.slide.on .stagger > *:nth-child(4) { animation-delay: .25s; }
+.slide.on .stagger > *:nth-child(5) { animation-delay: .32s; }
+.slide.on .stagger > *:nth-child(6) { animation-delay: .39s; }
+.slide.on .stagger > *:nth-child(7) { animation-delay: .46s; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+svg.chart .ln.draw { stroke-dasharray: var(--len); stroke-dashoffset: var(--len); animation: drawline 1.05s ease forwards; }
+@keyframes drawline { to { stroke-dashoffset: 0; } }
+svg.chart .dot.pop { animation: pop .3s ease both; animation-delay: 1s; }
+@keyframes pop { from { opacity: 0; transform: scale(.2); } to { opacity: 1; transform: none; } }
+svg.chart .endlabel { opacity: 0; animation: fadeIn .4s ease forwards; animation-delay: 1.05s; }
+@keyframes fadeIn { to { opacity: 1; } }
+
+.pulse { animation: pulse 2.4s ease-in-out infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .45; } }
+
 /* --- footer nav ----------------------------------------------------------- */
 .hud {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
@@ -303,7 +366,7 @@ svg.chart .bandlabel { fill: var(--phos); opacity: .8; font-size: 9px; letter-sp
       <p class="lede">A controlled study of federated learning for brain-tumour segmentation. We
       built four training regimes, ran five recipe iterations, and measured every claim on 248
       held-out volumes with paired per-case statistics.</p>
-      <div class="body-cols four" style="margin-top:38px">
+      <div class="body-cols four stagger" style="margin-top:38px">
         <div class="vp"><span class="tick-l"></span><img id="t-flair" alt="FLAIR MRI slice">
           <div class="cap"><b>Input</b><span>4 channels</span></div></div>
         <div class="vp"><span class="tick-l"></span><img id="t-seg" alt="Tumour regions overlaid">
@@ -324,7 +387,7 @@ svg.chart .bandlabel { fill: var(--phos); opacity: .8; font-size: 9px; letter-sp
       <p class="lede">A segmentation model wants every scan it can get. Patient-privacy law,
       ethics approval and institutional policy all say the scans stay where they were acquired.
       So each hospital trains alone on a fraction of the data — and each one plateaus early.</p>
-      <div class="body-cols three">
+      <div class="body-cols three stagger">
         <div class="card"><h4>The silo</h4><p>Four sites, roughly <strong>250 training cases</strong>
         each. Alone, none of them sees enough variety to generalize well.</p></div>
         <div class="card"><h4>The pool</h4><p>Pooling all four gives about <strong>1,000 cases</strong>
@@ -338,26 +401,97 @@ svg.chart .bandlabel { fill: var(--phos); opacity: .8; font-size: 9px; letter-sp
       have to beat to justify any of this.</div>
     </section>
 
-    <!-- ================= 3 ================= -->
-    <section class="slide" data-act="The problem">
-      <div class="eyebrow">The mechanism</div>
-      <h2>Send the <em>model</em>, not the data.</h2>
-      <p class="lede">One communication round: the server ships the current weights to every site,
-      each site trains on its own scans for one epoch, and only the updated weights travel back.
-      No image ever leaves the hospital.</p>
-      <div class="chain" style="margin-top:28px">
-        <div class="step"><div class="i">01</div><div class="t">Broadcast</div><div class="d">The server sends identical weights to all four sites.</div></div>
-        <div class="step"><div class="i">02</div><div class="t">Train locally</div><div class="d">Each site runs one epoch on its own cases. Scans never move.</div></div>
-        <div class="step"><div class="i">03</div><div class="t">Return weights</div><div class="d">Only parameter tensors go back — no images, no labels.</div></div>
-        <div class="step key"><div class="i">04</div><div class="t">Aggregate</div><div class="d">The server averages them into the next global model.</div></div>
-        <div class="step"><div class="i">05</div><div class="t">Repeat</div><div class="d">Forty rounds in the final recipe.</div></div>
+    <!-- ================= 3 : what is FL ================= -->
+    <section class="slide" data-act="Federated learning">
+      <div class="eyebrow">Tutorial · 1 of 4</div>
+      <h2>Two ways to train on four hospitals. Only one is <em>allowed.</em></h2>
+      <p class="lede">Switch between them. The traffic on the wires is the whole difference —
+      watch <strong>what</strong> travels, and in which direction.</p>
+      <div class="toolbar" style="margin-top:20px">
+        <span class="lbl">Approach</span>
+        <button class="tog" data-intro="pool" aria-pressed="true">Pool the data</button>
+        <button class="tog" data-intro="fed">Federate the model</button>
       </div>
-      <div class="body-cols two" style="margin-top:26px">
-        <div class="card"><h4>What this buys</h4><p>Every site's gradient signal reaches every other
-        site's model, without a single scan being transferred.</p></div>
-        <div class="card"><h4>What it costs</h4><p>The averaged model is a <strong>compromise</strong>.
-        It fits the majority of sites well — and that is exactly where the interesting failure lives.</p></div>
+      <div class="sim">
+        <canvas id="sim-intro" aria-label="Animated diagram of pooled versus federated training"></canvas>
+        <div class="badge" id="intro-badge"></div>
+        <div class="warn" id="intro-warn">⚠ PATIENT DATA LEAVES THE HOSPITAL</div>
       </div>
+      <div class="body-cols two stagger" style="margin-top:22px" id="intro-cards"></div>
+    </section>
+
+    <!-- ================= 4 : one round ================= -->
+    <section class="slide" data-act="Federated learning">
+      <div class="eyebrow">Tutorial · 2 of 4</div>
+      <h2>One communication round, <em>step by step.</em></h2>
+      <p class="lede">This is the entire algorithm. It repeats forty times in our final recipe, and
+      nothing but weights ever moves along those wires.</p>
+      <div class="toolbar" style="margin-top:20px">
+        <button class="tog" id="round-play" aria-pressed="true">❚❚ Pause</button>
+        <button class="tog" id="round-step">Step ▶</button>
+        <span class="lbl" style="margin-left:14px">Speed</span>
+        <button class="tog" data-speed="0.6">Slow</button>
+        <button class="tog" data-speed="1" aria-pressed="true">Normal</button>
+        <button class="tog" data-speed="2">Fast</button>
+      </div>
+      <div class="sim">
+        <canvas id="sim-round" aria-label="Animated diagram of one federated communication round"></canvas>
+        <div class="badge" id="round-badge"></div>
+      </div>
+      <div class="phases" id="round-phases"></div>
+      <div class="note"><b>Why this preserves privacy.</b> The server never sees a scan, a label, or
+      a patient identifier — only tensors of floating-point numbers. That is the entire privacy
+      argument, and it is worth being precise about its limits: raw weights <b>can</b> leak
+      information about training data. Closing that gap needs differential privacy, which this
+      study does not yet implement.</div>
+    </section>
+
+    <!-- ================= 5 : fedavg vs fedbn ================= -->
+    <section class="slide" data-act="Federated learning">
+      <div class="eyebrow">Tutorial · 3 of 4</div>
+      <h2>FedBN keeps <em>one seventh of one percent</em> at home.</h2>
+      <p class="lede">Both methods run the identical loop. The only difference is what goes into the
+      upload — and in FedBN the BatchNorm parameters stay behind, marked in amber below.</p>
+      <div class="toolbar" style="margin-top:20px">
+        <span class="lbl">Method</span>
+        <button class="tog" data-meth="fedavg" aria-pressed="true">FedAvg</button>
+        <button class="tog" data-meth="fedbn">FedBN</button>
+      </div>
+      <div class="sim">
+        <canvas id="sim-meth" aria-label="Animated comparison of FedAvg and FedBN weight sharing"></canvas>
+        <div class="badge" id="meth-badge"></div>
+      </div>
+      <div class="readout" id="meth-readout"></div>
+      <div class="body-cols two stagger" style="margin-top:22px" id="meth-cards"></div>
+    </section>
+
+    <!-- ================= 6 : watch it train ================= -->
+    <section class="slide" data-act="Federated learning">
+      <div class="eyebrow">Tutorial · 4 of 4</div>
+      <h2>Now watch it actually <em>train.</em></h2>
+      <p class="lede">The round counter and the Dice readout below are not invented — they are read
+      from the frozen log of our final 2D run, replayed round by round.</p>
+      <div class="toolbar" style="margin-top:20px">
+        <button class="tog" id="train-play" aria-pressed="true">❚❚ Pause</button>
+        <button class="tog" id="train-reset">↺ Restart</button>
+        <span class="lbl" style="margin-left:14px">Method</span>
+        <button class="tog" data-trainmeth="fedavg">FedAvg</button>
+        <button class="tog" data-trainmeth="fedbn" aria-pressed="true">FedBN</button>
+      </div>
+      <div class="body-cols side stagger" style="margin-top:0; gap:0">
+        <div class="sim" style="border-right:0">
+          <canvas id="sim-train" aria-label="Animated federated training replay"></canvas>
+          <div class="badge" id="train-badge"></div>
+        </div>
+        <div class="sim">
+          <canvas id="sim-curve" aria-label="Whole-tumour Dice building up round by round"></canvas>
+          <div class="badge">LIVE · WT DICE PER ROUND</div>
+        </div>
+      </div>
+      <div class="readout" id="train-readout"></div>
+      <div class="note"><b>Watch Site D.</b> It sits below the other three from the first round and
+      never catches up. That gap is the finding this entire project is built around — and the next
+      twenty slides are about measuring it properly.</div>
     </section>
 
     <!-- ================= 4 ================= -->
@@ -366,8 +500,8 @@ svg.chart .bandlabel { fill: var(--phos); opacity: .8; font-size: 9px; letter-sp
       <h2>BraTS 2021 — <em id="d-cases">1,251</em> annotated glioma cases.</h2>
       <p class="lede">Every case is a four-channel MRI volume with a voxel-level expert
       segmentation. That is the raw material for everything that follows.</p>
-      <div class="stat-row" style="margin-top:26px" id="data-stats"></div>
-      <div class="body-cols two" style="margin-top:26px">
+      <div class="stat-row stagger" style="margin-top:26px" id="data-stats"></div>
+      <div class="body-cols two stagger" style="margin-top:26px">
         <div class="card"><h4>One case, in numbers</h4><p>Four co-registered, skull-stripped
         modalities at <strong id="d-shape">240 × 240 × 155</strong> voxels, plus one label volume.
         The model reads all four channels stacked and predicts three overlapping masks.</p></div>
@@ -384,7 +518,7 @@ svg.chart .bandlabel { fill: var(--phos); opacity: .8; font-size: 9px; letter-sp
       <h2>The same brain, imaged <em>four ways.</em></h2>
       <p class="lede">Each MRI sequence makes different tissue bright. No single one shows the whole
       tumour, which is why the model receives all four stacked as channels.</p>
-      <div class="body-cols four" style="margin-top:26px" id="mod-grid"></div>
+      <div class="body-cols four stagger" style="margin-top:26px" id="mod-grid"></div>
       <div class="note"><b>Case <span id="mod-case">—</span>, axial slice <span id="mod-slice">—</span>.</b>
       Rendered from the source volumes by the project's own loader — the same function every
       training run calls.</div>
@@ -394,7 +528,7 @@ svg.chart .bandlabel { fill: var(--phos); opacity: .8; font-size: 9px; letter-sp
     <section class="slide" data-act="The data">
       <div class="eyebrow">Target · 3 nested regions</div>
       <h2>Three masks, and each one <em>contains</em> the next.</h2>
-      <div class="body-cols side" style="margin-top:24px">
+      <div class="body-cols side stagger" style="margin-top:24px">
         <div>
           <div class="vp"><span class="tick-l"></span><img id="reg-img" alt="Tumour region overlay">
             <div class="cap"><b id="reg-cap">All three regions</b><span id="reg-sub">WT ⊃ TC ⊃ ET</span></div></div>
@@ -431,7 +565,7 @@ svg.chart .bandlabel { fill: var(--phos); opacity: .8; font-size: 9px; letter-sp
       <p class="lede">The cases are partitioned once, deterministically, and the manifest is
       committed to the repository. Every run in every iteration reads the same split — so no result
       can be an accident of who got which patient.</p>
-      <div class="body-cols side" style="margin-top:24px">
+      <div class="body-cols side stagger" style="margin-top:24px">
         <div class="tw"><table id="part-table"></table></div>
         <div>
           <div class="card"><h4>Held out, and left alone</h4><p><strong>62 test cases per site</strong>
@@ -455,8 +589,8 @@ svg.chart .bandlabel { fill: var(--phos); opacity: .8; font-size: 9px; letter-sp
       <p class="lede">Real hospitals differ because their machines differ. We simulate that with a
       fixed per-site transform — contrast gamma, a smooth spatial bias field, and mild blur. Sites A
       through C are mild and cluster together. <strong>Site D is the outlier.</strong></p>
-      <div class="body-cols four" style="margin-top:24px" id="shift-grid"></div>
-      <div class="body-cols side" style="margin-top:22px">
+      <div class="body-cols four stagger" style="margin-top:24px" id="shift-grid"></div>
+      <div class="body-cols side stagger" style="margin-top:22px">
         <div class="tw"><table id="shift-table"></table></div>
         <div>
           <div class="card"><h4>Why nonlinear, and why spatial</h4><p>Preprocessing z-normalizes every
@@ -477,7 +611,7 @@ svg.chart .bandlabel { fill: var(--phos); opacity: .8; font-size: 9px; letter-sp
       <h2>Seven steps, in a <em>load-bearing</em> order.</h2>
       <p class="lede">Every case passes through the same chain before any model sees it. The order is
       not cosmetic — two of these steps only work correctly where they sit.</p>
-      <div class="chain" style="margin-top:26px">
+      <div class="chain stagger" style="margin-top:26px">
         <div class="step"><div class="i">01</div><div class="t">Load</div><div class="d">Four modalities + label, as float32.</div></div>
         <div class="step key"><div class="i">02</div><div class="t">Mask &amp; box</div><div class="d">Brain mask from the <em>unshifted</em> volume.</div></div>
         <div class="step"><div class="i">03</div><div class="t">Scanner shift</div><div class="d">The site's gamma, bias field, blur.</div></div>
@@ -486,7 +620,7 @@ svg.chart .bandlabel { fill: var(--phos); opacity: .8; font-size: 9px; letter-sp
         <div class="step"><div class="i">06</div><div class="t">Z-normalise</div><div class="d">Per case, per modality, over brain voxels.</div></div>
         <div class="step"><div class="i">07</div><div class="t">Clip &amp; label</div><div class="d">±5σ, then labels → WT / TC / ET.</div></div>
       </div>
-      <div class="body-cols two" style="margin-top:24px">
+      <div class="body-cols two stagger" style="margin-top:24px">
         <div class="card"><h4>Why the mask comes first</h4><p>Steps 02 and 04 exist purely to stop the
         blur halo from changing the crop. Without them the volume <em>shape</em> would correlate with the
         site — a model could read the site off the tensor dimensions and the whole experiment would be
@@ -504,13 +638,13 @@ svg.chart .bandlabel { fill: var(--phos); opacity: .8; font-size: 9px; letter-sp
       <p class="lede">Decoding and preprocessing a case takes seconds; a training run touches every
       case dozens of times. So the entire pipeline output is written to disk as fp16 tensors, keyed by
       a hash of the settings that produced it.</p>
-      <div class="stat-row" style="margin-top:26px">
+      <div class="stat-row stagger" style="margin-top:26px">
         <div class="stat"><div class="n">≈104<small>GB</small></div><div class="k">cache on disk</div></div>
         <div class="stat"><div class="n">3</div><div class="k">cache variants</div></div>
         <div class="stat"><div class="n">fp16</div><div class="k">stored precision</div></div>
         <div class="stat"><div class="n">12<small>hex</small></div><div class="k">settings hash</div></div>
       </div>
-      <div class="body-cols two" style="margin-top:24px">
+      <div class="body-cols two stagger" style="margin-top:24px">
         <div class="card"><h4>The key is the point</h4><p>The cache key hashes the shift parameters and
         the clip threshold. Change the scanner model and you get a <strong>new cache</strong>, not a
         silently stale one — the failure mode where a run reads tensors built under different rules
@@ -527,7 +661,7 @@ svg.chart .bandlabel { fill: var(--phos); opacity: .8; font-size: 9px; letter-sp
       <h2>Two backbones, two ways to <em>cut a brain.</em></h2>
       <p class="lede">The whole study runs twice — once on 2D axial slices, once on 3D patches. The
       two are not a redundancy: they disagree, and where they disagree is a finding.</p>
-      <div class="body-cols two" style="margin-top:24px">
+      <div class="body-cols two stagger" style="margin-top:24px">
         <div class="card" style="border-top:2px solid var(--sky)">
           <h4 style="color:var(--sky)">2D · axial slices</h4>
           <p><strong>8 slices per case</strong> per epoch, cropped to 192 × 192, batch of 8.
@@ -554,13 +688,13 @@ svg.chart .bandlabel { fill: var(--phos); opacity: .8; font-size: 9px; letter-sp
       <h2>One U-Net, written <em>once</em>, compiled for either dimension.</h2>
       <p class="lede">A residual U-Net with a shared implementation — the same code path builds the 2D
       and 3D models, so a difference between backbones is never a difference between two codebases.</p>
-      <div class="stat-row" style="margin-top:26px">
+      <div class="stat-row stagger" style="margin-top:26px">
         <div class="stat"><div class="n">1.61<small>M</small></div><div class="k">2D parameters</div></div>
         <div class="stat"><div class="n">1.19<small>M</small></div><div class="k">3D parameters</div></div>
         <div class="stat"><div class="n">2,310</div><div class="k">2D BatchNorm affine</div></div>
         <div class="stat"><div class="n">0.14<small>%</small></div><div class="k">of the model</div></div>
       </div>
-      <div class="body-cols two" style="margin-top:24px">
+      <div class="body-cols two stagger" style="margin-top:24px">
         <div class="card"><h4>Why BatchNorm is the whole story</h4><p>Those <strong>2,310</strong>
         parameters — one seventh of one percent of the network — are the only ones FedBN keeps local.
         Everything this project concludes about personalization turns on that fraction.</p></div>
@@ -574,7 +708,7 @@ svg.chart .bandlabel { fill: var(--phos); opacity: .8; font-size: 9px; letter-sp
     <section class="slide" data-act="The methods">
       <div class="eyebrow">Four training regimes</div>
       <h2>Two references, and two <em>real</em> candidates.</h2>
-      <div class="body-cols four" style="margin-top:26px">
+      <div class="body-cols four stagger" style="margin-top:26px">
         <div class="card" style="border-top:2px solid var(--m-centralized)">
           <h4 style="color:var(--m-centralized)">Centralized</h4>
           <p>All 920 training cases pooled into one model.</p>
@@ -604,7 +738,7 @@ svg.chart .bandlabel { fill: var(--phos); opacity: .8; font-size: 9px; letter-sp
     <section class="slide" data-act="The methods">
       <div class="eyebrow">Pre-registered</div>
       <h2>Three hypotheses, written down <em>before</em> the runs.</h2>
-      <div class="body-cols three" style="margin-top:26px">
+      <div class="body-cols three stagger" style="margin-top:26px">
         <div class="verdict"><div class="h"><b>H1</b><i>Collaboration</i></div>
           <div class="q">Federating beats training alone, on average.</div>
           <p class="a">mean Dice (FedAvg) ≥ mean Dice (Local-only)</p></div>
@@ -626,7 +760,7 @@ svg.chart .bandlabel { fill: var(--phos); opacity: .8; font-size: 9px; letter-sp
       <h2>Most of this project is about <em>not fooling ourselves.</em></h2>
       <p class="lede">Early on we found the round-to-round noise was larger than the effects we were
       trying to measure. Everything below exists because of that.</p>
-      <div class="body-cols two" style="margin-top:24px">
+      <div class="body-cols two stagger" style="margin-top:24px">
         <div class="card"><h4>The estimator, fixed in advance</h4><p>A headline figure is the
         <strong>mean of the final five rounds</strong>, never a single round. A single round can move a
         method by more than the difference between methods — we have a case where a single-round reading
@@ -650,7 +784,7 @@ svg.chart .bandlabel { fill: var(--phos); opacity: .8; font-size: 9px; letter-sp
       <p class="lede">Whole-tumour Dice, 2D, per site. FedAvg is the best method at Sites A, B and C —
       and the <strong>worst</strong> at Site D.</p>
       <div class="tw" style="margin-top:22px"><table id="v1-table"></table></div>
-      <div class="body-cols two" style="margin-top:22px">
+      <div class="body-cols two stagger" style="margin-top:22px">
         <div class="card"><h4>Read the last column</h4><p>FedAvg scores <strong id="v1-fa">—</strong>
         at Site D while training alone scores <strong id="v1-lo">—</strong>. For the outlier site,
         joining the federation was actively <em>worse</em> than not joining it.</p></div>
@@ -717,7 +851,7 @@ svg.chart .bandlabel { fill: var(--phos); opacity: .8; font-size: 9px; letter-sp
       <p class="lede">FedBN minus FedAvg at the final recipe, per site. At the three typical sites the
       difference is nil. At Site D it is the whole result.</p>
       <div class="tw" style="margin-top:22px"><table id="pers-table"></table></div>
-      <div class="body-cols two" style="margin-top:22px">
+      <div class="body-cols two stagger" style="margin-top:22px">
         <div class="card"><h4>The fairness gap</h4><p>Best site minus worst site, 2D at v5:
         FedAvg spans <strong id="gap-fa">—</strong>, FedBN spans <strong id="gap-fb">—</strong>.
         Personalization cuts the spread between the best-served and worst-served hospital by
@@ -735,7 +869,7 @@ svg.chart .bandlabel { fill: var(--phos); opacity: .8; font-size: 9px; letter-sp
       <h2>The same patient, segmented by <em>both</em> models.</h2>
       <p class="lede">A Site D test case, chosen as the <strong>median</strong> FedBN-minus-FedAvg gap
       for that site — an illustration of the typical effect, not the best frame we could find.</p>
-      <div class="body-cols four" style="margin-top:24px" id="pred-grid"></div>
+      <div class="body-cols four stagger" style="margin-top:24px" id="pred-grid"></div>
       <div class="toolbar" style="margin-top:16px">
         <span class="lbl">Backbone</span>
         <button class="tog" data-pred="pred2d" aria-pressed="true">2D</button>
@@ -748,7 +882,7 @@ svg.chart .bandlabel { fill: var(--phos); opacity: .8; font-size: 9px; letter-sp
     <section class="slide" data-act="Verdicts">
       <div class="eyebrow">What we established</div>
       <h2>Three hypotheses, answered <em>honestly.</em></h2>
-      <div class="body-cols three" style="margin-top:26px" id="verdicts"></div>
+      <div class="body-cols three stagger" style="margin-top:26px" id="verdicts"></div>
       <div class="note" style="margin-top:22px"><b>H1 is the interesting one.</b> Under v1, FedAvg beat
       training alone. Under v5 — with 230 training cases per site instead of 150 — plain FedAvg no
       longer does, in 2D. More local data raised the floor faster than it raised the average. FedBN
@@ -759,7 +893,7 @@ svg.chart .bandlabel { fill: var(--phos); opacity: .8; font-size: 9px; letter-sp
     <section class="slide" data-act="Verdicts">
       <div class="eyebrow">Limits &amp; next</div>
       <h2>What this study does <em>not</em> show.</h2>
-      <div class="body-cols two" style="margin-top:24px">
+      <div class="body-cols two stagger" style="margin-top:24px">
         <div>
           <div class="card"><h4>Single seed at v3 and v5</h4><p>The final recipe was run once per
           method. v1 and v2 have three seeds in 2D; the later iterations do not. Seed variance is the
@@ -813,6 +947,15 @@ svg.chart .bandlabel { fill: var(--phos); opacity: .8; font-size: 9px; letter-sp
     centralized: "var(--m-centralized)", local: "var(--m-local)",
     fedavg: "var(--m-fedavg)", fedbn: "var(--m-fedbn)"
   };
+  // Declared here rather than beside the simulator that mostly uses them: the chart draws at
+  // module scope, above that section, and a `const` read before its initializer is a hard error.
+  const C = {
+    panel: "#0D1218", panel2: "#121A23", line: "#1E2833", lineHi: "#334454",
+    ink: "#E6ECF2", inkDim: "#9AA9B8", muted: "#66788A",
+    phos: "#4ADE9B", amber: "#E8A33D", red: "#F0616D", sky: "#38BDF8", violet: "#C4B5FD"
+  };
+  const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
   const img = k => DATA.images[k] || "";
   const f4 = v => (v == null || Number.isNaN(v)) ? "—" : v.toFixed(4);
   const sgn = v => (v > 0 ? "+" : v < 0 ? "−" : "±") + Math.abs(v).toFixed(4);
@@ -1081,13 +1224,20 @@ svg.chart .bandlabel { fill: var(--phos); opacity: .8; font-size: 9px; letter-sp
       });
       add("text", { x: (P.l + W - P.r) / 2, y: Hh - 3, "text-anchor": "middle" }, "communication round");
 
-      // lines
+      // lines, drawn on rather than popped in -- the eye follows the curve's shape that way
       series.forEach(s => {
         const d = s.pts.map((p, i) => (i ? "L" : "M") + X(p.x).toFixed(1) + " " + Y(p.y).toFixed(1)).join(" ");
-        add("path", { class: "ln", d, stroke: MCOL[s.m] });
+        const path = add("path", { class: "ln", d, stroke: MCOL[s.m] });
+        if (!REDUCED) {
+          const len = path.getTotalLength ? path.getTotalLength() : 1200;
+          path.setAttribute("class", "ln draw");
+          path.style.setProperty("--len", len);
+        }
         const last = s.pts[s.pts.length - 1];
-        add("circle", { class: "dot", cx: X(last.x), cy: Y(last.y), r: 3.4, fill: MCOL[s.m] });
+        add("circle", { class: REDUCED ? "dot" : "dot pop", cx: X(last.x), cy: Y(last.y),
+                        r: 3.4, fill: MCOL[s.m], style: "transform-origin:" + X(last.x) + "px " + Y(last.y) + "px" });
         add("text", {
+          class: REDUCED ? "" : "endlabel",
           x: X(last.x) + 9, y: Y(last.y) + 3.5, fill: MCOL[s.m],
           style: "font-size:10.5px;font-weight:600"
         }, LABEL[s.m] + "  " + last.y.toFixed(3));
@@ -1272,6 +1422,550 @@ svg.chart .bandlabel { fill: var(--phos); opacity: .8; font-size: 9px; letter-sp
       }));
   }
 
+  /* =========================================================================
+     The federated-learning simulator.
+
+     One canvas engine drives all four tutorial diagrams. It is a real state
+     machine over the phases of a communication round, not a looping video --
+     which is what lets the same code show pooled training, FedAvg, FedBN, and
+     a replay of the actual logged run just by changing what travels on the
+     wires and what each node is worth.
+     ========================================================================= */
+  const FED_PHASES = [
+    { id: "broadcast", ms: 1500, n: "01", t: "Broadcast",
+      d: "The server sends identical weights to all four sites." },
+    { id: "train", ms: 2300, n: "02", t: "Train locally",
+      d: "Each site runs one epoch on its own scans. Nothing leaves the building." },
+    { id: "upload", ms: 1500, n: "03", t: "Return weights",
+      d: "Only parameter tensors go back — no images, no labels, no identifiers." },
+    { id: "aggregate", ms: 1400, n: "04", t: "Aggregate",
+      d: "The server averages them into the next global model." }
+  ];
+  const POOL_PHASES = [
+    { id: "ship", ms: 2600, n: "01", t: "Copy every scan",
+      d: "All 1,000 training cases are transferred to one machine." },
+    { id: "pool", ms: 1300, n: "02", t: "Pool",
+      d: "One dataset holding every hospital's patients." },
+    { id: "train", ms: 2400, n: "03", t: "Train once",
+      d: "A single model sees everything — the ceiling, and the thing we may not do." }
+  ];
+
+  function cubic(p0, p1, p2, p3, t) {
+    const u = 1 - t, a = u * u * u, b = 3 * u * u * t, c = 3 * u * t * t, d = t * t * t;
+    return { x: a * p0.x + b * p1.x + c * p2.x + d * p3.x,
+             y: a * p0.y + b * p1.y + c * p2.y + d * p3.y };
+  }
+
+  function FedNet(canvas, opts) {
+    const o = Object.assign({
+      mode: "fedavg", speed: 1, playing: true, compact: false,
+      onPhase: null, onRound: null, siteValues: null, maxRound: null, startRound: 1
+    }, opts);
+
+    const ctx = canvas.getContext("2d");
+    let W = 0, Hh = 0, raf = 0, last = 0, visible = false;
+    let phaseIdx = 0, phaseT = 0, round = o.startRound;
+    const packets = [];
+    const nodes = { server: null, sites: [] };
+    // Per-site training progress, and whether the site is currently holding weights.
+    const site = H.map(() => ({ prog: 0, lit: 0, parked: 0 }));
+
+    function phases() { return o.mode === "pool" ? POOL_PHASES : FED_PHASES; }
+
+    function layout() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const r = canvas.getBoundingClientRect();
+      if (!r.width || !r.height) return false;
+      W = r.width; Hh = r.height;
+      canvas.width = Math.round(W * dpr);
+      canvas.height = Math.round(Hh * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const sw = Math.min(230, W * 0.34), sh = o.compact ? 44 : 54;
+      nodes.server = { x: W / 2 - sw / 2, y: Hh * 0.07, w: sw, h: sh };
+
+      const n = 4, pad = W * 0.045;
+      const avail = W - pad * 2, nw = Math.min(avail / n - 12, o.compact ? 92 : 132);
+      const nh = o.compact ? 62 : 78;
+      const gap = (avail - nw * n) / (n - 1);
+      nodes.sites = H.map((h, i) => ({
+        x: pad + i * (nw + gap), y: Hh - nh - (o.compact ? 26 : 34), w: nw, h: nh, key: h
+      }));
+      return true;
+    }
+
+    function wire(i) {
+      const s = nodes.server, t = nodes.sites[i];
+      const p0 = { x: s.x + s.w * (0.18 + 0.21 * i), y: s.y + s.h };
+      const p3 = { x: t.x + t.w / 2, y: t.y };
+      const dy = p3.y - p0.y;
+      return [p0, { x: p0.x, y: p0.y + dy * 0.42 }, { x: p3.x, y: p3.y - dy * 0.42 }, p3];
+    }
+
+    function panel(x, y, w, h, stroke, fill) {
+      ctx.fillStyle = fill; ctx.fillRect(x, y, w, h);
+      ctx.strokeStyle = stroke; ctx.lineWidth = 1;
+      ctx.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
+      const s = 6;
+      ctx.beginPath();
+      [[x, y, 1, 1], [x + w, y, -1, 1], [x, y + h, 1, -1], [x + w, y + h, -1, -1]]
+        .forEach(([cx, cy, sx, sy]) => {
+          ctx.moveTo(cx + sx * s, cy); ctx.lineTo(cx, cy); ctx.lineTo(cx, cy + sy * s);
+        });
+      ctx.stroke();
+    }
+
+    function label(txt, x, y, col, size, font, align) {
+      ctx.fillStyle = col;
+      ctx.font = `${size}px ${font || '"IBM Plex Mono", monospace'}`;
+      ctx.textAlign = align || "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(txt, x, y);
+    }
+
+    /* --- the round state machine ------------------------------------------ */
+    function emit(i, dir, kind, delay) {
+      packets.push({ i, dir, kind, t: 0, delay: delay || 0 });
+    }
+
+    function enterPhase(idx) {
+      phaseIdx = idx; phaseT = 0; packets.length = 0;
+      const p = phases()[idx];
+      if (o.mode === "pool") {
+        if (p.id === "ship") for (let i = 0; i < 4; i++)
+          for (let k = 0; k < 4; k++) emit(i, "up", "data", k * 0.16 + i * 0.05);
+        if (p.id === "train") site.forEach(s => { s.prog = 0; });
+      } else {
+        if (p.id === "broadcast") {
+          site.forEach(s => { s.lit = 0; s.prog = 0; });
+          for (let i = 0; i < 4; i++) emit(i, "down", "weights", i * 0.07);
+        }
+        if (p.id === "upload") {
+          for (let i = 0; i < 4; i++) {
+            emit(i, "up", "weights", i * 0.07);
+            if (o.mode === "fedbn") site[i].parked = 1;
+          }
+        }
+      }
+      if (o.onPhase) o.onPhase(idx, p, round);
+    }
+
+    function advance(dt) {
+      const p = phases()[phaseIdx];
+      phaseT += dt * 1000 * o.speed / p.ms;
+
+      if (p.id === "train") {
+        const k = Math.min(1, phaseT);
+        site.forEach((s, i) => {
+          // Site D learns more slowly under a shared model -- the visual echoes the finding
+          // rather than contradicting it.
+          const rate = (o.mode !== "local" && i === 3) ? 0.72 : 1;
+          s.prog = Math.min(1, k * rate);
+        });
+      }
+      if (p.id === "broadcast") site.forEach(s => { s.lit = Math.min(1, phaseT * 1.4); });
+
+      for (const q of packets) {
+        if (q.delay > 0) { q.delay -= dt * o.speed; continue; }
+        q.t = Math.min(1, q.t + dt * o.speed * 1.35);
+      }
+
+      if (phaseT >= 1) {
+        const next = (phaseIdx + 1) % phases().length;
+        if (next === 0) {
+          round++;
+          if (o.maxRound && round > o.maxRound) round = o.maxRound;
+          if (o.onRound) o.onRound(round);
+          if (o.mode === "pool") { enterPhase(phases().length - 1); phaseT = 0; return; }
+        }
+        enterPhase(next);
+      }
+    }
+
+    /* --- drawing ----------------------------------------------------------- */
+    function draw() {
+      ctx.clearRect(0, 0, W, Hh);
+      const p = phases()[phaseIdx];
+      const pooling = o.mode === "pool";
+
+      // wires
+      for (let i = 0; i < 4; i++) {
+        const [a, b, c, d] = wire(i);
+        const busy = !pooling && (p.id === "broadcast" || p.id === "upload");
+        ctx.strokeStyle = busy ? C.lineHi : C.line;
+        ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.bezierCurveTo(b.x, b.y, c.x, c.y, d.x, d.y);
+        ctx.stroke();
+      }
+
+      // server
+      const s = nodes.server;
+      const agg = p.id === "aggregate" || (pooling && p.id !== "ship");
+      panel(s.x, s.y, s.w, s.h, agg ? C.phos : C.lineHi, agg ? "#101C18" : C.panel2);
+      if (agg) {
+        const g = 0.5 + 0.5 * Math.sin(phaseT * Math.PI * 3);
+        ctx.save(); ctx.globalAlpha = 0.28 * g;
+        ctx.strokeStyle = C.phos; ctx.lineWidth = 2;
+        ctx.strokeRect(s.x - 4, s.y - 4, s.w + 8, s.h + 8);
+        ctx.restore();
+      }
+      label(pooling ? "CENTRAL SERVER" : "AGGREGATION SERVER",
+            s.x + s.w / 2, s.y + s.h / 2 - 8, agg ? C.phos : C.inkDim, 10.5);
+      label(pooling ? (p.id === "ship" ? "receiving patient scans" : "holds all 1,000 cases")
+                    : (p.id === "aggregate" ? "averaging 4 models" : "global model  ·  round " + round),
+            s.x + s.w / 2, s.y + s.h / 2 + 9, pooling && p.id === "ship" ? C.red : C.muted, 9.5);
+
+      // sites
+      nodes.sites.forEach((nd, i) => {
+        const outlier = i === 3;
+        const training = p.id === "train" && site[i].prog > 0 && site[i].prog < 1;
+        const active = site[i].lit > 0.5 || training || pooling;
+        const stroke = outlier ? C.amber : (active ? C.phos : C.lineHi);
+        panel(nd.x, nd.y, nd.w, nd.h, stroke, active ? C.panel2 : C.panel);
+
+        label(SITE[nd.key], nd.x + nd.w / 2, nd.y + 15, outlier ? C.amber : C.ink, 11,
+              '"IBM Plex Sans", sans-serif');
+
+        // the local dataset: a little stack of slices, and it never moves in federated mode
+        const bx = nd.x + nd.w / 2 - 17, by = nd.y + 28;
+        for (let k = 0; k < 3; k++) {
+          ctx.fillStyle = pooling && p.id === "ship" ? "#2A1B22" : "#16212B";
+          ctx.fillRect(bx, by + k * 5, 34, 3.4);
+          ctx.fillStyle = outlier ? C.amber : C.sky;
+          ctx.globalAlpha = pooling && p.id === "ship" ? 0.25 : 0.55;
+          ctx.fillRect(bx, by + k * 5, 34 * (0.5 + 0.16 * k), 3.4);
+          ctx.globalAlpha = 1;
+        }
+
+        // training progress
+        const py = nd.y + nd.h - 13;
+        ctx.fillStyle = C.line; ctx.fillRect(nd.x + 10, py, nd.w - 20, 3);
+        ctx.fillStyle = outlier ? C.amber : C.phos;
+        ctx.fillRect(nd.x + 10, py, (nd.w - 20) * site[i].prog, 3);
+
+        // FedBN: the BatchNorm block that stays behind
+        if (site[i].parked && o.mode === "fedbn") {
+          ctx.fillStyle = C.amber;
+          ctx.fillRect(nd.x + nd.w - 13, nd.y + 6, 7, 7);
+          label("BN", nd.x + nd.w - 24, nd.y + 10, C.amber, 8);
+        }
+
+        if (!o.compact) {
+          label(training ? "training…" : (site[i].parked && o.mode === "fedbn" ? "keeps its BN" : ""),
+                nd.x + nd.w / 2, nd.y + nd.h - 24, C.muted, 9);
+        }
+      });
+
+      // packets
+      for (const q of packets) {
+        if (q.delay > 0) continue;
+        const [a, b, c, d] = wire(q.i);
+        const t = q.dir === "down" ? q.t : 1 - q.t;
+        const pt = cubic(a, b, c, d, t);
+        const isData = q.kind === "data";
+        const col = isData ? C.red : (q.i === 3 ? C.amber : C.phos);
+        ctx.save();
+        ctx.shadowColor = col; ctx.shadowBlur = 9;
+        ctx.fillStyle = col;
+        ctx.fillRect(pt.x - 3.5, pt.y - 3.5, 7, 7);
+        ctx.restore();
+        if (!o.compact && q.t < 0.92 && q.t > 0.08) {
+          label(isData ? "scans" : "weights", pt.x + 26, pt.y, isData ? C.red : C.muted, 8.5);
+        }
+      }
+
+      // per-site score readout, when the replay supplies one
+      if (o.siteValues) {
+        const vals = o.siteValues(round);
+        nodes.sites.forEach((nd, i) => {
+          const v = vals && vals[nd.key];
+          if (v != null) label(v.toFixed(3), nd.x + nd.w / 2, nd.y + nd.h + 13,
+                               i === 3 ? C.amber : C.inkDim, 10);
+        });
+      }
+    }
+
+    function frame(ts) {
+      raf = requestAnimationFrame(frame);
+      if (!visible) return;
+      const dt = Math.min(0.05, (ts - last) / 1000 || 0);
+      last = ts;
+      if (o.playing && !REDUCED) advance(dt);
+      draw();
+    }
+
+    const api = {
+      start() {
+        if (!layout()) { requestAnimationFrame(() => api.start()); return; }
+        visible = true;
+        if (!raf) { last = performance.now(); raf = requestAnimationFrame(frame); }
+        if (REDUCED) {
+          // Motion is off, so show the state that carries the information rather than the frame
+          // the animation happens to start on: sites trained, packets mid-flight, run finished.
+          site.forEach(s => { s.prog = 1; s.lit = 1; s.parked = o.mode === "fedbn" ? 1 : 0; });
+          packets.forEach(q => { q.delay = 0; q.t = 0.5; });
+          if (o.maxRound && round < o.maxRound) {
+            round = o.maxRound;
+            if (o.onRound) o.onRound(round);
+          }
+          draw();
+        }
+      },
+      stop() { visible = false; },
+      set(k, v) {
+        o[k] = v;
+        if (k === "mode") { round = o.startRound; enterPhase(0); site.forEach(s => { s.parked = 0; }); }
+        layout(); draw();
+      },
+      step() {
+        o.playing = false;
+        enterPhase((phaseIdx + 1) % phases().length);
+        if (phaseIdx === 0) round++;
+        draw();
+      },
+      reset() { round = o.startRound; enterPhase(0); site.forEach(s => { s.parked = 0; }); },
+      get round() { return round; },
+      get phase() { return phases()[phaseIdx]; },
+      resize() { if (layout()) draw(); }
+    };
+    enterPhase(0);
+    window.addEventListener("resize", () => api.resize());
+    return api;
+  }
+
+  const SIMS = [];
+
+  /* --- tutorial 1: pooled vs federated ----------------------------------- */
+  {
+    const badge = $("#intro-badge"), warn = $("#intro-warn"), cards = $("#intro-cards");
+    const COPY = {
+      pool: [["What it gets you", "Every scan in one place and the best model in the study — our "
+              + "<strong>centralized</strong> ceiling. Nothing here is technically hard."],
+             ["Why it is not an option", "It requires copying identifiable patient imaging out of "
+              + "the hospital that acquired it. Ethics approval, data-protection law and "
+              + "institutional policy each independently forbid it."]],
+      fed: [["What travels", "Only weights — a few million floating-point numbers, in both "
+             + "directions. No pixel of any scan ever crosses the boundary."],
+            ["What it costs", "The averaged model is a <strong>compromise</strong> across four "
+             + "distributions. It fits the majority well, and that is precisely where this study "
+             + "finds its most interesting failure."]]
+    };
+    const sim = FedNet($("#sim-intro"), { mode: "pool" });
+    SIMS.push({ sim, slide: 2 });
+    const show = m => {
+      $$("[data-intro]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.intro === m)));
+      sim.set("mode", m === "pool" ? "pool" : "fedavg");
+      warn.classList.toggle("on", m === "pool");
+      badge.innerHTML = m === "pool"
+        ? 'MODE · <b style="color:var(--red)">POOL THE DATA</b>'
+        : 'MODE · <b>FEDERATE THE MODEL</b>';
+      cards.innerHTML = COPY[m].map(([h, b]) =>
+        `<div class="card"><h4>${h}</h4><p>${b}</p></div>`).join("");
+    };
+    $$("[data-intro]").forEach(b => b.addEventListener("click", () => show(b.dataset.intro)));
+    show("pool");
+  }
+
+  /* --- tutorial 2: one round --------------------------------------------- */
+  {
+    const box = $("#round-phases"), badge = $("#round-badge");
+    box.innerHTML = FED_PHASES.map(p =>
+      `<div data-ph="${p.id}"><div class="n">${p.n}</div><div class="t">${p.t}</div>
+       <div class="d">${p.d}</div></div>`).join("");
+    const sim = FedNet($("#sim-round"), {
+      mode: "fedavg",
+      onPhase: (i, p, r) => {
+        $$("#round-phases [data-ph]").forEach(d => d.classList.toggle("on", d.dataset.ph === p.id));
+        badge.innerHTML = `ROUND <b>${r}</b> OF 40 · ${p.t.toUpperCase()}`;
+      }
+    });
+    SIMS.push({ sim, slide: 3 });
+    const play = $("#round-play");
+    play.addEventListener("click", () => {
+      const on = play.getAttribute("aria-pressed") !== "true";
+      play.setAttribute("aria-pressed", String(on));
+      play.textContent = on ? "❚❚ Pause" : "▶ Play";
+      sim.set("playing", on);
+    });
+    $("#round-step").addEventListener("click", () => {
+      play.setAttribute("aria-pressed", "false"); play.textContent = "▶ Play";
+      sim.step();
+    });
+    $$("[data-speed]").forEach(b => b.addEventListener("click", () => {
+      $$("[data-speed]").forEach(o => o.setAttribute("aria-pressed", String(o === b)));
+      sim.set("speed", parseFloat(b.dataset.speed));
+    }));
+  }
+
+  /* --- tutorial 3: FedAvg vs FedBN --------------------------------------- */
+  {
+    const badge = $("#meth-badge"), readout = $("#meth-readout"), cards = $("#meth-cards");
+    // Declared before the simulator: FedNet enters its first phase during construction, and that
+    // fires onPhase, which reads this.
+    let curMeth = "fedavg";
+    const sim = FedNet($("#sim-meth"), {
+      mode: "fedavg",
+      onPhase: (i, p) => {
+        badge.innerHTML = `METHOD · <b style="color:var(--phos)">${curMeth.toUpperCase()}</b> · ${p.t.toUpperCase()}`;
+      }
+    });
+    SIMS.push({ sim, slide: 4 });
+    const COPY = {
+      fedavg: [["One model, four hospitals", "Every parameter is averaged, so all four sites run "
+                + "byte-identical weights. Simple, standard, and it is the method that fails Site D."],
+               ["Where it breaks", "BatchNorm layers store the mean and variance of the features "
+                + "they see. Averaging them across four different scanners produces statistics that "
+                + "describe <strong>none</strong> of the four."]],
+      fedbn: [["A shared body, four calibrations", "Convolutional weights are averaged exactly as in "
+               + "FedAvg. Only the BatchNorm parameters stay home, so each site normalises with its "
+               + "own scanner's statistics."],
+              ["Why it is nearly free", "In our 2D model that is <strong>2,310</strong> of 1,607,562 "
+               + "parameters — 0.14%. It changes no architecture and costs no extra computation."]]
+    };
+    const show = m => {
+      curMeth = m;
+      $$("[data-meth]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.meth === m)));
+      sim.set("mode", m);
+      const bn = m === "fedbn";
+      readout.innerHTML = [
+        ["Parameters uploaded", bn ? "1,605,252" : "1,607,562", bn],
+        ["Kept local", bn ? "2,310" : "0", bn],
+        ["Share of the model kept", bn ? "0.14%" : "0.00%", bn],
+        ["Site D whole-tumour Dice",
+         f4(DATA.runs.v5[m + "_2d"].est.H4), bn]
+      ].map(([k, v, a]) =>
+        `<div><div class="k">${k}</div><div class="v${a ? " accent" : ""}">${v}</div></div>`).join("");
+      cards.innerHTML = COPY[m].map(([h, b]) =>
+        `<div class="card"><h4>${h}</h4><p>${b}</p></div>`).join("");
+    };
+    $$("[data-meth]").forEach(b => b.addEventListener("click", () => show(b.dataset.meth)));
+    show("fedavg");
+  }
+
+  /* --- tutorial 4: replay the real run ----------------------------------- */
+  {
+    let meth = "fedbn";
+    const curveCv = $("#sim-curve"), cctx = curveCv.getContext("2d");
+    const readout = $("#train-readout"), badge = $("#train-badge");
+
+    const series = () => DATA.runs.v5[meth + "_2d"].curve;
+    const maxRound = series()[series().length - 1].round;
+
+    // The replay reads the logged curve, so a round with no test evaluation shows the last
+    // round that was actually scored rather than inventing a value for it.
+    function atRound(r) {
+      const s = series();
+      let best = s[0];
+      for (const p of s) { if (p.round <= r) best = p; }
+      return best;
+    }
+
+    function drawCurve(r) {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const rect = curveCv.getBoundingClientRect();
+      if (!rect.width) return;
+      curveCv.width = Math.round(rect.width * dpr);
+      curveCv.height = Math.round(rect.height * dpr);
+      cctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const W = rect.width, Hh = rect.height, P = { t: 34, r: 46, b: 30, l: 40 };
+      cctx.clearRect(0, 0, W, Hh);
+
+      const s = series();
+      const ys = s.flatMap(p => H.map(h => p[h]).filter(v => v != null));
+      const y0 = Math.min(...ys) - 0.02, y1 = Math.max(...ys) + 0.02;
+      const X = v => P.l + (v - 1) / Math.max(1, maxRound - 1) * (W - P.l - P.r);
+      const Y = v => Hh - P.b - (v - y0) / (y1 - y0) * (Hh - P.t - P.b);
+
+      cctx.strokeStyle = C.line; cctx.lineWidth = 1;
+      for (let i = 0; i <= 4; i++) {
+        const y = P.t + (Hh - P.t - P.b) * i / 4;
+        cctx.beginPath(); cctx.moveTo(P.l, y); cctx.lineTo(W - P.r, y); cctx.stroke();
+      }
+      cctx.fillStyle = C.muted; cctx.font = '9px "IBM Plex Mono", monospace';
+      cctx.textAlign = "right"; cctx.textBaseline = "middle";
+      [y0, (y0 + y1) / 2, y1].forEach(v => cctx.fillText(v.toFixed(2), P.l - 6, Y(v)));
+
+      H.forEach((h, i) => {
+        const pts = s.filter(p => p.round <= r && p[h] != null);
+        if (!pts.length) return;
+        cctx.strokeStyle = i === 3 ? C.amber : (i === 0 ? C.phos : i === 1 ? C.sky : C.violet);
+        cctx.lineWidth = i === 3 ? 2 : 1.4;
+        cctx.globalAlpha = i === 3 ? 1 : 0.75;
+        cctx.beginPath();
+        pts.forEach((p, k) => k ? cctx.lineTo(X(p.round), Y(p[h])) : cctx.moveTo(X(p.round), Y(p[h])));
+        cctx.stroke();
+        const last = pts[pts.length - 1];
+        cctx.fillStyle = cctx.strokeStyle;
+        cctx.beginPath(); cctx.arc(X(last.round), Y(last[h]), 2.8, 0, 7); cctx.fill();
+        cctx.textAlign = "left"; cctx.globalAlpha = 1;
+        cctx.fillText(SITE[h].replace("Site ", ""), X(last.round) + 7, Y(last[h]));
+      });
+      cctx.globalAlpha = 1;
+      cctx.fillStyle = C.muted; cctx.textAlign = "center";
+      cctx.fillText("round " + Math.min(r, maxRound) + " / " + maxRound, W / 2, Hh - 10);
+    }
+
+    function refresh(r) {
+      const p = atRound(r);
+      const mean = p.mean;
+      badge.innerHTML = `REPLAY · <b>${meth.toUpperCase()}</b> · 2D · SEED 42`;
+      readout.innerHTML = [
+        ["Round", Math.min(r, maxRound) + " / " + maxRound, false],
+        ["Mean WT Dice", f4(mean), true],
+        ["Site D", f4(p.H4), false],
+        ["Gap to best site", sgn(p.H4 - Math.max(p.H1, p.H2, p.H3)), false]
+      ].map(([k, v, a]) =>
+        `<div><div class="k">${k}</div><div class="v${a ? " accent" : ""}">${v}</div></div>`).join("");
+      drawCurve(r);
+    }
+
+    const sim = FedNet($("#sim-train"), {
+      mode: "fedbn", speed: 2.6, compact: true, maxRound,
+      siteValues: r => atRound(r),
+      onRound: r => refresh(r),
+      onPhase: () => {}
+    });
+    SIMS.push({ sim, slide: 5, onShow: () => refresh(sim.round) });
+
+    const play = $("#train-play");
+    play.addEventListener("click", () => {
+      const on = play.getAttribute("aria-pressed") !== "true";
+      play.setAttribute("aria-pressed", String(on));
+      play.textContent = on ? "❚❚ Pause" : "▶ Play";
+      sim.set("playing", on);
+    });
+    $("#train-reset").addEventListener("click", () => { sim.reset(); refresh(1); });
+    $$("[data-trainmeth]").forEach(b => b.addEventListener("click", () => {
+      $$("[data-trainmeth]").forEach(o => o.setAttribute("aria-pressed", String(o === b)));
+      meth = b.dataset.trainmeth;
+      sim.set("mode", meth); sim.reset(); refresh(1);
+    }));
+    window.addEventListener("resize", () => drawCurve(sim.round));
+    refresh(1);
+  }
+
+  /* --- count-up on the stat blocks --------------------------------------- */
+  function countUp(root) {
+    if (REDUCED) return;
+    root.querySelectorAll(".stat .n").forEach(n => {
+      const txt = n.textContent.trim();
+      const m = txt.match(/^([\d,\.]+)(.*)$/);
+      if (!m) return;
+      const target = parseFloat(m[1].replace(/,/g, ""));
+      if (!isFinite(target) || target <= 0) return;
+      const rest = m[2], dec = (m[1].split(".")[1] || "").length;
+      const grouped = m[1].includes(",");
+      const t0 = performance.now(), dur = 750;
+      (function tick(now) {
+        const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+        const v = target * e;
+        n.childNodes[0].nodeValue =
+          (grouped ? Math.round(v).toLocaleString() : v.toFixed(dec)) + (grouped ? "" : "");
+        if (k < 1) requestAnimationFrame(tick); else n.childNodes[0].nodeValue = m[1];
+      })(t0);
+    });
+  }
+
   /* ------------------------------------------------------------ navigation */
   const slides = $$(".slide");
   const dots = $("#dots");
@@ -1298,7 +1992,15 @@ svg.chart .bandlabel { fill: var(--phos); opacity: .8; font-size: 9px; letter-sp
     $("#prev").disabled = cur === 0;
     $("#next").disabled = cur === slides.length - 1;
     window.scrollTo({ top: 0, behavior: "instant" });
-    if (cur === 17) chart.draw();
+
+    // Only the visible simulator runs -- four canvases animating off-screen would burn a
+    // laptop battery through a whole presentation for nothing.
+    SIMS.forEach(s => {
+      if (s.slide === cur) { s.sim.start(); if (s.onShow) s.onShow(); }
+      else s.sim.stop();
+    });
+    if (slides[cur].querySelector("#chart")) chart.draw();
+    countUp(slides[cur]);
   }
 
   $("#prev").addEventListener("click", () => go(cur - 1));

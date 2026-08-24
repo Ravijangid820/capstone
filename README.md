@@ -130,9 +130,14 @@ Full list of retracted and restricted claims: **[docs/conventions.md](docs/conve
 
 ## Project showcase
 
-A 24-slide walkthrough of the whole study — dataset, scanner shift, preprocessing chain, the four
-methods, all five iterations, and the final results — built as one self-contained HTML file for
-presenting to a reviewer or examiner.
+A 27-slide walkthrough of the whole study — an animated four-part federated-learning tutorial,
+then the dataset, scanner shift, preprocessing chain, the four methods, all five iterations and the
+final results — built as one self-contained HTML file for presenting to a reviewer or examiner.
+
+The tutorial runs on a canvas state machine over the phases of a communication round, so the same
+engine shows pooled training, FedAvg, FedBN, and a replay of the actual logged run just by changing
+what travels on the wires. The replay's round counter and per-site Dice are read from
+`artifacts/snapshots/v5/`, not invented.
 
 ```bash
 uv run python scripts/showcase_assets.py --data-root data/BraTS2021_Training_Data   # images, once
