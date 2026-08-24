@@ -239,6 +239,7 @@ def main() -> int:
     kb = out.stat().st_size / 1024
     print(f"wrote {out}  ({kb:.0f} KB, {len(data['images'])} images, "
           f"{sum(len(v) for k, v in runs.items())} runs)")
+    print("serve it with: python scripts/demo_server.py  ->  http://localhost:8000/showcase")
     return 0
 
 

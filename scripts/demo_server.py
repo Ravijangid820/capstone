@@ -31,6 +31,8 @@ from fedbrats.train import predict_volume
 from fedbrats.metrics import dice_regions
 
 STATIC_DIR = Path(__file__).resolve().parents[1] / "src" / "fedbrats" / "static"
+# Built by scripts/build_showcase.py from the frozen run logs; served at /showcase.
+SHOWCASE = Path(__file__).resolve().parents[1] / "artifacts" / "showcase" / "showcase.html"
 
 # ─── Model Cache ──────────────────────────────────────────────────────────────
 # Cache loaded models by (dim, method, hospital) to avoid reloading on every
@@ -80,6 +82,15 @@ class DemoHTTPRequestHandler(BaseHTTPRequestHandler):
         # Routing static assets
         if path_str == "/" or path_str == "/index.html":
             self.serve_file(STATIC_DIR / "index.html", "text/html")
+        elif path_str == "/showcase" or path_str == "/showcase.html":
+            # The generated project walkthrough, served from where build_showcase.py writes it
+            # rather than copied in here -- it is a single 800 KB self-contained file, and a
+            # second copy under static/ would be the same bytes tracked twice.
+            if SHOWCASE.exists():
+                self.serve_file(SHOWCASE, "text/html")
+            else:
+                self.send_error(404, "Walkthrough not built yet - run: "
+                                     "python scripts/build_showcase.py")
         elif path_str == "/style.css":
             self.serve_file(STATIC_DIR / "style.css", "text/css")
         elif path_str == "/app.js":
@@ -333,12 +344,14 @@ class ThreadingHTTPServer(ThreadingMixIn, HTTPServer):
     daemon_threads = True
 
 
-def run_server(port=8000):
-    server_address = ('', port)
+def run_server(port=8000, host=""):
+    server_address = (host, port)
     httpd = ThreadingHTTPServer(server_address, DemoHTTPRequestHandler)
-    print(f"Starting brain tumor segmentation demo server on http://localhost:{port}")
+    shown = host or "localhost"
+    print(f"Starting brain tumor segmentation demo server on http://{shown}:{port}")
     print(f"  Device: {_device}")
     print(f"  Static: {STATIC_DIR}")
+    print(f"  Walkthrough: /showcase {'(built)' if SHOWCASE.exists() else '(NOT BUILT)'}")
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
@@ -347,4 +360,12 @@ def run_server(port=8000):
 
 
 if __name__ == "__main__":
-    run_server()
+    import argparse
+
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    # 8000 is a popular port -- VS Code's tunnel and plenty of dev servers take it, and the
+    # failure looks like the server hanging rather than a port clash. Make it changeable.
+    ap.add_argument("--port", type=int, default=8000)
+    ap.add_argument("--host", default="", help="bind address; default all interfaces")
+    args = ap.parse_args()
+    run_server(port=args.port, host=args.host)

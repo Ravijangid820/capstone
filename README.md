@@ -142,8 +142,15 @@ what travels on the wires. The replay's round counter and per-site Dice are read
 ```bash
 uv run python scripts/showcase_assets.py --data-root data/BraTS2021_Training_Data   # images, once
 uv run python scripts/build_showcase.py                                             # the deck
-# open artifacts/showcase/showcase.html
+uv run python scripts/demo_server.py            # http://localhost:8000/showcase
 ```
+
+It is served by the same server as the live demo, so the project has **one UI and one command**:
+`/` is the interactive inference tool and `/showcase` is the walkthrough, cross-linked in both
+directions. The built file is also standalone — `artifacts/showcase/showcase.html` opens straight
+from disk with no server and no network, which is what you want on an unfamiliar laptop.
+
+Use `--port` if something already holds 8000 (VS Code's tunnel commonly does).
 
 Every figure is re-derived from `artifacts/snapshots/` at build time and every picture is rendered
 by the pipeline's own functions, for the same reason [`scripts/check_docs.py`](scripts/check_docs.py)
