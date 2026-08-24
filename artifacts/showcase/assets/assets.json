@@ -1,0 +1,38 @@
+{
+  "case_id": "BraTS2021_00000",
+  "slice": 74,
+  "modalities": [
+    "flair",
+    "t1",
+    "t1ce",
+    "t2"
+  ],
+  "shifts": {
+    "H1": {
+      "gamma": 1.06,
+      "bias_amp": 0.06,
+      "blur_sigma": 0.3
+    },
+    "H2": {
+      "gamma": 1.13,
+      "bias_amp": 0.09,
+      "blur_sigma": 0.5
+    },
+    "H3": {
+      "gamma": 1.2,
+      "bias_amp": 0.12,
+      "blur_sigma": 0.7
+    },
+    "H4": {
+      "gamma": 1.85,
+      "bias_amp": 0.34,
+      "blur_sigma": 1.7
+    }
+  },
+  "wt_voxels_slice": 1978,
+  "volume_shape": [
+    240,
+    240,
+    155
+  ]
+}

@@ -128,6 +128,23 @@ Two claims from those tables are **retracted** and must not be reused:
 Full list of retracted and restricted claims: **[docs/conventions.md](docs/conventions.md) §6**.
 
 
+## Project showcase
+
+A 24-slide walkthrough of the whole study — dataset, scanner shift, preprocessing chain, the four
+methods, all five iterations, and the final results — built as one self-contained HTML file for
+presenting to a reviewer or examiner.
+
+```bash
+uv run python scripts/showcase_assets.py --data-root data/BraTS2021_Training_Data   # images, once
+uv run python scripts/build_showcase.py                                             # the deck
+# open artifacts/showcase/showcase.html
+```
+
+Every figure is re-derived from `artifacts/snapshots/` at build time and every picture is rendered
+by the pipeline's own functions, for the same reason [`scripts/check_docs.py`](scripts/check_docs.py)
+exists: a slide with a hand-typed Dice number goes stale silently, and nobody re-derives a figure
+on a slide before presenting it.
+
 ## Web Demo
 
 An interactive web dashboard lets you visualize and compare segmentations across all four FL methods in real time.
