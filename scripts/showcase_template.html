@@ -1595,6 +1595,11 @@ svg.chart .endlabel { opacity: 0; animation: fadeIn .4s ease forwards; animation
 
     /* --- drawing ----------------------------------------------------------- */
     function draw() {
+      // A canvas on a display:none slide measures 0x0, so layout() bails and leaves the node
+      // geometry unbuilt. Every caller must tolerate that: the simulators are constructed while
+      // their slides are still hidden, and drawing before the first successful layout would
+      // dereference a null server node.
+      if (!nodes.server || !W || !Hh) return;
       ctx.clearRect(0, 0, W, Hh);
       const p = phases()[phaseIdx];
       const pooling = o.mode === "pool";
@@ -1726,7 +1731,7 @@ svg.chart .endlabel { opacity: 0; animation: fadeIn .4s ease forwards; animation
       set(k, v) {
         o[k] = v;
         if (k === "mode") { round = o.startRound; enterPhase(0); site.forEach(s => { s.parked = 0; }); }
-        layout(); draw();
+        if (layout()) draw();
       },
       step() {
         o.playing = false;

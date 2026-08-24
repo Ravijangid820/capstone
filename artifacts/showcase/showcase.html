@@ -1,3 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; }
+  img, canvas, svg { max-width: 100%; }
+  button, input, select { font: inherit; color: inherit; }
+</style>
 <title>Four Hospitals, One Model</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -357,7 +368,8 @@ svg.chart .endlabel { opacity: 0; animation: fadeIn .4s ease forwards; animation
   *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
 }
 </style>
-
+</head>
+<body>
 <div class="deck">
   <div class="rail">
     <span class="mark">FedBraTS</span>
@@ -1595,6 +1607,11 @@ const DATA = {"sites":{"H1":"Site A","H2":"Site B","H3":"Site C","H4":"Site D"},
 
     /* --- drawing ----------------------------------------------------------- */
     function draw() {
+      // A canvas on a display:none slide measures 0x0, so layout() bails and leaves the node
+      // geometry unbuilt. Every caller must tolerate that: the simulators are constructed while
+      // their slides are still hidden, and drawing before the first successful layout would
+      // dereference a null server node.
+      if (!nodes.server || !W || !Hh) return;
       ctx.clearRect(0, 0, W, Hh);
       const p = phases()[phaseIdx];
       const pooling = o.mode === "pool";
@@ -1726,7 +1743,7 @@ const DATA = {"sites":{"H1":"Site A","H2":"Site B","H3":"Site C","H4":"Site D"},
       set(k, v) {
         o[k] = v;
         if (k === "mode") { round = o.startRound; enterPhase(0); site.forEach(s => { s.parked = 0; }); }
-        layout(); draw();
+        if (layout()) draw();
       },
       step() {
         o.playing = false;
@@ -2036,3 +2053,6 @@ const DATA = {"sites":{"H1":"Site A","H2":"Site B","H3":"Site C","H4":"Site D"},
   go(0);
 })();
 </script>
+
+</body>
+</html>

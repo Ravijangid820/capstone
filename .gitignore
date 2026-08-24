@@ -33,3 +33,7 @@ artifacts/cache/
 # leave the comparison resting on files that exist on exactly one laptop. See docs/improvements.md.
 # Rescore outputs are regenerable from checkpoints, so only the written-up report is tracked.
 artifacts/rescore_*/
+
+# The publishable fragment of the walkthrough: same bytes as showcase.html minus the document
+# wrapper, regenerated on every build. showcase.html is the tracked deliverable.
+artifacts/showcase/showcase.artifact.html

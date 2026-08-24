@@ -344,10 +344,25 @@ class ThreadingHTTPServer(ThreadingMixIn, HTTPServer):
     daemon_threads = True
 
 
-def run_server(port=8000, host=""):
+def run_server(port=8000, host="127.0.0.1"):
+    # Bind loopback by default, NOT "" (all interfaces). On Windows another process can hold
+    # 127.0.0.1:PORT while a bind to "" still succeeds -- so the server starts, reports
+    # http://localhost:PORT, and that URL silently reaches the *other* process. VS Code's port
+    # forwarding does exactly this. Binding the address we actually advertise turns that silent
+    # misdirect into an immediate, obvious error.
     server_address = (host, port)
-    httpd = ThreadingHTTPServer(server_address, DemoHTTPRequestHandler)
-    shown = host or "localhost"
+    try:
+        httpd = ThreadingHTTPServer(server_address, DemoHTTPRequestHandler)
+    except OSError as e:
+        print(f"\nCannot bind {host or '0.0.0.0'}:{port} -- {e}\n")
+        print(f"Something else already holds that port. Either free it, or pick another:")
+        print(f"    python scripts/demo_server.py --port 8010")
+        print(f"\nOn Windows, find the holder with:")
+        print(f"    powershell \"Get-Process -Id (Get-NetTCPConnection -LocalPort {port} "
+              f"-State Listen).OwningProcess\"")
+        print("If it is VS Code, open its PORTS panel and remove the forwarded port.")
+        return 1
+    shown = "localhost" if host in ("", "127.0.0.1") else host
     print(f"Starting brain tumor segmentation demo server on http://{shown}:{port}")
     print(f"  Device: {_device}")
     print(f"  Static: {STATIC_DIR}")
@@ -357,15 +372,17 @@ def run_server(port=8000, host=""):
     except KeyboardInterrupt:
         print("\nStopping demo server.")
         httpd.server_close()
+    return 0
 
 
 if __name__ == "__main__":
     import argparse
 
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    # 8000 is a popular port -- VS Code's tunnel and plenty of dev servers take it, and the
-    # failure looks like the server hanging rather than a port clash. Make it changeable.
+    # 8000 is a popular port -- VS Code's forwarding and plenty of dev servers take it, and on
+    # Windows the clash does not present as a bind error unless we bind loopback explicitly.
     ap.add_argument("--port", type=int, default=8000)
-    ap.add_argument("--host", default="", help="bind address; default all interfaces")
+    ap.add_argument("--host", default="127.0.0.1",
+                    help="bind address (default 127.0.0.1; use 0.0.0.0 to allow other machines)")
     args = ap.parse_args()
-    run_server(port=args.port, host=args.host)
+    raise SystemExit(run_server(port=args.port, host=args.host))

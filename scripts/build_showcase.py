@@ -200,6 +200,34 @@ def encode_images() -> dict[str, str]:
     return imgs
 
 
+# Everything the hosting platform would otherwise provide. Kept minimal on purpose: the deck's
+# own stylesheet already sets box-sizing and the body background, so this only has to stop the
+# browser falling into quirks mode and normalise the few things quirks mode gets wrong.
+RESET = """<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; }
+  img, canvas, svg { max-width: 100%; }
+  button, input, select { font: inherit; color: inherit; }
+</style>"""
+
+
+def standalone(fragment: str) -> str:
+    """Wrap the fragment as a complete document, for serving and for opening off disk.
+
+    The template is authored as head-material (title, font links, stylesheet) followed by body
+    content, so the split point is the deck's root element. Without this the file renders in
+    quirks mode with its <title> and <link> stranded in the body.
+    """
+    at = fragment.find('<div class="deck">')
+    if at < 0:
+        raise SystemExit("template no longer starts its body with <div class=\"deck\">")
+    head, body = fragment[:at].rstrip(), fragment[at:]
+    return (f"<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n{RESET}\n{head}\n</head>\n"
+            f"<body>\n{body}\n</body>\n</html>\n")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--out", default=str(SHOWCASE / "showcase.html"))
@@ -235,10 +263,17 @@ def main() -> int:
 
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(html, encoding="utf-8")
+    out.write_text(standalone(html), encoding="utf-8")
     kb = out.stat().st_size / 1024
     print(f"wrote {out}  ({kb:.0f} KB, {len(data['images'])} images, "
           f"{sum(len(v) for k, v in runs.items())} runs)")
+
+    # The publishable variant. The hosting platform supplies its own doctype, head and CSS reset
+    # and wraps whatever it is given in a body, so it must receive the bare fragment -- a complete
+    # document nested inside a body would have its head silently discarded.
+    frag = out.with_suffix(".artifact.html")
+    frag.write_text(html, encoding="utf-8")
+    print(f"wrote {frag}  (fragment, for publishing only -- do not open this one directly)")
     print("serve it with: python scripts/demo_server.py  ->  http://localhost:8000/showcase")
     return 0
 
