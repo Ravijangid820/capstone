@@ -208,6 +208,31 @@ def check_snapshots(problems: list[str], checked: list[str]) -> None:
         checked.append(f"snapshot {tag}: {len(runs)} runs")
 
 
+def check_review_pack(problems: list[str], checked: list[str]) -> None:
+    """If the review pack exists, it must not be older than the documents it copies.
+
+    The pack is what gets opened in front of a reviewer, and it holds *copies*. A doc edited
+    after the pack was built leaves a stale copy that still reads as authoritative -- exactly the
+    failure this whole checker exists to prevent, just one directory over.
+    """
+    pack = REPO / "review"
+    if not pack.exists():
+        return
+    built = pack / "README.md"
+    if not built.exists():
+        problems.append("REVIEW  review/ exists but has no README.md — rebuild it")
+        return
+    stamp = built.stat().st_mtime
+    stale = [p.name for p in DOCS.glob("*.md") if p.stat().st_mtime > stamp]
+    if stale:
+        problems.append(
+            f"REVIEW  review/ is older than {len(stale)} document(s) "
+            f"({', '.join(sorted(stale)[:3])}{'…' if len(stale) > 3 else ''}) — "
+            f"rerun: python scripts/build_review_pack.py")
+    checked.append(f"review pack: {len(list(pack.rglob('*.md')))} documents, "
+                   f"{'stale' if stale else 'current'}")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--list", action="store_true", help="also print what was checked")
@@ -219,6 +244,7 @@ def main() -> int:
     check_docs(problems, checked)
     check_links(problems, checked)
     check_snapshots(problems, checked)
+    check_review_pack(problems, checked)
 
     if not (DOCS / "conventions.md").exists():
         problems.append("MISSING  docs/conventions.md — the canonical naming reference")

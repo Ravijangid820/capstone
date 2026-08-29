@@ -60,9 +60,14 @@ def curve_and_estimate(run: Path, tag: str) -> dict | None:
 
     lo, hi = WINDOW[tag]
     window = [rnd for rnd in curve if lo <= rnd <= hi]
-    est = {h: round(statistics.fmean([curve[rnd][h] for rnd in window if h in curve[rnd]]), 4)
+    # Average the unrounded per-site values. Rounding each site to 4dp and then averaging those
+    # shifts the mean by up to 1 in the 4th decimal, which is enough to disagree with the figure
+    # check_docs.py re-derives -- and a review pack that contradicts the checker is worse than
+    # no review pack.
+    raw = {h: statistics.fmean([curve[rnd][h] for rnd in window if h in curve[rnd]])
            for h in HOSPITALS}
-    est["mean"] = round(statistics.fmean(est[h] for h in HOSPITALS), 4)
+    est = {h: round(v, 4) for h, v in raw.items()}
+    est["mean"] = round(statistics.fmean(raw.values()), 4)
     return {
         "curve": [{"round": rnd,
                    **{h: round(curve[rnd][h], 4) for h in HOSPITALS if h in curve[rnd]},

@@ -128,6 +128,23 @@ Two claims from those tables are **retracted** and must not be reused:
 Full list of retracted and restricted claims: **[docs/conventions.md](docs/conventions.md) §6**.
 
 
+## Review pack
+
+Everything needed to present and defend the project, gathered into one folder in reading order:
+
+```bash
+uv run python scripts/build_review_pack.py       # then open review/README.md
+```
+
+`review/README.md` is the operator's guide — every command, where the models / logs / cache /
+split live, the headline numbers, how to prove any of them on the spot, and what to do when
+something breaks mid-demo. `review/QUESTIONS.md` is the likely review questions with the answers
+and the figures already in them.
+
+It holds **copies**; `docs/` stays the source of truth and every link points back there. The pack
+is git-ignored and rebuilt on demand, and `check_docs.py` fails if it is older than any document
+it copied.
+
 ## Project showcase
 
 A 27-slide walkthrough of the whole study — an animated four-part federated-learning tutorial,
