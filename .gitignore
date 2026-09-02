@@ -42,3 +42,7 @@ artifacts/showcase/showcase.artifact.html
 # so committing it would put two versions of every claim under version control -- exactly what
 # check_docs.py exists to prevent. Build it fresh before a review; it takes one command.
 review/
+
+# Generated deployment bundles. app/ carries BraTS cases and checkpoints -- ~200 MB of data
+# that is licensed, regenerable, and has no business in git. Build with build_deploy.py.
+deploy/

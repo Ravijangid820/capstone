@@ -128,6 +128,30 @@ Two claims from those tables are **retracted** and must not be reused:
 Full list of retracted and restricted claims: **[docs/conventions.md](docs/conventions.md) §6**.
 
 
+## Deploying
+
+```bash
+uv run python scripts/build_deploy.py       # then read deploy/README.md
+```
+
+Builds two independent bundles:
+
+| | What | Where it runs |
+|---|---|---|
+| `deploy/static/` | the walkthrough, one HTML file (818 KB) | Vercel · Cloudflare Pages · any static host |
+| `deploy/app/` | the live inference server (~197 MB) | a container or VM — **not** Vercel |
+
+`app/` is a pruned mirror of this repository, so `config.py` resolves every path without a single
+environment variable and no code differs from what was tested here. It bundles the eight v5
+checkpoints, the split manifest, a cache index trimmed to the bundled cases, and twelve curated
+test cases (three per site, including both figure cases). Inference is **CPU-only** — 2.5 s for a
+2D volume, 1.6 s for 3D — but a request peaks near **1.2 GB resident**, so size the container at
+2 GB.
+
+Vercel cannot host `app/`: a serverless bundle is capped below a CPU PyTorch install, and the
+Hobby memory limit is under the per-request peak. `deploy/README.md` covers Proxmox LXC, Docker,
+systemd, and putting authentication in front before exposing it.
+
 ## Review pack
 
 Everything needed to present and defend the project, gathered into one folder in reading order:
