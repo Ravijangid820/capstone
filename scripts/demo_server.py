@@ -34,6 +34,22 @@ STATIC_DIR = Path(__file__).resolve().parents[1] / "src" / "fedbrats" / "static"
 # Built by scripts/build_showcase.py from the frozen run logs; served at /showcase.
 SHOWCASE = Path(__file__).resolve().parents[1] / "artifacts" / "showcase" / "showcase.html"
 
+_ARTIFACTS = Path(__file__).resolve().parents[1] / "artifacts"
+
+
+def _default_runs() -> Path:
+    """Prefer the final recipe's checkpoints.
+
+    Everything this project reports is v5, so a demo that quietly serves the v1 checkpoints shows
+    a reviewer different models from the ones in every table. Fall back to the untagged directory
+    when v5 has not been run on this machine.
+    """
+    v5 = _ARTIFACTS / "runs" / "v5"
+    return v5 if (v5 / "fedbn_2d_42" / "checkpoints" / "final.pt").exists() else _ARTIFACTS / "runs"
+
+
+RUNS_DIR = _default_runs()
+
 # ─── Model Cache ──────────────────────────────────────────────────────────────
 # Cache loaded models by (dim, method, hospital) to avoid reloading on every
 # request.  For FedBN, the hospital matters because BN weights differ; for all
@@ -42,29 +58,51 @@ _model_cache: dict[tuple, torch.nn.Module] = {}
 _device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
+def _state_for(ckpt, method: str, hospital: str) -> dict:
+    """Pull the state_dict that serves `hospital` out of a checkpoint.
+
+    Four layouts exist across the iterations, and only three of them were handled before:
+
+      fedbn        {"global": ..., "bn": {H1: ..., H4: ...}}   body + that site's own BN
+      fedavg       {"global": ...}                             one model serves everyone
+      centralized  {"global": ...}                             same
+      local-only   {"H1": ..., "H2": ..., "H3": ..., "H4": ...}  one model PER SITE
+
+    The last one used to fall through to `load_state_dict(ckpt)`, which tried to load a dict of
+    four models as if it were one and raised. Local-only was simply broken in the live demo.
+
+    Newer runs also wrap the payload as {"state": ..., "round": ..., "config": ...}, so unwrap
+    that first rather than stranding every checkpoint written since v2.
+    """
+    payload = ckpt["state"] if isinstance(ckpt, dict) and "state" in ckpt else ckpt
+
+    if method == "fedbn" and "global" in payload:
+        return {**payload["global"], **(payload.get("bn") or {}).get(hospital, {})}
+    if "global" in payload:
+        return payload["global"]
+    if hospital in payload:                      # local-only: one model each
+        return payload[hospital]
+    return payload                               # already a bare state_dict
+
+
 def _get_model(dim: str, method: str, hospital: str):
     """Return a cached model, loading from checkpoint on first access."""
-    cache_key = (dim, method, hospital if method == "fedbn" else "_global")
+    # Local-only keeps a separate model per site, so it must be cached per site too -- keying it
+    # as "_global" would have served Site A's model to every hospital.
+    per_site = method in ("fedbn", "local")
+    cache_key = (dim, method, hospital if per_site else "_global")
     if cache_key in _model_cache:
         return _model_cache[cache_key]
 
     cfg = Config(dim=dim)
     model = build_model(cfg)
-    run_id = cfg.run_id(method)
-    path = cfg.paths.runs / run_id / "checkpoints" / "final.pt"
+    path = RUNS_DIR / cfg.run_id(method) / "checkpoints" / "final.pt"
 
     if not path.exists():
         return None  # caller should handle missing checkpoint
 
-    ckpt = torch.load(path, map_location="cpu")
-    if method == "fedbn":
-        global_w = ckpt["global"]
-        bn_state = ckpt["bn"].get(hospital, {})
-        model.load_state_dict({**global_w, **bn_state})
-    elif isinstance(ckpt, dict) and "global" in ckpt:
-        model.load_state_dict(ckpt["global"])
-    else:
-        model.load_state_dict(ckpt)
+    ckpt = torch.load(path, map_location="cpu", weights_only=False)
+    model.load_state_dict(_state_for(ckpt, method, hospital))
 
     model.to(_device)
     model.eval()
@@ -108,7 +146,9 @@ class DemoHTTPRequestHandler(BaseHTTPRequestHandler):
         elif path_str == "/api/view":
             self.handle_api_view(url.query)
         elif path_str == "/api/health":
-            self.send_json({"status": "ok", "device": str(_device), "cached_models": len(_model_cache)})
+            self.send_json({"status": "ok", "device": str(_device),
+                            "cached_models": len(_model_cache),
+                            "checkpoints": RUNS_DIR.name})
         else:
             self.send_error(404, "File not found")
 
@@ -367,6 +407,7 @@ def run_server(port=8000, host="127.0.0.1"):
     print(f"  Device: {_device}")
     print(f"  Static: {STATIC_DIR}")
     print(f"  Walkthrough: /showcase {'(built)' if SHOWCASE.exists() else '(NOT BUILT)'}")
+    print(f"  Checkpoints: {RUNS_DIR}")
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
@@ -384,5 +425,10 @@ if __name__ == "__main__":
     ap.add_argument("--port", type=int, default=8000)
     ap.add_argument("--host", default="127.0.0.1",
                     help="bind address (default 127.0.0.1; use 0.0.0.0 to allow other machines)")
+    ap.add_argument("--runs", default=None,
+                    help=f"checkpoint directory (default {_default_runs().name}: the final recipe "
+                         f"when it exists, otherwise the untagged baseline)")
     args = ap.parse_args()
+    if args.runs:
+        RUNS_DIR = Path(args.runs)
     raise SystemExit(run_server(port=args.port, host=args.host))

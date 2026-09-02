@@ -51,7 +51,11 @@ uv run python scripts/freeze_baseline.py --runs-dir artifacts/runs/v5 --dest art
 ```bash
 uv run python scripts/demo_server.py                # / = live inference, /showcase = walkthrough
 uv run python scripts/demo_server.py --port 8010    # if 8000 is taken (VS Code often holds it)
+uv run python scripts/demo_server.py --runs artifacts/runs   # serve the v1 checkpoints instead
 ```
+
+The demo serves the **v5** checkpoints by default when they exist, so the models it runs are the
+ones every reported table describes. `/api/health` names which set is loaded.
 
 ### Analysis
 
