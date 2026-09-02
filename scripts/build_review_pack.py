@@ -2,9 +2,9 @@
 
     python scripts/build_review_pack.py
 
-Hunting for the right document while a reviewer waits is a bad look, and the docs are split
-across 35 files by concern rather than by "what gets shown". This gathers the sixteen that
-matter, in reading order, and writes two navigation documents on top of them.
+Hunting for the right document while a reviewer waits is a bad look. This copies the four current
+documents plus the final recipe's generated evidence into one folder, and writes two navigation
+documents on top of them.
 
 **Copies, not the originals.** `docs/` stays the single source of truth -- `check_docs.py`
 re-derives sixteen headline figures from the frozen logs and enforces the naming rules against
@@ -35,59 +35,49 @@ METHODS = ["centralized", "local", "fedavg", "fedbn"]
 LABEL = {"centralized": "Centralized", "local": "Local-only",
          "fedavg": "FedAvg", "fedbn": "FedBN"}
 
-# What actually gets opened in a review, grouped by the question it answers.
-PACK: dict[str, list[tuple[str, str]]] = {
-    "01-start-here": [
-        ("conventions.md", "Naming rules, reporting rules, and every retracted claim. Read first."),
-        ("methodology.md", "The research question, the three hypotheses, and what each one tests."),
-    ],
-    "02-results": [
-        ("iteration-report.md", "The full v1→v5 record: every configuration, result and failure."),
-        ("results-v5-summary.md", "The final recipe's results, with Holm-corrected significance."),
-        ("results-significance-2d-v5.md", "FedBN vs FedAvg, 2D, paired per case."),
-        ("results-significance-3d-v5.md", "FedBN vs FedAvg, 3D — the one that is not significant."),
-        ("results-comparison-v5-2d.md", "v1 vs v5, 2D, paired per case."),
-        ("results-comparison-v5-3d.md", "v1 vs v5, 3D, paired per case."),
-    ],
-    "03-how-it-works": [
-        ("architecture.md", "Components and the end-to-end flow — the big picture."),
-        ("data-pipeline.md", "Partition, scanner shift, preprocessing, caching, sampling."),
-        ("federated-learning.md", "The round loop, and how each method aggregates."),
-        ("experiments.md", "The experiment matrix and the evaluation protocol."),
-        ("specs.md", "Reference sheet: hyperparameters, model sizes, hardware, timings."),
-    ],
-    "04-engineering": [
-        ("workflow.md", "The pipeline in order, with measured costs per stage."),
-        ("environments.md", "Windows / WSL2 / Colab, and the portability contract."),
-        ("improvements.md", "The evaluation-noise finding and the freeze → rerun → compare protocol."),
-        ("data.md", "BraTS 2021 spec, labels, and how the data was acquired."),
-    ],
-}
+# docs/ is now four documents, so the pack is flat -- nesting four files inside five folders
+# would reintroduce exactly the hunting this is meant to remove.
+PACK: list[tuple[str, str]] = [
+    ("conventions.md", "Naming rules, reporting rules, and every retracted claim. Read first."),
+    ("data.md", "The dataset, the four-hospital split, the scanner shift, preprocessing, the cache."),
+    ("training.md", "The question, the methods, the round loop, the protocol, and the full v1-v5 record."),
+    ("code.md", "How to run it, what every module does, and what changed in the code."),
+]
 
-BANNER = ("> **Review copy — do not edit.** Source of truth: [`docs/{name}`](../../docs/{name}).\n"
+# The generated reports worth having open: the final recipe's evidence.
+RESULTS = [
+    "results-v5-summary.md",
+    "results-significance-2d-v5.md",
+    "results-significance-3d-v5.md",
+    "results-comparison-v5-2d.md",
+    "results-comparison-v5-3d.md",
+]
+
+BANNER = ("> **Review copy — do not edit.** Source of truth: [`docs/{src}`]({up}docs/{src}).\n"
           "> Regenerate this folder with `python scripts/build_review_pack.py`.\n\n---\n\n")
 
 LINK = re.compile(r"\]\((?!https?://|mailto:|#)([^)]+)\)")
 
 
-def rewrite_links(text: str) -> str:
-    """Point every relative link back at the real file, from two directories down.
+def rewrite_links(text: str, src_dir: Path, up: str) -> str:
+    """Point every relative link back at the real file.
 
-    A copy under review/02-results/ that still says `](conventions.md)` resolves to a sibling
-    that may not have been included. Resolving against docs/ and re-anchoring at the repo root
-    means every link works and every link lands on the source of truth.
+    A copy that still says `](conventions.md)` resolves to a sibling that may not have been
+    included, and one that says `](results/x.md)` resolves to nothing at all. Resolving against
+    the source directory and re-anchoring at the repo root means every link works and every link
+    lands on the source of truth.
     """
     def fix(m: re.Match) -> str:
         target = m.group(1)
         path, _, anchor = target.partition("#")
         if not path:
             return m.group(0)
-        resolved = (DOCS / path).resolve()
+        resolved = (src_dir / path).resolve()
         try:
             rel = resolved.relative_to(REPO).as_posix()
         except ValueError:
             return m.group(0)
-        return f"](../../{rel}{'#' + anchor if anchor else ''})"
+        return f"]({up}{rel}{'#' + anchor if anchor else ''})"
     return LINK.sub(fix, text)
 
 
@@ -194,7 +184,7 @@ uv run python scripts/demo_server.py --port 8010
 ```
 
 The walkthrough also opens straight from disk with no server and no network —
-`artifacts/showcase/showcase.html`, and a copy is in [`05-demo/`](05-demo/). Use that if the
+`artifacts/showcase/showcase.html`, and a copy is in [`demo/`](demo/). Use that if the
 laptop misbehaves.
 
 **Presenting the walkthrough:** `←` `→` to move, `O` for a slide overview, `F` for fullscreen.
@@ -322,20 +312,17 @@ uv run python scripts/build_showcase.py                    # the walkthrough its
 | Live inference errors | Checkpoints missing (`artifacts/runs/`, git-ignored) | Present the walkthrough instead — it needs nothing |
 | Cache missing | `artifacts/cache/` not on this machine | Everything except live inference still works |
 
-**The safest demo path:** open `05-demo/showcase.html` directly in a browser. No server, no
+**The safest demo path:** open `demo/showcase.html` directly in a browser. No server, no
 network, no GPU, no data.
 
 ---
 
 ## 9. What is in this pack
 
-{chr(10).join(f"### {folder}" + chr(10) + chr(10) +
-              chr(10).join(f"- **[{n}]({folder}/{n})** — {d}" for n, d in items)
-              for folder, items in PACK.items())}
-
-### 05-demo
-
-- **[showcase.html](05-demo/showcase.html)** — the 27-slide walkthrough, self-contained.
+{chr(10).join(f"- **[{n}]({n})** — {d}" for n, d in PACK)}
+- **[demo/showcase.html](demo/showcase.html)** — the 27-slide walkthrough, self-contained.
+- **[results/](results/)** — the generated evidence for the final recipe:
+{chr(10).join(f"  - [{n}](results/{n})" for n in RESULTS)}
 
 {copied} documents copied. The originals in `docs/` remain the source of truth; every link in
 these copies points back there.
@@ -499,7 +486,7 @@ monotone-ordering claim that held at seed 42 and failed at seed 7.
 ## Awkward questions — answer these honestly
 
 **Your best results are single-seed. Isn't that fragile?**
-Yes, and it is stated as limitation 2 in `docs/iteration-report.md` §11. v1 and v2 have three 2D
+Yes, and it is stated as limitation 2 in `docs/training.md` §11. v1 and v2 have three 2D
 seeds; v3–v5 are seed 42 only, and no iteration has 3D multi-seed coverage. **Any ± figure for v5
 would be fabricated**, so we do not give one. Margins under about 0.01 should be treated as
 provisional — which is exactly why we refuse to claim the 3D FedBN result.
@@ -553,19 +540,24 @@ def main() -> int:
     OUT.mkdir(parents=True)
 
     copied, missing = 0, []
-    for folder, items in PACK.items():
-        d = OUT / folder
-        d.mkdir(parents=True, exist_ok=True)
-        for name, _ in items:
-            src = DOCS / name
-            if not src.exists():
-                missing.append(name)
-                continue
-            body = rewrite_links(src.read_text(encoding="utf-8"))
-            (d / name).write_text(BANNER.format(name=name) + body, encoding="utf-8")
-            copied += 1
 
-    demo = OUT / "05-demo"
+    def take(src: Path, dest: Path, up: str) -> None:
+        nonlocal copied
+        if not src.exists():
+            missing.append(str(src.relative_to(REPO)))
+            return
+        body = rewrite_links(src.read_text(encoding="utf-8"), src.parent, up)
+        rel = src.relative_to(DOCS).as_posix()
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_text(BANNER.format(src=rel, up=up) + body, encoding="utf-8")
+        copied += 1
+
+    for name, _ in PACK:
+        take(DOCS / name, OUT / name, "../")
+    for name in RESULTS:
+        take(DOCS / "results" / name, OUT / "results" / name, "../../")
+
+    demo = OUT / "demo"
     demo.mkdir(parents=True, exist_ok=True)
     built = REPO / "artifacts" / "showcase" / "showcase.html"
     if built.exists():
@@ -578,7 +570,7 @@ def main() -> int:
     write_guide(runs, stats, copied)
     write_questions(runs, stats)
 
-    print(f"review/ built — {copied} documents in {len(PACK)} folders, plus the walkthrough")
+    print(f"review/ built — {copied} documents, plus the walkthrough")
     print("  review/README.md     the guide: commands, locations, numbers, troubleshooting")
     print("  review/QUESTIONS.md  likely review questions, answered")
     if missing:

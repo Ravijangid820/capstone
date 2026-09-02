@@ -1,6 +1,6 @@
 """Data: load a case, preprocess it, cache it, and sample training units from it.
 
-Pipeline order (see docs/data-pipeline.md §3):
+Pipeline order (see docs/data.md §5):
     load -> brain mask/bbox (UNSHIFTED) -> shift -> re-mask -> crop -> z-norm -> clip -> regions
 
 The brain mask and the crop bbox are derived from the **unshifted** volume, then the shifted
@@ -152,7 +152,7 @@ def build_case_cache(task: tuple) -> str:
     """Preprocess ONE case and write it to the cache. Skip-safe and resumable.
 
     Top-level function taking a picklable tuple, so it works under Windows `spawn`
-    as well as Linux `fork` (see docs/environments.md).
+    as well as Linux `fork` (see docs/code.md §1).
     """
     case_id, hospital, split, data_root, out_dir, seed, clip = task
     out = Path(out_dir)

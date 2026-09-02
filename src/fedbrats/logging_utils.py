@@ -1,7 +1,7 @@
 """Logging: a timestamped console+file logger and a JSONL metrics writer.
 
 Every run produces a human `run.log` (mirrored to console) and a machine-readable
-`metrics.jsonl` that plots and the H1/H2/H3 tables read directly. See docs/specs.md §8.
+`metrics.jsonl` that plots and the H1/H2/H3 tables read directly. See docs/code.md §3.
 """
 
 from __future__ import annotations

@@ -7,7 +7,7 @@
 > refuted (the "3D reversal", and the BatchNorm-statistics explanation for FedBN's 3D result).
 >
 > **Current results: [iteration-report.md](iteration-report.md).**
-> **Naming and retracted claims: [conventions.md](conventions.md).**
+> **Naming and retracted claims: [conventions.md](../conventions.md).**
 >
 > Retained unchanged as a record of the project at that stage. Do not take numbers from it.
 

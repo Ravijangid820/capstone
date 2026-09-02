@@ -4,7 +4,7 @@ Partition-then-split: each hospital owns a train AND a test set drawn from its o
 distribution, which the per-hospital H2/H3 claims require. The assignment is written once to a
 committed manifest (`artifacts/splits/partition.json`) so every experiment uses the identical
 split. The `train_per_hospital` knob is applied later at sampling time, NOT here — the manifest
-stays the full, stable assignment. See docs/data-pipeline.md §1.
+stays the full, stable assignment. See docs/data.md §3.
 """
 
 from __future__ import annotations

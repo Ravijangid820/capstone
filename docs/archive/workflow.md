@@ -9,7 +9,7 @@ Dice be attributed to federation rather than to luck or to a larger training bud
 ## 1. The four runs
 
 Hospitals are **Site A–D** in prose (`H1`–`H4` in code and logs; **Site D** is the outlier) —
-see [conventions.md](conventions.md). Case counts below are for the current `--preset v5`;
+see [conventions.md](../conventions.md). Case counts below are for the current `--preset v5`;
 the v1 baseline used 150 per site and 600 pooled.
 
 | Run | Trains on | What's shared | Models produced | Role |

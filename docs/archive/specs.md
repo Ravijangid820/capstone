@@ -4,7 +4,7 @@ Reference sheet — concrete numbers in one place. Values marked *(default)* are
 
 ## 1. Dataset
 
-BraTS 2021 — 1251 cases, 3D, 240×240×155, 4 modalities + `{0,1,2,4}` mask. Full spec in [data.md](data.md).
+BraTS 2021 — 1251 cases, 3D, 240×240×155, 4 modalities + `{0,1,2,4}` mask. Full spec in [data.md](../data.md).
 
 ## 2. Model — U-Net
 
@@ -44,7 +44,7 @@ a hospital spends across a whole federated run. See [experiments](experiments.md
 Every knob in §3 keeps its baseline value unless a preset or an explicit flag changes it, so an
 un-flagged run still reproduces the frozen v1 baseline bit for bit. Full rationale for each
 iteration in [iteration-report.md](iteration-report.md); naming and retracted claims in
-[conventions.md](conventions.md).
+[conventions.md](../conventions.md).
 
 | Knob | v1 (default) | v2 | v3 | v4 | **v5** |
 |---|---|---|---|---|---|

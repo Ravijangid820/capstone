@@ -1,10 +1,10 @@
 """Central configuration: paths, the hospital split, and model/training defaults.
 
 One `Config` drives every run. The same seed + the committed split manifest make runs
-comparable across methods and across the 2D/3D backbones. See docs/specs.md.
+comparable across methods and across the 2D/3D backbones. See docs/code.md.
 
 Paths resolve per-platform (WSL2 and native Windows are both supported) and can be
-overridden with `FEDBRATS_DATA_ROOT` / `FEDBRATS_CACHE_DIR`. See docs/environments.md.
+overridden with `FEDBRATS_DATA_ROOT` / `FEDBRATS_CACHE_DIR`. See docs/code.md §1.
 """
 
 from __future__ import annotations
@@ -91,7 +91,7 @@ class Config:
     # output rather than by whatever command someone remembers typing.
     tag: str | None = None
 
-    # hospital split (see docs/data-pipeline.md §1)
+    # hospital split (see docs/data.md §3)
     num_hospitals: int = 4
     outlier_hospital: str = "H4"          # designated outlier (strongest scanner shift)
     test_per_hospital: int = 62           # held-out test cases per hospital
@@ -106,11 +106,11 @@ class Config:
     # preprocessing
     clip_sigma: float = 5.0
 
-    # federated schedule (see docs/federated-learning.md)
+    # federated schedule (see docs/training.md §3)
     rounds: int = 20                      # R communication rounds
     local_epochs: int = 1                 # E local epochs per round
     # NOTE: local-only and centralized train R*E epochs total -- matched compute, so H1
-    # tests collaboration rather than a longer training budget. See docs/experiments.md §3.
+    # tests collaboration rather than a longer training budget. See docs/training.md §4.
 
     # optimization
     lr: float = 1e-3

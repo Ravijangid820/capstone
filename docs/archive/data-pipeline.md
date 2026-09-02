@@ -2,7 +2,7 @@
 
 > Hospitals appear as `H1`–`H4` below because that is how they are keyed in the code and logs.
 > In prose they are **Site A–D** (**Site D** = `H4` = the outlier); `H1`–`H3` mean **hypotheses**.
-> See [conventions.md](conventions.md).
+> See [conventions.md](../conventions.md).
 
 The journey from a raw case in Drive to a training batch. Four stages: **partition → shift →
 preprocess → sample/cache**.

@@ -2,7 +2,7 @@
 
 BatchNorm is not incidental -- it is the thing FedBN keeps local. The three region channels
 (WT, TC, ET) are **nested and overlapping** (ET subset of TC subset of WT), so this is a multi-label
-problem: independent sigmoids, never a softmax. See docs/specs.md §2.
+problem: independent sigmoids, never a softmax. See docs/training.md §3.
 """
 
 from __future__ import annotations

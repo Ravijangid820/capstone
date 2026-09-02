@@ -26,7 +26,7 @@ estimator of the right one, and on the baseline it flips H1 from supported in 1/
 Pick the estimator before looking at the verdicts, and apply the same one to both sides of any
 comparison. `compare_runs.py` enforces that; here it is on you.
 
-The hypotheses reduce to inequalities over the final-round diagonal (docs/experiments.md §3):
+The hypotheses reduce to inequalities over the final-round diagonal (docs/training.md §4):
 
     H1  collaboration helps on average   mean_dice(fedavg) >= mean_dice(local)
     H2  the global model fails outliers  dice(fedavg, H4)   <  dice(local, H4)

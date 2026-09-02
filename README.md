@@ -39,7 +39,7 @@ FedAvg, and FedBN on brain-tumor segmentation.
 | 7. Experiments — full 2D matrix | ✅ done — ran locally (RTX 3050), all four methods, R=25 |
 | 8. Analysis (H1/H2/H3) → report | ✅ done — see **Results** below (verdicts changed after v2–v5) |
 | 9. 3D feasibility spike → 3D matrix | ✅ done — full 3D matrix; the early "reversal" reading was later refuted |
-| 10. Accuracy iterations v2–v5 | ✅ done — see [iteration-report.md](docs/iteration-report.md) |
+| 10. Accuracy iterations v2–v5 | ✅ done — see [training.md](docs/training.md) |
 | 11. *(optional)* NVIDIA FLARE port | ⬜ Linux/Colab only |
 
 ## Results (best recipe, `--preset v5`) — supersedes everything below
@@ -81,7 +81,7 @@ Mean WT Dice across hospitals (training recipe only, no TTA):
 > excludes zero but the Wilcoxon test does not, meaning the shift comes from magnitude on a minority
 > of volumes. The defensible sentence is **"no significant difference in 3D"**, which is still a
 > change from v1. In 2D FedBN wins decisively (59 of 62 volumes). See
-> [results-v5-summary.md](docs/results-v5-summary.md).
+> [results/results-v5-summary.md](docs/results/results-v5-summary.md).
 
 ### Why the outlier moves the way it does
 
@@ -104,7 +104,7 @@ outlier, which is exactly FedBN's claim.
 geometric augmentation only, flip-TTA and small-component filtering at inference,
 validation-based checkpoint selection, and 230 training cases/hospital.
 
-Full analysis: **[improvements.md](docs/improvements.md)**.
+Full analysis: **[training.md](docs/training.md)**.
 
 Reproduce: `python scripts/run_matrix.py --dim 2d 3d --seed 42 --preset v5 --tag v5`
 
@@ -115,7 +115,7 @@ reruns. They contained hospital columns labelled `H1`–`H4`, which collide with
 names, and two claims that later runs refuted. They have been consolidated into one place rather
 than left to contradict each other:
 
-**→ [docs/iteration-report.md](docs/iteration-report.md)** — every iteration v1→v5, every method,
+**→ [docs/training.md](docs/training.md)** — every iteration v1→v5, every method,
 both backbones, all three regions, with the statistics and the limitations.
 
 Two claims from those tables are **retracted** and must not be reused:
@@ -191,20 +191,17 @@ Features:
 
 ## Documentation
 
-Start at the [documentation index](docs/README.md). The set is split by concern so each doc stays focused:
+Start at the [documentation index](docs/README.md). Four documents, in reading order:
 
 | Doc | Scope |
 |---|---|
-| [methodology.md](docs/methodology.md) | Research design — question, hypotheses, methods, evaluation (the *why*) |
-| [workflow.md](docs/workflow.md) | **Start here to run it** — the four runs, pipeline order, measured costs, decision gates |
-| [data.md](docs/data.md) | Dataset spec, labels, and the reproducible data-prep pipeline |
-| [architecture.md](docs/architecture.md) | System architecture, end-to-end flow, module layout, logging strategy |
-| [data-pipeline.md](docs/data-pipeline.md) | Case → hospital partition, synthetic shift, preprocessing, caching, sampling |
-| [federated-learning.md](docs/federated-learning.md) | The FL round loop; FedAvg / FedBN / local-only aggregation |
-| [experiments.md](docs/experiments.md) | Experiment matrix, evaluation protocol, how H1/H2/H3 are measured |
-| [specs.md](docs/specs.md) | Reference sheet — hyperparameters, model dims, hardware, seeds, artifact layout |
-| [environments.md](docs/environments.md) | Windows / WSL2 / Colab — what runs where, portability contract, recipes |
-| [progress-log.md](docs/progress-log.md) | Dated lab notebook of decisions and milestones |
+| [conventions.md](docs/conventions.md) | **Read first.** Naming rules (hospitals = Site A–D, hypotheses = H1–H3), reporting rules, retracted claims |
+| [data.md](docs/data.md) | Dataset, the four-hospital split, the synthetic scanner shift, preprocessing, sampling, the cache |
+| [training.md](docs/training.md) | The question, the four methods, the round loop, the evaluation protocol, and the full v1→v5 record with all results |
+| [code.md](docs/code.md) | How to run it, what every module does, how a run flows through the code, what changed each iteration |
+
+Supporting: [docs/results/](docs/results/) holds the generated per-run reports;
+[docs/archive/](docs/archive/) holds superseded and merged documents, none of them current.
 
 ## Repository layout
 
@@ -240,7 +237,7 @@ Results stream to `artifacts/runs/<method>_<dim>_<seed>/metrics.jsonl`.
 ## Compute
 
 - **Local:** WSL2 **or** native Windows, RTX 3050 Laptop (4 GB VRAM) — data prep and quick checks.
-  NVIDIA FLARE runs on WSL2 only ([why](docs/environments.md)).
+  NVIDIA FLARE runs on WSL2 only ([why](docs/archive/environments.md)).
 - **Training:** Google Colab **T4 (16 GB VRAM)**, with the dataset staged in Google Drive.
 - **Cache:** ~35 MB/case → ~44 GB for all 1251. Set `FEDBRATS_CACHE_DIR` to keep it off `C:`.
 

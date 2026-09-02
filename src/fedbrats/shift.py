@@ -4,7 +4,7 @@ Each hospital applies a fixed, **nonlinear + spatial** transform emulating its s
 gamma (contrast) + a smooth multiplicative bias field + mild blur. Nonlinear/spatial on purpose,
 so it **survives per-image z-normalization** (a purely linear intensity shift would be normalized
 away, leaving no real heterogeneity). Applied to the 4 modalities only — never the segmentation.
-See docs/data-pipeline.md §2.
+See docs/data.md §4.
 """
 
 from __future__ import annotations
@@ -24,7 +24,7 @@ class ShiftParams:
 
 # Starting values — H1-H3 are mild, same-direction (they cluster); H4 is the outlier (strong,
 # clearly apart). Calibrated so shifts survive z-norm and H4's outlier margin is large; the real
-# calibration is whether H2 appears once we train (revisit then). See docs/data-pipeline.md §2.
+# calibration is whether H2 appears once we train (revisit then). See docs/data.md §4.
 HOSPITAL_SHIFTS: dict[str, ShiftParams] = {
     "H1": ShiftParams(gamma=1.06, bias_amp=0.06, blur_sigma=0.3),
     "H2": ShiftParams(gamma=1.13, bias_amp=0.09, blur_sigma=0.5),

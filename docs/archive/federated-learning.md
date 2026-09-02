@@ -2,7 +2,7 @@
 
 > Hospitals appear as `H1`–`H4` below because that is how they are keyed in the code and logs.
 > In prose they are **Site A–D** (**Site D** = `H4` = the outlier); `H1`–`H3` mean **hypotheses**.
-> See [conventions.md](conventions.md).
+> See [conventions.md](../conventions.md).
 
 How the global model is trained, and how the three methods differ. Conceptual background (why random
 weights learn, why averaging works) is in [methodology](methodology.md); this doc is the *implementation design*.

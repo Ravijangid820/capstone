@@ -24,7 +24,7 @@ protocols shift the image distribution. A single global model (FedAvg) is pulled
 > **This section replaces an earlier claim.** It previously reported that *all three* hypothesis
 > verdicts reverse in 3D, and called that a novel contribution. Iterations v2–v5 refuted it: the
 > reversal was an artefact of the v1 training recipe, not a property of the backbone. See
-> [conventions.md](conventions.md) §6 and [iteration-report.md](iteration-report.md).
+> [conventions.md](../conventions.md) §6 and [iteration-report.md](iteration-report.md).
 
 Under **v1**, 3D appeared to reverse every verdict — H1 supported, H2 and H3 not. Under **v5**,
 with a properly tuned recipe run identically in both backbones, that picture is gone:
@@ -56,7 +56,7 @@ the minority site — placing FedBN's mechanism in exactly the explanatory role 
 
 ## 3. Data & heterogeneity design
 
-- **Dataset:** BraTS 2021 (see [`data.md`](data.md)) — multi-modal 3D brain MRI with expert
+- **Dataset:** BraTS 2021 (see [`data.md`](../data.md)) — multi-modal 3D brain MRI with expert
   tumor masks. Details, labels, and prep there.
 - **Hospitals:** we partition the cases into **K = 4** simulated hospitals (decided). Three are
   "typical" sites; **one is a designated outlier** with the strongest scanner shift, to drive H2/H3.

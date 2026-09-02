@@ -3,7 +3,7 @@
 The operational plan: what runs, how they're evaluated, and exactly how each hypothesis is measured.
 
 > Hospitals are **Site A–D** in prose (`H1`–`H4` in code and logs; **Site D** is the outlier);
-> `H1`–`H3` mean **hypotheses**. See [conventions.md](conventions.md). Sections 4–5 quote raw log
+> `H1`–`H3` mean **hypotheses**. See [conventions.md](../conventions.md). Sections 4–5 quote raw log
 > names inside their superseded v1 tables.
 
 ## 1. Experiment matrix
@@ -95,7 +95,7 @@ Two consequences worth carrying into the write-up:
 The 3D runs were re-checked the same way and all three verdicts are estimator-independent, so the
 3D picture does not rest on this choice — the 2D H1 verdict does. It is, however, *recipe*-
 sensitive: what v1 reported as a 2D/3D reversal did not survive v5. See
-[methodology.md](methodology.md#21-the-2d-3d-comparison-what-survives).
+[methodology.md](methodology.md#21-the-2d--3d-comparison--what-survives).
 
 Centralized (E0) frames all of the above as "how close to the pooled ceiling did we get."
 
@@ -113,7 +113,7 @@ Centralized (E0) frames all of the above as "how close to the pooled ceiling did
 > **⚠ Superseded numbers.** Sections 4 and 5 report the **v1 baseline**. They are kept because the
 > gates and the protocol above were validated against them, but the verdicts changed under v2–v5.
 > **Current results: [iteration-report.md](iteration-report.md).** Hospital columns below use the
-> raw log names `H1`–`H4`; in prose these are Sites A–D — see [conventions.md](conventions.md).
+> raw log names `H1`–`H4`; in prose these are Sites A–D — see [conventions.md](../conventions.md).
 
 Run on the RTX 3050; `metrics.jsonl` per run under `artifacts/runs/`. Regenerate the verdicts with
 `python scripts/analyze.py --dim 2d` and the figures with `python scripts/plot_results.py`.
@@ -157,7 +157,7 @@ Figures: `artifacts/figures/{learning_curves_wt_2d,per_hospital_wt_2d,outlier_h4
 
 > **⚠ The 3D verdicts below were later refuted.** Under `--preset v5` both H2 and H3's inequalities
 > hold in 3D. What v1 reported as a dimension-dependent reversal was an artefact of its training
-> recipe. See [conventions.md](conventions.md) §6.
+> recipe. See [conventions.md](../conventions.md) §6.
 
 ### Mean Dice across hospitals (diagonal)
 

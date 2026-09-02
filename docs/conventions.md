@@ -116,11 +116,11 @@ These have been shown wrong or over-stated by later runs. They must not appear i
 
 | Need | Read |
 |---|---|
-| Everything about v1→v5 in one place | [iteration-report.md](iteration-report.md) |
-| FedBN vs FedAvg significance, Holm-corrected | [results-v5-summary.md](results-v5-summary.md) |
-| The methodology story behind the changes | [improvements.md](improvements.md) |
-| Hyperparameters | [specs.md](specs.md) |
-| Evaluation protocol | [experiments.md](experiments.md) |
+| Everything about v1→v5 — methods, protocol, results, limitations | [training.md](training.md) |
+| The dataset, the split, the scanner shift, preprocessing | [data.md](data.md) |
+| Running it, the modules, what changed in the code | [code.md](code.md) |
+| FedBN vs FedAvg significance, Holm-corrected | [results/results-v5-summary.md](results/results-v5-summary.md) |
+| Generated per-run comparison and significance reports | [results/](results/) |
 
 `project_report.md`, `project_status_report.md` and `capstone_project_report.md` predate v2–v5.
 Their results sections describe **v1 only** and are marked as such; do not take numbers from them.

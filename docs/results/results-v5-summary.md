@@ -1,6 +1,6 @@
 # v5 results — what changed, and what it does to the headline claim
 
-> Naming follows [conventions.md](conventions.md): hospitals are **Site A–D**
+> Naming follows [conventions.md](../conventions.md): hospitals are **Site A–D**
 > (`H1`–`H4` in code and logs, Site D = the outlier); `H1`–`H3` mean **hypotheses**.
 
 Seed 42, both backbones, all four methods. Runs in `artifacts/runs/v5`; every number below comes
@@ -54,7 +54,7 @@ attaches to a different hypothesis, and the mechanism has to be re-argued from s
 
 ### Why H1 flips in 2D (Local − FedAvg, WT, paired)
 
-*Hospitals are Site A–D; `H1`–`H4` in the logs. Site D is the outlier. See [conventions.md](conventions.md).*
+*Hospitals are Site A–D; `H1`–`H4` in the logs. Site D is the outlier. See [conventions.md](../conventions.md).*
 
 | Dim | Site A | Site B | Site C | Site D | Pooled |
 |-----|--------|--------|--------|--------|--------|

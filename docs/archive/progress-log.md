@@ -13,7 +13,7 @@ A dated lab notebook: what was done, what was decided, and *why*. Newest entries
 
 ### 2026-07-05/06 — Confirmed the dataset is 3D
 - Inspected the actual files rather than assuming. BraTS 2021 is **3D volumetric**: 1251 cases,
-  240×240×155, int16, 4 modalities + a `{0,1,2,4}` mask, ~0.6% tumor. (See [`data.md`](data.md).)
+  240×240×155, int16, 4 modalities + a `{0,1,2,4}` mask, ~0.6% tumor. (See [`data.md`](../data.md).)
 - This is the fact that makes the 2D-vs-3D model choice a real decision.
 
 ### 2026-07-06 — Local unzip to the D: drive
@@ -30,7 +30,7 @@ A dated lab notebook: what was done, what was decided, and *why*. Newest entries
   data prep and quick sanity checks.
 
 ### 2026-07-07 — Colab data pipeline built and run
-- Wrote [`../colab_setup.ipynb`](../colab_setup.ipynb): download the dataset **on Colab**
+- Wrote [`../colab_setup.ipynb`](../../colab_setup.ipynb): download the dataset **on Colab**
   (fast datacenter link, no slow home upload) → extract → **stream-unzip in 100-case batches**
   to Google Drive, deleting each local batch so Colab's ~100 GB disk never fills.
 - Made every stage skip-safe: download reused from Colab/Drive if present; extraction skipped if
@@ -153,7 +153,7 @@ A dated lab notebook: what was done, what was decided, and *why*. Newest entries
   launched E1 early, contaminating the first worker benchmark — always confirm the process is dead.)*
 
 ### Next
-- **Analysis is done for 2D** — tables in [experiments.md](experiments.md#4-results-2d-backbone-v1-baseline-only-r25-e1-seed-42-150-trainhospital), figures in `artifacts/figures/`.
+- **Analysis is done for 2D** — tables in [experiments.md](experiments.md#4-results--2d-backbone-v1-baseline-only-r25-e1-seed-42-150-trainhospital), figures in `artifacts/figures/`.
 - **3D feasibility spike** on the T4 (memory is fine; speed is the gate). If it passes, repeat the
   matrix in 3D and add the "does the story hold in 3D?" comparison.
 - *(optional)* NVIDIA FLARE port as a framework demonstration — the science is now settled on the

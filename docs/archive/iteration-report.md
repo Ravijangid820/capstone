@@ -8,7 +8,7 @@ Companions: [improvements.md](improvements.md) for the methodology narrative,
 hyperparameters. Every figure below comes from run logs in `artifacts/snapshots/`, each frozen with
 a SHA-256 manifest.
 
-> **Naming.** This project follows [conventions.md](conventions.md). Hospitals are **Site A–D**
+> **Naming.** This project follows [conventions.md](../conventions.md). Hospitals are **Site A–D**
 > in all prose (`H1`–`H4` in code and logs; **Site D = H4** is the outlier). `H1`/`H2`/`H3`
 > unqualified always mean **hypotheses**. Every table below already uses Site names.
 
@@ -188,7 +188,7 @@ gives **uncorrected p = 0.066, Holm-corrected p = 0.53, with a sign split of 39/
 CI excludes zero while the Wilcoxon test does not reach significance, which means the mean shift
 comes from magnitude on a minority of volumes rather than a consistent per-case win. The defensible
 sentence is **"no significant difference in 3D"** — which is still a change from v1, where FedAvg
-beat FedBN in 3D significantly. See [results-v5-summary.md](results-v5-summary.md) for the full
+beat FedBN in 3D significantly. See [results-v5-summary.md](../results/results-v5-summary.md) for the full
 table.
 
 **H1 is a knife edge and should be reported as one.** It has flipped in both directions during this

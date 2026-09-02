@@ -1,41 +1,59 @@
-# Documentation index
+# Documentation
 
-Project docs, split by concern so each stays focused and maintainable. Suggested reading order top to bottom.
+Four documents. Read them in this order.
 
-| # | Doc | Read it for |
-|---|---|---|
-| 0 | [conventions.md](conventions.md) | **Read first.** Naming rules (hospitals = Site A–D, hypotheses = H1–H3), reporting conventions, and the list of retracted claims. |
-| 1 | [methodology.md](methodology.md) | The research question, hypotheses (H1/H2/H3), methods compared, evaluation — the **why**. |
-| 2 | [workflow.md](workflow.md) | **Start here to run it.** The four runs, the pipeline in order, measured costs, and the decision gates. |
-| 3 | [data.md](data.md) | BraTS 2021 spec, labels/regions, and the reproducible data-acquisition pipeline. |
-| 4 | [architecture.md](architecture.md) | System components, end-to-end data/training flow, module layout, logging strategy — the **big picture**. |
-| 5 | [data-pipeline.md](data-pipeline.md) | Case → hospital partition, synthetic scanner shift, preprocessing, caching, sampling — the **data engineering**. |
-| 6 | [federated-learning.md](federated-learning.md) | The FL round loop and how FedAvg / FedBN / local-only aggregate — the **training engine**. |
-| 7 | [experiments.md](experiments.md) | Experiment matrix, evaluation protocol, and exactly how each hypothesis is measured. |
-| 8 | [specs.md](specs.md) | Reference sheet — hyperparameters, model dims, hardware numbers, seeds, artifact/log layout. |
-| 9 | [environments.md](environments.md) | Windows / WSL2 / Colab — what runs where, the portability contract, run recipes. |
-| 10 | [progress-log.md](progress-log.md) | Dated lab notebook — decisions and milestones with rationale. |
-| 11 | [iteration-report.md](iteration-report.md) | **Full v1→v5 analytical report** — every configuration, result, failure and limitation in one place. Start here for the paper. |
-| 12 | [improvements.md](improvements.md) | **Accuracy round 2** — the evaluation-noise finding, what changed, and the freeze → rerun → paired-comparison protocol. |
-| 13 | [project_report.md](project_report.md) | Formal project report — background, methodology, results, and discussion |
-| 14 | [project_status_report.md](project_status_report.md) | Handoff/status report — current state, completed work, and next steps |
+| Doc | Read it for |
+|---|---|
+| **[conventions.md](conventions.md)** | **Read first.** Naming rules (hospitals = Site A–D, hypotheses = H1–H3), reporting rules, and every retracted claim. |
+| **[data.md](data.md)** | The dataset, the four-hospital partition, the synthetic scanner shift, preprocessing, sampling and the cache. |
+| **[training.md](training.md)** | The research question, the four methods, the federated round loop, the evaluation protocol, and the full v1→v5 record with all results. |
+| **[code.md](code.md)** | How to run it, what every module does, how one run flows through the code, and what changed in the code across the iterations. |
+
+## Supporting material
+
+| Folder | Contents |
+|---|---|
+| **[results/](results/)** | Generated per-run reports — comparisons, significance tests, inference-only measurements. Written by `compare_runs.py` and `compute_significance.py`; not hand-maintained. |
+| **[archive/](archive/)** | Superseded and merged documents, kept for reference. Nothing here is current. |
 
 ## One-screen orientation
 
 ```mermaid
 flowchart LR
-    D["Google Drive<br/>unzipped BraTS"] --> P["Partition<br/>4 hospitals"]
-    P --> PP["Preprocess<br/>+ shift + cache"]
-    PP --> FL["FL engine<br/>FedAvg / FedBN / local"]
-    FL --> E["Evaluate<br/>Dice WT/TC/ET"]
+    D["BraTS 2021<br/>1,251 cases"] --> P["Partition<br/>4 hospitals"]
+    P --> PP["Preprocess<br/>+ scanner shift + cache"]
+    PP --> FL["FL engine<br/>Centralized · Local · FedAvg · FedBN"]
+    FL --> E["Evaluate<br/>Dice WT/TC/ET, per volume"]
     E --> R["H1 / H2 / H3"]
 ```
 
-- **Goal:** show personalized FL (FedBN) recovers the outlier hospital that a single global model (FedAvg) serves worst, without hurting the average — vs. a local-only floor and a centralized ceiling.
-- **Data:** BraTS 2021, 1251 3D MRI cases, split into **4 simulated hospitals** (3 typical + 1 outlier via a synthetic scanner shift).
-- **Models:** 2D and 3D U-Net (dimension-parametric); 2D first, 3D feasibility-gated.
-- **Compute:** local RTX 3050 (4 GB) for prep + quick checks; Colab T4 (16 GB) for training.
+- **Goal:** show that personalized FL (FedBN) recovers the outlier hospital a single global model
+  (FedAvg) serves worst, without hurting the average — against a local-only floor and a
+  centralized ceiling.
+- **Data:** BraTS 2021, 1,251 3D MRI cases, split into **4 simulated hospitals** (3 typical + 1
+  outlier via a synthetic scanner shift).
+- **Models:** dimension-parametric U-Net, run in both 2D and 3D.
+- **Evidence:** 248 held-out volumes, a pre-registered estimator, paired per-case statistics, and
+  five frozen hash-verified iterations.
+
+## Keeping it honest
+
+```bash
+uv run python scripts/check_docs.py
+```
+
+Re-derives sixteen headline Dice figures from `artifacts/snapshots/`, checks every document against
+[conventions.md](conventions.md), verifies every relative link resolves, confirms each iteration is
+archived with a manifest, and fails if the [review pack](../review/) is older than any document it
+copied. **Run it before committing documentation changes.**
+
+## Presenting
+
+```bash
+uv run python scripts/build_review_pack.py     # review/ — one folder to present from
+uv run python scripts/demo_server.py           # / live demo · /showcase the walkthrough
+```
 
 ## Diagram conventions
 
-Diagrams are [Mermaid](https://mermaid.js.org/) fenced blocks — they render inline on GitHub. Colour meaning is kept consistent with the concept explainer: **global** model = the method under test, **base** = ceiling, **local** = floor.
+Diagrams are [Mermaid](https://mermaid.js.org/) fenced blocks and render inline on GitHub.
