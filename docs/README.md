@@ -1,6 +1,6 @@
 # Documentation
 
-Four documents. Read them in this order.
+Four reference documents, plus a travel-friendly walkthrough.
 
 | Doc | Read it for |
 |---|---|
@@ -8,6 +8,7 @@ Four documents. Read them in this order.
 | **[data.md](data.md)** | The dataset, the four-hospital partition, the synthetic scanner shift, preprocessing, sampling and the cache. |
 | **[training.md](training.md)** | The research question, the four methods, the federated round loop, the evaluation protocol, and the full v1→v5 record with all results. |
 | **[code.md](code.md)** | How to run it, what every module does, how one run flows through the code, and what changed in the code across the iterations. |
+| **[travel-walkthrough.md](travel-walkthrough.md)** | A single presentation and viva briefing: narrative, final numbers, safe wording, limitations, questions, and demo checklist. |
 
 ## Supporting material
 

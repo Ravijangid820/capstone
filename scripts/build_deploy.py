@@ -43,6 +43,16 @@ from fedbrats.data import cache_key         # noqa: E402
 METHODS = ["centralized", "local", "fedavg", "fedbn"]
 SITES = {"H1": "Site A", "H2": "Site B", "H3": "Site C", "H4": "Site D"}
 
+# The static showcase can be hosted anywhere as index.html, but this makes it equally easy to run
+# inside a small LXC: `npm install --omit=dev && npm start` serves it on localhost:8080.
+STATIC_PACKAGE_JSON = json.dumps({
+    "name": "fedbrats-showcase",
+    "version": "1.0.0",
+    "private": True,
+    "scripts": {"start": "serve -s . -l 8080"},
+    "dependencies": {"serve": "14.2.4"},
+}, indent=2) + "\n"
+
 # The cases the paper figures use. Whatever else is bundled, these two must be, so the
 # qualitative figure and the live demo can be shown on the same patient.
 PINNED = ["BraTS2021_01163", "BraTS2021_00104"]
@@ -171,6 +181,17 @@ Two independent bundles. Build both with `python scripts/build_deploy.py` from t
 ## static/ — the walkthrough
 
 One self-contained file. No server, no Python, no data, no network calls beyond a webfont.
+
+**Small LXC / Cloudflare Tunnel**
+
+```bash
+cd deploy/static
+npm install --omit=dev
+npm start                    # serves http://127.0.0.1:8080
+```
+
+Point the Cloudflare Tunnel public hostname at `http://localhost:8080`. No Python application
+server, data, checkpoints, or GPU is involved.
 
 **Vercel**
 
@@ -328,6 +349,7 @@ def main() -> int:
     static.mkdir(parents=True)
     shutil.copy2(showcase, static / "index.html")
     (static / "vercel.json").write_text(VERCEL_JSON, encoding="utf-8")
+    (static / "package.json").write_text(STATIC_PACKAGE_JSON, encoding="utf-8")
 
     # ---- app target: a pruned mirror of the repository ---------------------------------
     app = OUT / "app"
