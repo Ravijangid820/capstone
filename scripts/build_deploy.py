@@ -44,13 +44,12 @@ METHODS = ["centralized", "local", "fedavg", "fedbn"]
 SITES = {"H1": "Site A", "H2": "Site B", "H3": "Site C", "H4": "Site D"}
 
 # The static showcase can be hosted anywhere as index.html, but this makes it equally easy to run
-# inside a small LXC: `npm install --omit=dev && npm start` serves it on localhost:8080.
+# inside a small LXC: `npm start` serves it on localhost:8080 without third-party dependencies.
 STATIC_PACKAGE_JSON = json.dumps({
     "name": "fedbrats-showcase",
     "version": "1.0.0",
     "private": True,
-    "scripts": {"start": "serve -s . -l 8080"},
-    "dependencies": {"serve": "14.2.4"},
+    "scripts": {"start": "node server.js"},
 }, indent=2) + "\n"
 
 # The cases the paper figures use. Whatever else is bundled, these two must be, so the
@@ -186,7 +185,6 @@ One self-contained file. No server, no Python, no data, no network calls beyond 
 
 ```bash
 cd deploy/static
-npm install --omit=dev
 npm start                    # serves http://127.0.0.1:8080
 ```
 
@@ -350,6 +348,7 @@ def main() -> int:
     shutil.copy2(showcase, static / "index.html")
     (static / "vercel.json").write_text(VERCEL_JSON, encoding="utf-8")
     (static / "package.json").write_text(STATIC_PACKAGE_JSON, encoding="utf-8")
+    shutil.copy2(Path(__file__).with_name("showcase_server.js"), static / "server.js")
 
     # ---- app target: a pruned mirror of the repository ---------------------------------
     app = OUT / "app"
